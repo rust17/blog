@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+<link rel="stylesheet" href="__CSS__/box.css">
+<script type="text/javascript">
+    var ThinkPHP = {
+        'MODULE' : '__MODULE__',
+        'IMG' : '__PUBLIC__/{:MODULE_NAME}/images',
+    };
+</script>
+<form id="box-login">
+    <div id="open-box-login">
+            <ul class="left">
+                <li>用户名：<input type="text" name="email" class="username" placeholder="邮箱"/></li>
+                <li>密&nbsp&nbsp&nbsp码：<input type="password" name="password" class="password" placeholder="请输入密码" /></li>
+                <li class="code">验证码：<input type="text" name="code" class="code" placeholder="请输入验证码"></li>
+                <img src="{:U('verify')}" class="image-code" style="cursor: pointer;">
+                <li class="status"><input type="checkbox" name="auto" id="status" checked="checked" class="auto">记住登录状态</li>
+            </ul>
+            <ul class="right">
+                <li><a href="###" id="locate-register">立即注册</a></li>
+                <li><a href="###">找回密码</a></li>
+            </ul>
+    </div>
+</form>
+<form id="box-register">
+    <div id="open-box-register">
+        <ul class="left">
+            <li>邮&nbsp&nbsp&nbsp箱：<input type="text" name="email" class="username" placeholder="6-18个字符"/></li>
+            <li>密&nbsp&nbsp&nbsp码：<input type="password" name="password" class="password" placeholder="6-16位密码，区分大小写" /></li>
+            <li class="check">密码确认：<input type="password" name="repassword" class="check password" placeholder="再次输入密码" /></li>
+            <li class="code">验证码：<input type="text" name="code" class="code" placeholder="请输入验证码"></li>
+            <img src="{:U('verify')}" class="image-code" style="cursor: pointer;">
+        </ul>
+        <ul class="right">
+            <li>已有账号？立即<a href="###" id="locate-login">登录</a></li>
+        </ul>
+    </div>
+</form>
+<div id="loading">注册中...</div>
+</body>
+</html>

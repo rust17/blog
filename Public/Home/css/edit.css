@@ -1,0 +1,30 @@
+li#logout.right{
+    position: relative;
+    right: -220px;
+    width: 120px;
+}
+#submit input#exp{
+    margin: 10px 0 0 0;
+    width: 70px;
+    height: 35px;
+    font-size: 18px;
+    background: #91DBD1;
+    float: right;
+    border-radius:5px;
+}
+#submit input#exp:hover{
+    background: orange;
+    cursor: pointer;
+}
+form#experience li{
+    list-style: none;
+    text-align: center;
+}
+input#title{
+    width: 100%;
+    height: 60px;
+    border: 1px solid #a0a0a0;
+    border-bottom: none;
+    text-align: center;
+    font-size: 30px;
+}

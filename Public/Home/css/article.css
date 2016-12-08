@@ -1,0 +1,12 @@
+.register-info ul{
+    font-size: 13px;
+    color: #000;
+}
+li#logout.right{
+    position: relative;
+    right: -220px;
+    width: 120px;
+}
+#main-content{
+    min-width: 960px;
+}

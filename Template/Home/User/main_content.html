@@ -1,0 +1,52 @@
+﻿<script type="text/javascript" src="__JS__/user.js"></script>
+<div id="main-content" class="col-2-3">
+    <div class="wrap-col">
+        <article>
+            <div class="heading">
+                <h4><a href="###" id="basic">基本信息</a></h4>
+            </div>
+            <volist name="basic" id="bas">
+            <div class="content" id="basic-content">
+                <div class="edit-basic"><p class="edit">编辑</p></div>
+                <form id="basic-info">
+                <dl>
+                    <dt>姓&nbsp&nbsp名：<input type="text" id="username" name="username" class="username" value="{$bas.username}" readonly="true" /></dt>
+                    <dt>性&nbsp&nbsp别：<input type="text" name="sex" class="sex" value="{$bas.sex}" readonly="true" /></dt>
+                    <dt>绰&nbsp&nbsp号：<input type="text" name="nickname" class="nickname" value="{$bas.nickname}" readonly="true" /></dt>
+                    <dt>海 贼 团：<input type="text" name="team" class="team" value="{$bas.team}" readonly="true" /></dt>
+                    <dt>故&nbsp&nbsp乡：<input type="text" name="location" class="location" value="{$bas.location}" readonly="true" /></dt>
+                    <dt>口 头 禅：<input type="text" name="organ" class="organ" value="{$bas.organ}" readonly="true" /></dt>
+                </dl>
+                <div class="edit-basic"><p class="complete">完成</p></div>
+                </form>
+            </div>
+            </volist>
+            <div class="heading">
+                <h4><a href="###" id="experience">个人经历</a></h4>
+            </div>
+            <div class="content" id="experience-content">
+                <div class="edit-basic"><p class="edit">编辑</p></div>
+                <volist name="experience" id="exp">
+                <dl>
+                    <a href="{:U('User/editExperience',array('id'=>$exp['id']))}"><dt>{$exp.title}</dt></a>
+                </dl>
+                </volist>
+                <div class="edit-basic"><p class="complete">完成</p></div>
+            </div>
+            <div class="heading">
+                <h4><a href="###" id="ability">能力设定</a></h4>
+            </div>
+            <div class="content" id="ability-content">
+                <div class="edit-basic"><p class="edit">编辑</p></div>
+                <dl>
+                    <dt>果实：{$ability}</dt>
+                    <volist name="skill" id="sk">
+                    <dt>{$sk.skill}</dt>
+                    </volist>
+                </dl>
+                <div class="edit-basic"><p class="complete">完成</p></div>
+            </div>
+
+        </article>
+    </div>
+</div>

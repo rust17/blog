@@ -1,0 +1,73 @@
+li#save.right{
+    position: relative;
+    right: -220px;
+    width: 120px;
+}
+li#logout.right{
+    position: relative;
+    left: 220px;
+    width: 110px;
+}
+#basic-content input{
+    width: 440px;
+    height: 30px;
+    margin: 5px 0;
+    font-size: 16px;
+    background: #FFFFFF;
+    border: 1px solid #000000;
+}
+#experience-content input{
+    width: 440px;
+    height: 30px;
+    margin: 5px 0;
+    font-size: 16px;
+    background: #FFFFFF;
+    border: 1px solid #000000;
+}
+#experience-content dl dt.add{
+    width: 100px;
+    text-align: right;
+    position: relative;
+    top: -33px;
+    right: -490px;
+}
+#experience-content dl dt.add img{
+    float: right;
+    margin: 0;
+    padding: 0 0 2px 0;
+    cursor: pointer;
+}
+#ability-content dt.fruit{
+    font-size: 17px;
+    position: relative;
+    left: 8px;
+}
+#ability-content dt.skill{
+    position: relative;
+    left: -1px;
+}
+#ability-content input{
+    width: 440px;
+    height: 30px;
+    margin: 5px 0;
+    font-size: 16px;
+    background: #FFFFFF;
+    border: 1px solid #000000;
+}
+#ability-content dl dt.add{
+    width: 100px;
+    text-align: right;
+    position: relative;
+    top: -33px;
+    right: -490px;
+}
+#ability-content dl dt.add img{
+    float: right;
+    margin: 0;
+    padding: 0 0 2px 0;
+    cursor: pointer;
+}
+div.info .complete a{
+    font-style: normal;
+    font-size: 25px;
+}

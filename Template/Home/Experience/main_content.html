@@ -1,0 +1,19 @@
+﻿<div id="main-content" class="col-2-3">
+    <div class="wrap-col">
+        <article>
+            <volist name="experience" id="exp">
+            <div class="heading">
+                <h2><a href="{:U('User/editExperience',array('id'=>$exp['id']))}">{$exp.title}</a></h2>
+            </div>
+            <div class="content">
+
+                        <img src="__IMAGE__/img1.jpg" width="250px" height="100px"/>
+                        <p>{$exp.content}</p>
+            </div>
+            <div class="info">
+                <p>By Admin on December 01, 2012 - <a href="#">01 Commnets</a></p>
+            </div>
+            </volist>
+        </article>
+    </div>
+</div>

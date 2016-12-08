@@ -1,0 +1,30 @@
+@charset "UTF-8";
+.menu  ul li.right{
+    margin: 0;
+    position: relative;
+    right: -110px;
+    width: 100px;
+}
+.menu  ul li.right a{
+    font-size: 14px;
+}
+#sidebar .box .info h3{
+    float: right;
+    display: block;
+    width: 80px;
+    padding: 0 0 0 10px;
+}
+#sidebar .box .info ul{
+    width: 120px;
+    height: 100px;
+    float: right;
+}
+#sidebar .box .info ul li{
+    margin: 10px 0 0 0;
+    width: 40px;
+    font-size: 12px;
+    display: inline-block;
+    float: right;
+    border-bottom:none;
+}
+

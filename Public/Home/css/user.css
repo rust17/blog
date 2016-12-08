@@ -1,0 +1,47 @@
+.register-info ul{
+    font-size: 13px;
+    color: #000;
+}
+li#logout.right{
+    position: relative;
+    left: 180px;
+    width: 110px;
+}
+#basic-content input{
+    width: 440px;
+    height: 30px;
+    margin: 5px 0;
+    font-size: 16px;
+    background: #FFFFFF;
+    border: 1px solid #FFFFFF;
+}
+#basic-content input.username{
+    position: relative;
+    right: -16px;
+}
+#basic-content input.sex{
+    position: relative;
+    right: -16px;
+}
+#basic-content input.nickname{
+    position: relative;
+    right: -16px;
+}
+#basic-content input.location{
+    position: relative;
+    right: -16px;
+}
+#main-content .edit-basic p.edit{
+    float: right;
+    position: relative;
+    top: -20px;
+}
+#main-content .edit-basic p.complete{
+    float: right;
+    position: relative;
+    top: 5px;
+    display: none;
+}
+#main-content .edit-basic:hover{
+    cursor: pointer;
+}

@@ -1,0 +1,51 @@
+﻿<script type="text/javascript" src="__JS__/jquery.js"></script>
+<script type="text/javascript" src="__JS__/jquery.ui.js"></script>
+<script type="text/javascript" src="__JS__/jquery.validate.js"></script>
+<script type="text/javascript" src="__JS__/jquery.form.js"></script>
+<script type="text/javascript" src="__JS__/login.js"></script>
+<link rel="stylesheet" href="__CSS__/jquery.ui.css">
+
+<header>
+    <div class="wrap-header">
+
+        <div class="top">
+            <div class="socials">
+                <ul>
+                    <li><a href="#" title="facebook"><img  src="__IMAGE__/socials/facebook-32x32.png"/></a></li>
+                    <li><a href="#" title="google"><img  src="__IMAGE__/socials/google-32x32.png"/></a></li>
+                    <li><a href="#" title="twitter"><img  src="__IMAGE__/socials/twitter-32x32.png"/></a></li>
+                    <li><a href="#" title="rss"><img  src="__IMAGE__/socials/rss-32x32.png"/></a></li>
+                    <li><a href="#" title="youtube"><img  src="__IMAGE__/socials/youtube-32x32.png"/></a></li>
+                </ul>
+            </div>
+            <div id="search">
+                <div class="button-search"></div>
+                <input type="text" value="Search..." onfocus="if (this.value == &#39;Search...&#39;) {this.value = &#39;&#39;;}" onblur="if (this.value == &#39;&#39;) {this.value = &#39;Search...&#39;;}">
+            </div>
+        </div>
+
+        <div id="logo">
+            <h1>博客首页</h1>
+        </div>
+
+        <nav>
+            <div class="wrap-nav">
+                <div class="menu">
+                    <ul>
+                        <li><a href="{:U('Index/index')}">首页</a></li>
+                        <li><a href="{:U('Experience/index')}">博客文章</a></li>
+                        <li><a href="blog.html">相册</a></li>
+                        <li><a href="{:U('User/index')}">个人资料</a></li>
+                        <li><a href="#">联系方式</a></li>
+                        <li class="right" id="login"><a href="###">登录</a></li>
+                        <li class="right" id="register"><a href="###">注册</a></li>
+                    </ul>
+                </div>
+                <!-- 弹窗登录 -->
+                <include file="Public/box" />
+            </div>
+        </nav>
+
+    </div>
+
+</header>
