@@ -1,0 +1,30 @@
+markdown: kramdown
+highlighter: rouge
+excerpt_separator: "<!-- more -->"
+
+github: panxw
+author: "梁杰"
+email: newnash@163.com
+name: "梁杰个人博客"
+url: https://rust17.github.io/circle.github.io
+domain: www.rust17.github.io
+all_categories: [
+["php", "php开发","/posts/php.html"], 
+["program", "软件编程","/posts/program.html"],
+["web", "Web建站","/posts/web.html"], 
+["linux", "Linux相关","/posts/linux.html"],
+["read", "读书笔记","/posts/read.html"], 
+["other", "杂记","/posts/other.html"],
+["about", "关于","/about.html"]
+]
+paginate: 5
+paginate_path: "/page:num"
+timezone: America/Los_Angeles
+site.url: https://rust17.github.io/circle.github.io
+comments: true
+collections:
+  docs:
+    output: true
+
+plugins:
+ - jekyll-paginate
