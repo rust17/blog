@@ -1,6 +1,6 @@
 ---
 layout: post
-category: [php,program]
+category: blog
 title:  "记录一次折腾到深夜的跨域经历"
 tags: [阅读,人生]
 ---

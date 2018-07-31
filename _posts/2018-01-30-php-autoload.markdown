@@ -1,6 +1,6 @@
 ---
 layout: post
-category: "php"
+category: blog
 title:  "php自动加载__autoload()相关笔记"
 tags: [php]
 ---

@@ -1,50 +1,49 @@
---- 
-layout: default 
---- 
-<!-- Navi -->
-{% for cat in site.all_categories %}{% if page.category == cat[0] %}<a href="/">首页</a>&nbsp;>&nbsp;<a href="{{cat[2]}}">{{cat[1]}}</a>&nbsp;>&nbsp;正文{% endif %}{% endfor %}
-<!-- Title -->
-<h2>{{ page.title }}</h2>
-{% if page.tags.size > 0%}<b>标签：</b>{% for tag in page.tags %}{% if tag != "" %}<a href="{{site.url}}/tags.html#{{ tag }}"><i>{{ tag }}</i></a>{% if forloop.index != page.tags.size %}, {% endif %}{% endif %}{% endfor %}{% endif %}
-<div class="post-date">
-	<span class="glyphicon glyphicon-time"></span>
-	{{ page.date | date:"%Y-%m-%d" }}
-</div>
-<br/>
+---
+layout: page
+---
 
-<!-- content -->
-<div style="text-indent:2em;">
-{{ content }}
-</div>
+{% if page.image and page.headerImage %}
+    <img class="title-image" src="{{ page.image }}" alt="{{ page.title }}">
+{% endif %}
 
-<br/>
-<b>原创文章，转载请注明出处！</b>
-<br/>
-<b>本文链接：</b><a href="{{site.url}}{{page.url}}" title="{{page.name}}">{{site.url}}{{page.url}}</a>
+<h1 class="title">{{ page.title }}</h1>
 
-<!-- next and previous -->
-<div style="margin-top:15px; margin-bottom:10px">
-  {%if page.previous%}
-  <span class="next">
-    上篇：
-    <a href="{{page.previous.url}}">
-      {{page.previous.title}}
-    </a>
-  </span>
-  {%endif%} 
-  {%if page.next%}
-  <div style="float:right">
-  <span class="prev" >
-    下篇：
-    <a href="{{page.next.url}}">
-      {{page.next.title}}
-    </a>
-  </span>
-  </div>
-  {%endif%}
-</div>
-<hr>
-<!-- Blog Comments -->
-<div class="media">
-  {% include comment.html %} 
-</div>
+<span class="date">
+    <time datetime="{{ page.date | date:"%d-%m-%Y" }}">{{ page.date | date: "%A. %B %d, %Y" }}</time>
+    {% if site.read-time %} - {% include read-time.html %}{% endif %}
+</span>
+
+{% if site.show-tags %}
+    <div class="post-tags">
+        {% for tag in page.tags %}
+            <a class="item" href="{{ site.url }}/tags/#{{ tag | slugify }}">{{ tag }}</a>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{{content}}
+
+{% if site.post-advance-links contains page.category %}
+    <div class="blog-navigation">
+        {% if page.previous.url %}
+            <a class="prev" href="{{ site.url }}{{ page.previous.url }}">&laquo; {{ page.previous.title }}</a>
+        {% else %}
+            <a class="prev"></a>
+        {% endif %}
+        {% if page.next.url %}
+            <a class="next" href="{{ site.url }}{{ page.next.url }}">{{ page.next.title }} &raquo;</a>
+        {% endif %}
+    </div>
+{% endif %}
+
+{% if site.related %}
+    {% include related.html %}
+{% endif %}
+
+{% if site.show-author %}
+    {% include author.html %}
+{% endif %}
+
+{% if site.disqus.categories contains page.category %}
+    {% include disqus.html %}
+{% endif %}

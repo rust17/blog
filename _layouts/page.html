@@ -1,9 +1,8 @@
---- 
-layout: default 
---- 
-{{ content }}
-<hr>
-<!-- Blog Comments -->
-<div class="media">
-  {% include comment.html %} 
-</div>
+---
+layout: default
+---
+{% include header.html %}
+
+{{content}}
+
+{% include footer.html %}

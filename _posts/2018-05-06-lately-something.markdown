@@ -1,6 +1,6 @@
 ---
 layout: post
-category: [other]
+category: blog
 title:  "最近的一些事"
 tags: [other]
 ---
@@ -21,4 +21,4 @@ tags: [other]
 
 接下来的5月，计划继续学习 vue，并掌握 vue 的使用以及核心插件 vuex、axios、vue-router 的使用，顺便还得学下 element-ui ，通过学习这些掌握一些快速开发网站的前端技能。6-8月，初步计划是跟着 laravel 实战教程的第三本学习，也就是架构 API 服务器，希望能结合5月份学习的 vue 做出一个前后分离的项目，后端通过维护一套 API 可以同时满足论坛网站、移动端网站(主要是微信端)以及小程序。<br>
 
-##### 加油，争取早日突破10k，cheer up 😄
+##### 加油，cheer up 😄

@@ -1,6 +1,6 @@
 ---
 layout: post
-category: [linux,web]
+category: blog
 title:  "一个Linux nginx环境下php项目配置"
 tags: [php,nginx,linux]
 ---
