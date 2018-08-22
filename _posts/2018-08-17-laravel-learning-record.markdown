@@ -132,31 +132,6 @@ User::paginate(10)
 ```
 密码匹配验证，保证两次输入密码一致
 
-**基本的路由信息**
-
-| HTTP 请求 | URL | 方法 |
-| :- | :- | :- |
-| GET | /users | UsersController@index |
-| GET | /users/{user} | UsersController@show |
-| GET | /users/create | UsersController@create |
-| POST | /users | UsersController@store |
-| GET | /users/{user}/edit | UsersController@edit |
-| PATCH | /users/{user} | UsersController@update |
-| DELETE | /users/{user} | UsersController@destroy |
-
-重定向到路由并携带数据
-```php
-redirect()->route('路由', 数据);
-```
-重定向到上一次的页面
-```php
-return redirect()->back();
-```
-重定向到上一次请求尝试访问的页面，并且默认跳转到地址参数
-```php
-return redirect()->intended(route('users.show', [Auth::user()]));
-```
-
 4.用户登录
 
 ```php
@@ -306,6 +281,79 @@ public function down()
 ```
 迁移文件中，`up` 方法定义了迁移执行的逻辑，`down` 方法定义了回滚的逻辑
 
+9.模型监听事件
+
+`creating` 用户监听模型被创建之前的事件，`created` 用户监听模型被创建之后的事件，用法：
+
+在模型中添加 `created` 方法。
+
+*app/Models/User.php*
+```php
+...
+public static function boot()
+{
+    parent::boot();
+
+    static::creating(function ($user) {
+        $user->activation_token = str_random(30);
+    });
+}
+```
+
+10.模型关联
+
+一对多 - 一个用户拥有多条微博
+
+*app/Models/Status.php*
+```php
+public function user()
+{
+    return $this->belongsTo(User::class);
+}
+```
+*app/Models/User.php*
+```php
+public function statuses()
+{
+    return $this->hasMany(Status::class);
+}
+```
+
+多对多 - 一个用户能关注多个人，被关注者能拥有多个粉丝
+
+*app/Models/User.php*
+```php
+...
+public function followers()
+{
+	return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id');
+}
+
+public function followings()
+{
+	return $this->belongsToMany(User::class, 'followers', 'follower_id', 'user_id');
+}
+```
+获取关联模型
+```php
+$statuses = $user->statuses()->orderBy('created_at', 'desc')->paginate(30);
+```
+一对多 -- 获取一个用户的所有微博，按照创建时间倒序排列，以每页 30 条返回。
+```php
+$user->followers(); // 多对多，获取一个用户的所有粉丝
+$user->followings(); // 对对多，获取一个用户的所有关注人
+```
+多对多关联模型，可以使用 `attach` 或 `sync` 方法在中间表创建一个多对多记录，使用 `detach` 移除记录
+```php
+$user->followings()->attach([2, 3]); // 当前用户关注 2 和 3 号用户
+$user->followings()->sync([3], false); // 当前用户关注 3 号用户并且保持之前的关注记录
+$user->followings()->detach([2, 3]); // 当前用户取消关注 2 和 3 号用户
+```
+用 `contains` 方法可以判断两个模型是否存在关系
+```php
+return $this->followings->contains($user_id); // 当前用户是否关注了 $user_id 用户
+```
+
 **基本视图命令**
 
 ```php
@@ -317,3 +365,89 @@ html 代码
 @stop // 页面代码结束区域
 ```
 Laravel 会将错误信息自动绑定到视图上，使用 `errors` 变量读取
+
+**发送邮件**
+
+```php
+use Mail;
+...
+$view = 'emails.confirm';
+$data = compact('user');
+$from = 'xxx@xxx.com';
+$name = 'xxx';
+$to = $user->email;
+$subject = '主题';
+
+Mail::send($view, $data, function ($message) use ($from, $name, $to, $subject) {
+	$message->from($from, $name)->to($to)->subject($subject);
+});
+```
+
+**密码重置**
+
+Laravel 内置了密码重置功能，只需要把密码重置相关路由指定到控制器上
+
+| HTTP 请求 | URL | 动作 | 作用 |
+| :- | :- | :- | :- |
+| GET | /password/reset | Auth\ForgotPasswordController@showLinkRequest | 显示密码重置邮件发送界面 |
+| POST | /password/email | Auth\ForgotPasswordController@sendResetLinkEmail | 邮箱发送重置链接 |
+| GET | /password/reset/{token} | Auth\ResetPasswordController@showResetForm | 密码更新页面 |
+| POST | /password/reset | Auth\ResetPasswordController@reset | 执行密码更新操作 |
+
+密码重置后，发送邮件需要：
+
+1.生成消息通知文件：
+```
+$ php artisan make:notification ResetPassword
+```
+2.定制消息通知文件
+
+*app/Notifications/ResetPassword.php*
+```php
+public function toMail($notifiable)
+{
+    return (new MailMessage)
+        ->subject('重置密码')
+        ->line('这是一封密码重置邮件，如果是您本人操作，请点击以下按钮继续：')
+        ->action('重置密码', url(route('password.reset', $this->token, false)))
+        ->line('如果您并没有执行此操作，您可以选择忽略此邮件。');
+}
+```
+3.模型中调用
+
+*app/Models/User.php*
+```php
+public function sendPasswordResetNotification($token)
+{
+    $this->notify(new ResetPassword($token));
+}
+```
+4.发布密码重置的 Email 视图
+```
+$ php artisan vendor:publish --tag=laravel-notifications
+```
+
+**基本的路由信息**
+
+| HTTP 请求 | URL | 方法 |
+| :- | :- | :- |
+| GET | /users | UsersController@index |
+| GET | /users/{user} | UsersController@show |
+| GET | /users/create | UsersController@create |
+| POST | /users | UsersController@store |
+| GET | /users/{user}/edit | UsersController@edit |
+| PATCH | /users/{user} | UsersController@update |
+| DELETE | /users/{user} | UsersController@destroy |
+
+重定向到路由并携带数据
+```php
+redirect()->route('路由', 数据);
+```
+重定向到上一次的页面
+```php
+return redirect()->back();
+```
+重定向到上一次请求尝试访问的页面，并且默认跳转到地址参数
+```php
+return redirect()->intended(route('users.show', [Auth::user()]));
+```
