@@ -54,6 +54,8 @@ Route::post('password/reset', 'Auth\ResetPasswordController@reset');
 ---
 #### 1.[mews/captcha][1]
 
+用途：生成验证码
+
 安装
 ```bash
 composer require "mews/captcha:~2.0"
@@ -76,10 +78,46 @@ $ php artisan vendor:publish --provider="Mews\Captcha\CaptchaServiceProvider"
 
 #### 2.[overtrue/laravel-lang][2]
 
+用途：语言处理
+
 安装
 ```bash
 $ composer require "overtrue/laravel-lang:~3.0"
 ```
+#### 3.[intervention/image][3]
+
+用途：处理图片裁剪
+
+安装
+```bash
+$ composer require intervention/image
+```
+生成配置信息文件 `config/image.php`
+```bash
+$ php artisan vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravel5"
+```
+使用
+
+**1.实例化**
+```php
+// 参数是文件磁盘物理路径
+$image = Image::make($file_path)
+```
+**2.大小调整**
+```php
+$image->resize($max_width, null, function ($constraint) {
+    // 设定宽度是 $max_width，高度等比例双方缩放
+    $constraint->aspectRatio();
+
+    // 防止图片裁剪时图片尺寸变大
+    $constraint->upsize();
+});
+```
+**3.保存**
+```php
+$image->save();
+```
+
 ### resource 路由
 
 ---
@@ -128,9 +166,34 @@ public function messages()
 }
 ...
 ```
+### 上传图片
+
+---
+表单的 `html` 代码
+```html
+<form action="{ { route('users.update', $user->id) }}" methods="POST" accept-charset="UTF-8" enctype="multiplart/form-data">
+    <input type="file" name="avatar"/>
+</form>
+```
+图片的表单验证
+```html
+'avatar' => 'mines:jepg,bmp,png,gif|dimensions:min_width=200,min_height=200',
+```
+获取图片 API
+```php
+// 获取图片信息
+$request->avatar
+
+// 获取后缀名
+$request->avatar->getClientOrinalExtension()
+
+// 移动图片
+$request->avatar->move($upload_path, $filename)
+```
 
 相关链接：
 [https://laravel-china.org/courses/laravel-intermediate-training-5.5](https://laravel-china.org/courses/laravel-intermediate-training-5.5)
 
 [1]: https://github.com/mewebstudio/captcha
 [2]: https://github.com/overtrue/laravel-lang
+[3]: https://github.com/Intervention/image
