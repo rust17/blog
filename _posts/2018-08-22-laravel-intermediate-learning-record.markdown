@@ -215,6 +215,15 @@ class TopicObserver
 $params = [];
 return route('topics.show', array_merge([$this->id, $this->slug], $params));
 ```
+
+### 继承 URI 中的请求参数
+
+---
+```php
+// 继承 uri 中除了 page 参数以外的其他参数
+// http://xxx.com?page=1&tab=replies -> http://xxx.com?tab=replies
+appends(Request::expect('page'));
+```
 ### 永久重定向
 
 ---
@@ -244,7 +253,6 @@ $ php artisan queue:failed-table // 生成迁移文件
 $ php artisan migrate // 执行迁移
 ```
 **2. 生成任务类**
-
 ```bash
 $ php artisan make:job TranslateSlug
 ```
@@ -279,6 +287,153 @@ dispatch(new TranslateSlug($topic));
 **4. 启动队列监听**
 ```bash
 $ php artisan queue:listen
+```
+### 模型某个字段加 1 减 1
+
+---
+```php
+$model->increment('xxx', 1); // + 1
+$model->decrement('xxx', 1); // - 1
+```
+### 消息通知
+
+---
+说明：Laravel 自带了一套消息通知系统，支持多种通知频道，有数据库、邮件、短信以及 Slack。
+
+**数据库通知**
+
+**1. 准备数据库**
+
+数据通知频道会在一张数据表里存储所有的通知信息，使用以下命令创建这张表
+```bash
+$ php artisan notifications:table // 生成数据通知表迁移文件
+$ php artisan migrate // 执行迁移
+```
+还需要在 `users` 表新增 `notification_count` 来记录有多少未读通知
+
+**2. 生成通知类**
+```bash
+$ php artisan make:notification TopicReplied
+```
+修改文件
+
+*app/Notifications/TopicReplied.php*
+```php
+...
+public function __construct(Reply $reply)
+{
+    $this->reply = $reply;
+}
+
+public function via($notifiable)
+{
+    // 开启通知的频道
+    return ['database'];
+}
+
+public function toDatabase($notifiable)
+{
+    // 存入数据库的数据
+    return [
+        'reply_id' => $this->reply->id,
+        'reply_content' => $this->reply->content,
+        'user_id' => $this->reply->user->id,
+        'user_name' => $this->reply->user->name,
+        'user_avatar' => $this->reply->user->avatar,
+        'topic_link' => $link,
+        'topic_id' => $topic->id,
+        'topic_title' => $topic->title,
+    ];
+}
+...
+```
+说明：Laravel 中一条通知就是一个类（通常位于 app/Notifications 文件夹下），每个通知都有一个 `via()` 方法，决定了通知在哪个频道上发送。使用数据库通知频道，需要定义 `toDatabase()`。这个方法接收 `$notifiable` 实例参数并返回普通的 PHP 数组。这个返回的数组将被转成 JSON 存储到数据库的 `data` 字段中。
+
+**3. 触发通知**
+
+在需要触发的地方调用以下代码
+```php
+// 通知 user 
+$reply = xxx;
+$model->user->notify(new TopicReplied($reply));
+```
+*app/Models/User.php*
+```php
+...
+use Notifiable {
+    notify as protected laravelNotify;
+}
+public function notify($instance)
+{
+    // 排除掉本人是要通知的人
+    if ($this->id == Auth::id()) {
+        return;
+    }
+    $this->increment('notification_count');
+    $this->laravelNotify($instance);
+}
+...
+```
+
+**4. 清除未读消息标示**
+
+在 User 模型新增 `markAsRead()` 方法
+
+*app/Models/User.php*
+```php
+...
+public function markAsRead()
+{
+    $this->notification_count = 0;
+    $this->save();
+    $this->unreadNotifications->markAsRead();
+}
+...
+```
+**邮件通知**
+
+**1. 配置**
+
+*.env*
+
+```php
+...
+MAIL_DRIVER=smtp // 使用支持 ESMTP 的 SMTP 服务器发送邮件
+MAIL_HOST=smtp.qq.com // QQ 邮箱的 SMTP 服务器地址
+MAIL_PORT=25 // QQ 邮箱的 SMTP 服务器端口
+MAIL_USERNAME=xxxxxxxxxxxxxx@qq.com
+MAIL_PASSWORD=xxxxxxxxx
+MAIL_ENCRYPTION=tls // 加密类型，
+MAIL_FROM_ADDRESS=xxxxxxxxxxxxxx@qq.com
+MAIL_FROM_NAME=LaraBBS // 邮件发送者名称
+...
+```
+
+**2. 添加邮件通知频道**
+
+*app/Notifications/TopicReplied.php*
+```php
+...
+public function via($notifiable)
+{
+    return ['database', 'mail'];
+}
+
+public function toMail($notifiable)
+{
+    $url = 'xxx';
+    return (new MailMessage)
+                ->line('您的话题有新回复！')
+                ->action('查看回复', $url);
+}
+...
+```
+
+**3. 使用队列发送邮件**
+
+只需要对通知类添加 ShouldQueue 接口，Laravel 会自动将通知发送放入队列中
+```php
+class TopicReplied extends Notification implements ShouldQueue
 ```
 
 ### 用到的扩展包
