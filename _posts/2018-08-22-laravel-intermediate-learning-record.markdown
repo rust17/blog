@@ -435,6 +435,34 @@ public function toMail($notifiable)
 ```php
 class TopicReplied extends Notification implements ShouldQueue
 ```
+### 权限部署
+
+---
+说明：在策略中定义一个 `before()` 方法，`before()` 方法会在策略中其它所有方法之前执行，在 `before()` 中存在三种返回值：
+* `true` —— 授权通过；
+* `false` —— 拒绝授权；
+* `null` —— 通过其他策略方法来决定授权是否通过
+
+*app/Policies/Policy.php*
+```php
+<?php
+
+namespace App\Policies;
+
+use Illuminate\Auth\Access\HandlesAuthorization;
+
+class Policy
+{
+    use HandlesAuthorization;
+
+    public function before($user, $ability)
+    {
+        if ($user->can('manage_contents')) {
+            return true;
+        }
+    } 
+}
+```
 
 ### 用到的扩展包
 
@@ -675,6 +703,164 @@ $ php artisan vendor:publish --provider="Laravel\Horizon\HorizonServiceProvider"
 ```bash
 $ php artisan horizon
 ```
+定义访问策略
+```php
+\Horizon::auth(function ($request) {
+    // 根据返回 `true` 或 `false` 决定是否有权限访问
+    return \Auth::user()->hasRole('Founder');
+})
+```
+#### 11. [Laravel-permission][11]
+
+用途：用户授权管理
+
+安装
+```bash
+$ composer require "spatie/laravel-permission:~2.7"
+```
+生成数据库迁移文件
+```bash
+$ php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="migrations"
+```
+将生成数据表：
+
+* roles —— 角色的模型表；
+* permissions —— 权限的模型表；
+* model_has_roles —— 模型与角色的关联表，用户拥有什么角色在此表中定义，一个用户能拥有多个角色；
+* role_has_permissions —— 角色拥有的权限关联表，如管理员拥有查看后台的权限都是在此表定义，一个角色能拥有多个权限；
+* model_has_permissions —— 模型与权限关联表，一个模型能拥有多个权限。
+
+生成配置文件 `config/permissions.php`：
+```bash
+$ php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="config"
+```
+使用
+
+**1. 加载 HasRoles**
+
+*app/Models/User.php*
+```php
+<?php
+
+use Spatie\Permission\Traits\HasRoles;
+
+class User extends Authenticatable
+{
+    use HasRole;
+    ...
+}
+```
+**2. 创建权限**
+
+```php
+use Spatie\Permission\Models\Permission;
+// 清除缓存
+app()['cache']->forget('spatie.permission.cache');
+
+Permission::create(['name' => 'manage_contents']);
+Permission::create(['name' => 'manage_users']);
+Permission::create(['name' => 'edit_settings']);
+```
+
+**3. 创建角色**
+```php
+use Spatie\Permission\Models\Role;
+// 创建站长角色
+$founder = Role::create(['name' => 'Founder']);
+$founder->givePermissionTo('manage_contents');
+$founder->givePermissionTo('manage_users');
+$founder->givePermissionTo('edit_settings');
+
+// 创建管理员角色
+$maintainer = Role::create(['name' => 'Maintainer']);
+$maintainer->givePermissionTo('manage_contents');
+```
+**4. 初始化角色**
+```php
+// 初始化用户为 Founder 角色
+$user->assignRole('Founder');
+
+// 初始化用户为 Maintainer 角色
+$user->assignRole('Maintainer');
+
+// 多个角色
+$user->assignRole('writer', 'admin');
+$user->assignRole(['writer', 'admin']);
+```
+**5. 检查用户角色**
+```php
+// 是否是站长
+$user->hasRole('Founder');
+
+// 是否拥有至少一个角色
+$user->hasAnyRole(Role::all());
+
+// 是否拥有所有角色
+$user->hasAllRoles(Role::all());
+```
+**6. 检查权限**
+```php
+// 检查用户是否有某个权限
+$user->can('manage_contents');
+
+// 检查角色是否有某个权限
+$role->hasPermissionTo('manage_contents');
+```
+**7. 直接给用户添加权限**
+```php
+// 为用户添加权限
+$user->givePermissionTo('manage_contents');
+
+// 获取所有直接权限
+$user->getDirectPermissions()
+```
+#### 12.[sudo-su][12]
+
+用途：用户切换工具
+
+安装
+```bash
+$ composer require "viacreative/sudo-su:~1.1"
+```
+添加 Provider
+
+*app/Providers/AppServiceProvider.php*
+```php
+...
+public function register()
+{
+    if (app()->isLocal()) {
+        $this->app->register(\VIACreative\SudoSu\ServiceProvider::class);
+    }
+}
+...
+```
+发布资源文件
+```bash
+$ php artisan vendor:publish --provider="VIACreative\SudoSu\ServiceProvider"
+```
+会生成 `/public/sudo-su` 前端资源文件、`config/sudosu.php` 配置信息文件
+
+修改配置信息
+
+*config/sudosu.php*
+```php
+<?php
+
+return [
+    // 允许使用的顶级域名
+    'allowed_tlds' => ['dev', 'local', 'test'],
+
+    // 用户模型
+    'user_model' => App\Models\User::class
+];
+```
+使用
+
+在模板文件中写入调用代码
+```html
+include('sudosu:user-selector')
+```
 
 相关链接：
 [https://laravel-china.org/courses/laravel-intermediate-training-5.5](https://laravel-china.org/courses/laravel-intermediate-training-5.5)
@@ -689,3 +875,5 @@ $ php artisan horizon
 [8]: https://github.com/guzzle/guzzle
 [9]: https://github.com/overtrue/pinyin
 [10]: https://laravel-china.org/docs/laravel/5.5/horizon/1345
+[11]: https://github.com/spatie/laravel-permission
+[12]: https://github.com/viacreative/sudo-su
