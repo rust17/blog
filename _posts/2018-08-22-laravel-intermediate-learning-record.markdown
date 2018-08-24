@@ -127,6 +127,27 @@ $request->avatar->move($upload_path, $filename)
 ```bash
 $ php artisan make:model Models/Category -m
 ```
+### 添加外键约束
+
+---
+利用 MySQL 自带的外键约束功能，在关联数据删除时，可以做联动删除。实现方式：
+```php
+// 在数据库迁移文件中添加如下代码
+Schema::table('topics', function (Blueprint $table) {
+
+    // 当 user_id 对应的 users 表数据被删除时，删除词条
+    $table->foreign('user_id')->reference('id')->on('users')->onDelete('cascade');
+});
+
+Schema::table('replies', function (Blueprint $table) {
+
+    // 当 user_id 对应的 users 表数据被删除时，删除此条数据
+    $table->foreign('user_id')->reference('id')->on('users')->onDelete('cascade');
+
+    // 当 topic_id 对应的 topics 表数据被删除时，删除此条数据
+    $toble->foreign('topic_id')->reference('id')->on('topic')->onDelete('cascade');
+});
+```
 ### Faker 假数据库 API
 
 ---
@@ -192,6 +213,8 @@ $topics = $topic->withOrder($request->order)->paginate(20);
 Eloquent 模型会触发许多事件，我们可以对模型的生命周期内多个时间点进行监控：creating,created,
 updating,updated,saving,saved,deleting,deleted,restoring,restored。Eloquent 观察者类的方法名对应 Eloquent 想监听的事件，每种方法接收 `model` 作为其唯一的参数。
 
+新建模型监控器
+
 *app/Observers/TopicObserver.php*
 ```php
 <?php
@@ -207,6 +230,25 @@ class TopicObserver
         $topic->excerpt = make_excerpt($topic->body);
     }
 }
+```
+注册监控器
+
+*app/Providers/AppServiceProvider.php*
+```php
+<?php
+...
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot()
+    {
+        \App\Models\User::observe(\App\Observers\UserObserver::class);
+        \App\Models\Reply::observe(\App\Observers\ReplyObserver::class);
+        \App\Models\Topic::observe(\App\Observers\TopicObserver::class);
+
+        \Carbon\Carbon::setLocale('zh');
+    }
+}
+...
 ```
 ### 返回带参数的路由
 
@@ -461,6 +503,186 @@ class Policy
             return true;
         }
     } 
+}
+```
+### 缓存操作
+
+---
+尝试用缓存中获取数据，没有数据则执行函数
+```php
+Cache::remember($this->key, $this->cache_expire_in_minutes, function(){
+    return $this->calculateActiveUsers();
+})
+```
+将数据放入缓存中
+```php
+Cache::put($this->cache_key, $data, $this->cache_expire_in_minutes);
+```
+清除掉缓存
+```php
+Cache::forget($cache_key);
+```
+数据写入 Redis，字段存在会被更新
+```php
+// 参数分别为：Redis 哈希表命名，字段名称，当前时间
+Redis::hSet($hash, $field, $now);
+```
+获取所有 hash 表的数据
+```php
+Redis::hGetAll($hash);
+```
+删除指定 hash 表的数据
+```php
+Redis::del($hash)
+```
+获取指定 hash 表，指定字段 $field 的值
+```php
+Redis::hGet($hash, $field);
+```
+### 查询构造器
+
+---
+在面对复杂的查询的时候，常规的 Eloquent 查询满足不了需求，可以使用查询构造器写原生查询语句
+```php
+Topic::query()->select(DB::raw('user_id', count(*) as topic_count))
+              ->where('created_at', '>=', Carbon::now()->subDays($this->pass_days))
+              ->groupBy('user_id')
+              ->get();
+```
+### 自定义 Artisan 命令
+
+---
+生成命令类
+```bash
+$ php artisan make:command CalculateActiveUser --command=larabbs:calculate-active-user
+```
+一条命令对应一个文件
+
+*app/Console/Commands/CalculateActiveUser.php*
+```php
+<?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+use App\Models\User;
+
+class CalculateActiveUser extends Command
+{
+    // 调用的命令
+    protected $signature = 'larabbs:calculate-active-user';
+
+    // 描述
+    protected $description = '生成活跃用户';
+
+    // 最终执行的方法
+    public function handle(User $user)
+    {
+        $this->info("开始计算...");
+        $user->calculateActiveUsers();
+        $this->info("成功生成！");
+    }
+}
+```
+执行命令
+```bash
+$ php artisan larabbs:calculate-active-users
+```
+### 自定义中间件
+
+---
+说明：Laravel 中间件从执行时机上分 『前置中间件』 和 『后置中间件』，前置中间件是应用初始化完成后立刻执行，此时控制器路由还未分配、控制器还未执行、视图还未渲染。后置中间件是即将离开应用的响应，此时控制器已将渲染好的视图返回。
+
+**1. 创建中间件**
+```bash
+$ php artisan make:middleware RecordLastActivedTime
+```
+**2. 注册中间件**
+
+想让中间件在应用的每个 HTTP 请求期间运行，需要在 `app/Http/Kernel.php` 类中对中间件进行注册。
+
+*app/Http/Kerner.php*
+```php
+...
+class Kernel extends HttpKernel
+{
+    // 全局中间件，最先调用
+    protected $middleware = [
+    ...
+    ];
+
+    // 定义中间件组
+    protected $middlewareGroups = [
+        // Web 中间件组，应用于 routes/web.php 路由文件
+        'web' => [
+            ...
+            // 记录用户最后活跃时间
+            \App\Http\Middleware\RecordLastActivedTime::class,
+        ],
+
+        // API 中间件组，应用于 routes/api.php 路由文件
+        'api' => [
+            ...
+        ],
+    ];
+
+    // 中间件别名设置
+    protected $routeMiddleware = [
+        ...
+    ];
+}
+...
+```
+**3. 书写中间件**
+
+*app/Http/Middleware/RecordLastActivedTime.php*
+```php
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Auth;
+
+class RecordLastActivedTime
+{
+    public function handle($request, Closure $next)
+    {
+        if (Auth::check()) {
+            // 记录最后登录时间
+            Auth::user()->recordLastActivedAt();
+        }
+
+        return $next($request);
+    }
+}
+```
+
+### 计划任务
+
+---
+使用计划任务时，需要先修改操作系统的 Cron 计划任务配置信息，运行命令：
+```bash
+$ export EDIROT=vi & crontab -e
+```
+将这一行添加到打开的文件最后，保存
+```bash
+* * * * * php /home/vagrant/Code/larabbs/artisan schedule:run >> /dev/null 2>&1
+```
+然后注册调度任务即可
+
+*app/Console/Kernel.php*
+```php
+class Kernel extends ConsoleKernel
+{
+    ... 
+    public function schedule(Schedule $schedule)
+    {
+        // 一小时执行一次该命令
+        $schedule->command('larabbs:calculate-active-user')->hourly();
+        // 每日零时执行一次
+        $schedule->command('larabbs:sync-user-actived-at')->dailyAt('00:00');
+    }
 }
 ```
 
