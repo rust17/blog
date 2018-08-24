@@ -126,9 +126,23 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', [
 	'namespace' => 'App\Http\Controller\Api', // 使得 v1 版本的路由都指向 App\Http\Controllers\Api
-], function($api) {
-	$api->post('verificationCodes', 'VerificationCodesController@store')
-		->name('api.verificationCodes.store');
+], function ($api) {
+	$api->group([
+		// 通过中间件添加频率限制
+		// 设置为一分钟一次
+		'middleware' => 'api.throttle',
+		'limit' => 1,
+		'expires' => 1,
+	], function($api) {
+		$api->post('xxx', 'xxx')->name('xxx');
+		// 通过中间件添加 token 验证
+		// 需要 token 验证的接口
+		$api->group([
+			'middleware' => 'api.auth',
+		], function ($api) {
+			$api->get(xxx,xxx)->name(xxx);
+		})
+	});
 });
 ```
 ### API 的表单验证
@@ -161,32 +175,13 @@ class xxxRequest extends FormRequest
 
 ---
 ```php
-return $this->response->array([xxx])->setStatusCode(xxx);
+return $this->response->array([xxx])->setMeta([xxx])->setStatusCode(xxx);
 ```
 ### 防止时序攻击的字符串比较
 
 ---
 ```php
 hash_equals($verifyData['code'], $request->verification_code);
-```
-### 调用频率限制
-
----
-通过中间件添加频率限制
-```php
-...
-$api->version('v1', [
-	'namespace' => 'App\Http\Controllers\Api',
-], function ($api) {
-	$api->group([
-		// 设置为一分钟一次
-		'middleware' => 'api.throttle',
-		'limit' => 1,
-		'expires' => 1,
-	], function($api) {
-		$api->post('xxx', 'xxx')->name('xxx');
-	});
-});
 ```
 ### OAuth 2.0 流程解释
 
@@ -196,6 +191,100 @@ $api->version('v1', [
 3. 用户同意授权后，认证服务器将用户导向客户端事先指定的 `重定向URI`，同时附上一个授权码
 4. 客户端获取授权码发送至服务器，服务器通过授权码以及 `APP_SECRET` 向第三方服务器申请 `access_token`
 5. 服务器通过 `access_token`，向第三方服务器申请用户数据，完成登录流程
+
+### [Fractal](https://github.com/thephpleague/fractal)
+
+---
+说明：Fractal 是一个数据转换层，API 开发中处理响应数据的结构与嵌套关系，最后将数据返回给客户端
+
+数据结构：
+
+* DataArraySerializer
+
+```php
+// 带 meta 信息的单条数据
+[
+	'data' => [
+		'foo' => 'bar'
+	],
+	'meta' => [
+		...
+	]
+];
+// 带着 meta 信息的数据集合
+[
+	'data' => [
+		'foo' => 'bar'
+	],
+	'meta' => [
+		...
+	]
+];
+```
+
+* ArraySerializer
+
+```php
+// 带着 meta 信息的单条数据
+[
+	'foo' => 'bar'
+	'meta' => [
+		...
+	]
+];
+
+// 带着 meta 信息的数据集合
+[
+	'data' => [
+		'foo' => 'bar'
+	],
+	'meta' => [
+		...
+	]
+];
+```
+使用：给 `Transformer` 传入一个模型实例，然后返回一个数组，这个数组就是返回给客户端的响应数据
+
+**1. 创建 Transformer**
+
+*app/Transformers/UserTransformer.php*
+```php
+<?php
+
+namespace App\Transformers;
+
+use App\Models\User;
+use League\Fractal\TransformerAbstract;
+
+class UserTransformer extends TransformerAbstract
+{
+	public function transform(User $user)
+	{
+		return [
+			'id' => $user->id,
+			'name' => $user->name,
+			'email' => $user->email,
+			'avatar' => $user->avatar,
+			'introduction' => $user->introduction,
+			'bound_phone' => $user->phone ? true : false,
+			...
+		];
+	}
+}
+```
+**2. 返回数据**
+```php
+return $this->response->item($this->user(), new UserTransformer());
+```
+### 数据的提交方式
+
+---
+HTTP 提交数据有两种方式
+
+* application/x-www-form-urlencoded(默认)
+* multipart/form-data
+
+`form` 表单提交文件的时候，需要增加 `enctype="multipart/form-data"` 才能正确的传输文件，因为默认的 `enctype` 是 `enctype="application/x-www-form-urlencoded"`
 
 ### 用到的扩展包
 
@@ -446,6 +535,23 @@ $token = Auth::guard('api')->refresh();
 // 删除 token
 Auth::guard('api')->logout();
 ```
+#### 6.[liyu/dingo-serializer-switch][6]
+
+用途：方便地切换 `DataArraySerializer` 和 `ArraySerializer`
+
+安装
+```bash
+$ composer require liyu/dingo-serializer-switch
+```
+使用
+
+*route/api.php*
+```php
+$api->version('v1', [
+	'namespace' => 'App\Http\Controller\Api',
+	'middleware' => 'serializer:array' // 添加了一个中间件
+], function ($api) {})
+```
 
 相关链接：[https://laravel-china.org/courses/laravel-advance-training-5.5](https://laravel-china.org/courses/laravel-advance-training-5.5)
 
@@ -454,3 +560,4 @@ Auth::guard('api')->logout();
 [3]: https://github.com/Gregwar/Captcha
 [4]: https://socialiteproviders.github.io/
 [5]: https://github.com/tymondesigns/jwt-auth
+[6]: https://github.com/liyu001989/dingo-serializer-switch
