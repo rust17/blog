@@ -47,3 +47,7 @@ layout: page
 {% if site.disqus.categories contains page.category %}
     {% include disqus.html %}
 {% endif %}
+
+{% if site.gitment.categories contains page.category %}
+    {% include gitment.html %}
+{% endif %}
