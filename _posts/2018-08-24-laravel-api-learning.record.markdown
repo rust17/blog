@@ -9,7 +9,10 @@ tag:
 category: blog
 author: circle
 description: 记录一些学习 Laravel API 的过程中的知识点
+sidebar: true
 ---
+* 目录
+{:toc #markdown-toc}
 &emsp;&emsp;接触 Laravel 已经有半年左右，得益于 [Laravel China 社区](https://laravel-china.org/) 的学习资源，从这个社区接触到了许多高质量的文章，无论是 php 层面还是其他层面都学到了许多，非常感谢。
 
 &emsp;&emsp;这篇文章主要目的在于记录一些在 [L03 Laravel 教程 - 实战构架 API 服务器](https://laravel-china.org/courses/laravel-advance-training-5.5)学到的知识点。记录的原则是记录如何使用，侧重点在于用与记录。记录的目的是方便日后快速查阅。 

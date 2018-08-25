@@ -9,7 +9,10 @@ tag:
 category: blog
 author: circle
 description: 记录一些学习 laravel 的过程中的知识点
+sidebar: true
 ---
+* 目录
+{:toc #markdown-toc}
 &emsp;&emsp;接触 Laravel 已经有半年左右，得益于 [Laravel China 社区](https://laravel-china.org/) 的学习资源，从这个社区接触到了许多高质量的文章，无论是 php 层面还是其他层面都学到了许多，非常感谢。
 
 &emsp;&emsp;接着上一篇『Laravel 基础知识学习记录』，这篇文章的目的在于记录一些在[L02 Laravel 教程 - Web 开发实战进阶 ( Laravel 5.5 ) ](https://laravel-china.org/courses/laravel-intermediate-training-5.5)学到的知识点。记录的原则是如何使用框架的各种功能，侧重点在于如何使用。记录的目的是方便日后快速查阅。

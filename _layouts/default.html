@@ -31,6 +31,10 @@ layout: compress
 <body>
 
     <div class="wrapper-{% if site.width == "normal" %}normal{% elsif site.width == "large" %}large{% endif %}">
+        {% if page.sidebar %}
+            {% include sidebar.html %}
+        {% endif %}
+
         {% if page.tag %}
             <div class="post">
         {% else %}
@@ -48,4 +52,17 @@ layout: compress
     {% include icons.html %}
 
 </body>
+<script>
+if (document.querySelector('#markdown-toc')) {
+    document.querySelector('#markdown-toc').style.display = 'none';
+    let category_title = '<ul class="list_catelog"> '+ document.querySelector('#markdown-toc').innerHTML +' </ul>';
+    document.querySelector('.sidebar_catelog').innerHTML = category_title;
+
+    let post = document.querySelector('.post');
+    post.onclick = function() {
+        document.querySelector('#left_sidebar').classList.add('hidden');
+        document.querySelector('.left-button').classList.remove('hidden');
+    };
+}
+</script>
 </html>

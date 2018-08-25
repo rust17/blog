@@ -9,7 +9,10 @@ tag:
 category: blog
 author: circle
 description: 记录一些学习 laravel 的过程中的知识点
+sidebar: true
 ---
+* 目录
+{:toc #markdown-toc}
 &emsp;&emsp;接触 Laravel 已经有半年左右，得益于 [Laravel China 社区](https://laravel-china.org/) 的学习资源，从这个社区接触到了许多高质量的文章，无论是 php 层面还是其他层面都学到了许多，非常感谢。
 
 &emsp;&emsp;这半年间，一直在进行基础性的学习，比如这个框架的一些基本使用：用户注册登录、邮件发送、数据模型 CRUD、用户数据获取等。在学习使用的过程中，不仅积累了许多相关知识，也一直在尝试了解一些框架的底层原理。虽然到现在许多底层知识还是一知半解，不过却不妨碍对框架的基本使用，通过持续性、不间断的练习得以掌握了一些常规操作。这篇文章的目的就是记录一些一些在 [L01 Laravel 教程 - Web 开发实战入门 ( Laravel 5.5 )](https://laravel-china.org/courses/laravel-essential-training-5.5)学到的知识点。记录的原则是记录如何使用框架的各种功能，侧重点在于如何使用。记录的目的是方便日后快速查阅。
