@@ -15,7 +15,7 @@ description: 记录一些学习 laravel 的过程中的知识点
 &emsp;&emsp;这半年间，一直在进行基础性的学习，比如这个框架的一些基本使用：用户注册登录、邮件发送、数据模型 CRUD、用户数据获取等。在学习使用的过程中，不仅积累了许多相关知识，也一直在尝试了解一些框架的底层原理。虽然到现在许多底层知识还是一知半解，不过却不妨碍对框架的基本使用，通过持续性、不间断的练习得以掌握了一些常规操作。这篇文章的目的就是记录一些一些在 [L01 Laravel 教程 - Web 开发实战入门 ( Laravel 5.5 )](https://laravel-china.org/courses/laravel-essential-training-5.5)学到的知识点。记录的原则是记录如何使用框架的各种功能，侧重点在于如何使用。记录的目的是方便日后快速查阅。
 
 ---  
->文章内容摘录自 [L01 Laravel 教程 - Web 开发实战入门 ( Laravel 5.5 )](https://laravel-china.org/courses/laravel-essential-training-5.5)，作者 [Summer](https://laravel-china.org/users/1)、[Aufree](https://laravel-china.org/users/5)，转载请注明出处，请不要将文章用于商业用途，谢谢。
+**文章内容摘录自 [L01 Laravel 教程 - Web 开发实战入门 ( Laravel 5.5 )](https://laravel-china.org/courses/laravel-essential-training-5.5)，作者 [Summer](https://laravel-china.org/users/1)、[Aufree](https://laravel-china.org/users/5)，转载请注明出处，请不要将文章用于商业用途，谢谢。**
 
 ---
 ### 利用 composer 创建一个 laravel 项目
@@ -462,7 +462,7 @@ return redirect()->intended(route('users.show', [Auth::user()]));
 ```
 
 ---
->文章内容摘录自 [L01 Laravel 教程 - Web 开发实战入门 ( Laravel 5.5 )](https://laravel-china.org/courses/laravel-essential-training-5.5)，作者 [Summer](https://laravel-china.org/users/1)、[Aufree](https://laravel-china.org/users/5)，转载请注明出处，请不要将文章用于商业用途，谢谢。
+**文章内容摘录自 [L01 Laravel 教程 - Web 开发实战入门 ( Laravel 5.5 )](https://laravel-china.org/courses/laravel-essential-training-5.5)，作者 [Summer](https://laravel-china.org/users/1)、[Aufree](https://laravel-china.org/users/5)，转载请注明出处，请不要将文章用于商业用途，谢谢。**
 
 ---
 

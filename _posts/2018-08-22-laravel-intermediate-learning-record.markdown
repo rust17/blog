@@ -15,7 +15,7 @@ description: 记录一些学习 laravel 的过程中的知识点
 &emsp;&emsp;接着上一篇『Laravel 基础知识学习记录』，这篇文章的目的在于记录一些在[L02 Laravel 教程 - Web 开发实战进阶 ( Laravel 5.5 ) ](https://laravel-china.org/courses/laravel-intermediate-training-5.5)学到的知识点。记录的原则是如何使用框架的各种功能，侧重点在于如何使用。记录的目的是方便日后快速查阅。
 
 ---
->文章内容摘录自 [L02 Laravel 教程 - Web 开发实战进阶 ( Laravel 5.5 ) ](https://laravel-china.org/courses/laravel-intermediate-training-5.5)，作者 [Summer](https://laravel-china.org/users/1)，转载请注明出处，请不要将文章用于商业用途，谢谢。
+**文章内容摘录自 [L02 Laravel 教程 - Web 开发实战进阶 ( Laravel 5.5 ) ](https://laravel-china.org/courses/laravel-intermediate-training-5.5)，作者 [Summer](https://laravel-china.org/users/1)，转载请注明出处，请不要将文章用于商业用途，谢谢。**
 
 ---
 ### 访问配置
@@ -1090,7 +1090,7 @@ include('sudosu:user-selector')
 ```
 
 ---
->文章内容摘录自 [L02 Laravel 教程 - Web 开发实战进阶 ( Laravel 5.5 ) ](https://laravel-china.org/courses/laravel-intermediate-training-5.5)，作者 [Summer](https://laravel-china.org/users/1)，转载请注明出处，请不要将文章用于商业用途，谢谢。
+**文章内容摘录自 [L02 Laravel 教程 - Web 开发实战进阶 ( Laravel 5.5 ) ](https://laravel-china.org/courses/laravel-intermediate-training-5.5)，作者 [Summer](https://laravel-china.org/users/1)，转载请注明出处，请不要将文章用于商业用途，谢谢。**
 
 ---
 

@@ -15,7 +15,7 @@ description: 记录一些学习 Laravel API 的过程中的知识点
 &emsp;&emsp;这篇文章主要目的在于记录一些在 [L03 Laravel 教程 - 实战构架 API 服务器](https://laravel-china.org/courses/laravel-advance-training-5.5)学到的知识点。记录的原则是记录如何使用，侧重点在于用与记录。记录的目的是方便日后快速查阅。 
 
 ---
->文章内容摘录自 [L03 Laravel 教程 - 实战构架 API 服务器](https://laravel-china.org/courses/laravel-advance-training-5.5)，作者 [Liyu](https://laravel-china.org/users/3995)、[Summer](https://laravel-china.org/users/1)，转载请注明出处，请不要将文章用于商业用途，谢谢。
+**文章内容摘录自 [L03 Laravel 教程 - 实战构架 API 服务器](https://laravel-china.org/courses/laravel-advance-training-5.5)，作者 [Liyu](https://laravel-china.org/users/3995)、[Summer](https://laravel-china.org/users/1)，转载请注明出处，请不要将文章用于商业用途，谢谢。**
 
 ---
 ### 用 URL 定位资源
@@ -774,9 +774,66 @@ $ composer require overtrue/laravel-query-logger --dev
 ```bash
 $ tail -f ./storage/logs/laravel.log
 ```
+#### 8. [laravel/passport][8]
+
+用途：实现 OAUth2 的密码模式 —— 用户直接在客户端输入用户名和密码，客户端直接通过用户数据的用户名和密码获取 `access_token`
+
+安装
+```bash
+$ composer require laravel/passport:~4.0
+```
+执行迁移
+```bash
+$ php artisan migrate
+```
+创建加密密钥
+```bash
+$ php artisan passport:keys
+```
+创建客户端
+```bash
+$ php artisan passport:client --passport --name="larabbs-ios"
+```
+使用
+
+注册路由
+
+*app/Providers/AuthServiceProvider.php*
+```php
+...
+use Laravel\Passport\Passport;
+...
+public function boot()
+{
+	$this->registerPolicies();
+
+	// Passport 的路由
+	Passport::routes();
+	// access_token 的过期时间
+	Passport::tokensExpirtIn(Carbon::now()->addDays(15));
+	// refreshTokens 的过期时间
+	Passport::refreshTokensExpireIn(Carbon::now()->addDays(30));
+	...
+}
+...
+```
+获取 access_token
+
+通过访问 `域名/oauth/token` 可以获得令牌，提交参数：
+
+* grant_type —— 密码模式固定为 `passport`
+* client_id —— 通过 `passport:client` 生成的客户端 `id`
+* client_secret —— 通过 `passport:client` 生成的客户端 `secret`
+* username —— 登录用户名
+* password —— 用户密码
+* scope —— 作用域，可以填 `*` 或为空
+
+刷新 access_token
+
+路由与获取 access_token 一致，参数为将 `username` 和 `password`去掉，换成 `refresh_token`， `grant_type` 的值换成 `refresh_token`
 
 ---
->文章内容摘录自 [L03 Laravel 教程 - 实战构架 API 服务器](https://laravel-china.org/courses/laravel-advance-training-5.5)，作者 [Liyu](https://laravel-china.org/users/3995)、[Summer](https://laravel-china.org/users/1)，转载请注明出处，请不要将文章用于商业用途，谢谢。
+**文章内容摘录自 [L03 Laravel 教程 - 实战构架 API 服务器](https://laravel-china.org/courses/laravel-advance-training-5.5)，作者 [Liyu](https://laravel-china.org/users/3995)、[Summer](https://laravel-china.org/users/1)，转载请注明出处，请不要将文章用于商业用途，谢谢。**
 
 ---
 
@@ -789,3 +846,4 @@ $ tail -f ./storage/logs/laravel.log
 [5]: https://github.com/tymondesigns/jwt-auth
 [6]: https://github.com/liyu001989/dingo-serializer-switch
 [7]: https://github.com/overtrue/laravel-query-logger
+[8]: https://laravel-china.org/docs/laravel/5.5/passport/1309#password-grant-tokens
