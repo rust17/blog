@@ -85,7 +85,7 @@ $table->timestamps();
 ### 数据模型
 
 ---
-**1. 模型属性**
+#### 1. 模型属性
 
 ```php
 protected $table = 'users';
@@ -100,7 +100,7 @@ protected $hidden = ['password', 'remember_token'];
 ```
 指定通过模型实例显示时需要隐藏的字段
 
-**2. 查找模型**
+#### 2. 查找模型
 
 ```php
 User::find(1)
@@ -121,7 +121,7 @@ User::paginate(10)
 ```
 分页返回数据
 
-**3. 表单数据验证**
+#### 3. 表单数据验证
 
 ```php
 'name' => 'required'
@@ -144,7 +144,7 @@ User::paginate(10)
 ```
 密码匹配验证，保证两次输入密码一致
 
-**4. 用户登录**
+#### 4. 用户登录
 
 ```php
 Auth::attempt(['email' => $email, 'password' => $password]);
@@ -167,7 +167,7 @@ Auth::attempt($credentials, $request->has('remember');
 ```
 登录后记住我，登录状态为五年
 
-**5. 简单的用户权限**
+#### 5. 简单的用户权限
 
 1.使用中间件
 
@@ -217,7 +217,7 @@ $this->authorize('update', $user);
 @endcan
 ```
 
-**6. 模型工厂 - 对要生成假数据的模型指定字段进行赋值**
+#### 6. 模型工厂 - 对要生成假数据的模型指定字段进行赋值
 
 生成模型工厂文件
 
@@ -240,7 +240,7 @@ $factory->define(App\Models\User::class, function (Faker $faker) {
 ```
 模型工厂的 `define` 接收两个参数，参数一表示需要生成假数据的模型类，参数二为闭包，为模型的指定字段赋值。
 
-**7. 数据填充**
+#### 7. 数据填充
 
 生成数据填充文件
 
@@ -268,7 +268,7 @@ public function run()
 }
 ```
 
-**8. 数据表迁移 - 改变表结构，新增删除或修改字段**
+#### 8. 数据表迁移 - 改变表结构，新增删除或修改字段
 
 生成迁移文件
 ```
@@ -293,7 +293,7 @@ public function down()
 ```
 迁移文件中，`up` 方法定义了迁移执行的逻辑，`down` 方法定义了回滚的逻辑
 
-**9. 模型监听事件**
+#### 9. 模型监听事件
 
 `creating` 用户监听模型被创建之前的事件，`created` 用户监听模型被创建之后的事件，用法：
 
@@ -312,7 +312,7 @@ public static function boot()
 }
 ```
 
-**10. 模型关联**
+#### 10. 模型关联
 
 一对多 —— 一个用户拥有多条微博
 
