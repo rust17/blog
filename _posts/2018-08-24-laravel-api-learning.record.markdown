@@ -1,5 +1,5 @@
 ---
-title: "Laravel API 知识学习记录"
+title: "Laravel 学习总结 —— API 服务器"
 layout: post
 date: 2018-08-24 09:58
 headerImage: false
@@ -10,7 +10,12 @@ category: blog
 author: circle
 description: 记录一些学习 Laravel API 的过程中的知识点
 ---
-&emsp;&emsp;这篇文章主要目的在于记录一些在 [L03 Laravel 教程 - 实战构架 API 服务器](https://laravel-china.org/courses/laravel-advance-training-5.5)学到的知识点。原则是记录如何使用，侧重点在于用与记录。 
+&emsp;&emsp;接触 Laravel 已经有半年左右，得益于 [Laravel China 社区](https://laravel-china.org/) 的学习资源，从这个社区接触到了许多高质量的文章，无论是 php 层面还是其他层面都学到了许多，非常感谢。
+
+&emsp;&emsp;这篇文章主要目的在于记录一些在 [L03 Laravel 教程 - 实战构架 API 服务器](https://laravel-china.org/courses/laravel-advance-training-5.5)学到的知识点。记录的原则是记录如何使用，侧重点在于用与记录。记录的目的是方便日后快速查阅。 
+
+---
+>文章内容摘录自 [L03 Laravel 教程 - 实战构架 API 服务器](https://laravel-china.org/courses/laravel-advance-training-5.5)，作者 [Liyu](https://laravel-china.org/users/3995)、[Summer](https://laravel-china.org/users/1)，转载请注明出处，请不要将文章用于商业用途，谢谢。
 
 ---
 ### 用 URL 定位资源
@@ -18,17 +23,34 @@ description: 记录一些学习 Laravel API 的过程中的知识点
 ---
 在 RESTful 的架构中，每一个 URL 都代表着一种资源。资源是名词，尽量不要在 URL 中出现动词。
 ```
-GET /issues										列出所有的 issue
-GET /orgs/:org/issues							列出某个项目的 issue
-GET /repos/:owner/:repo/issues/:number  		获取某个项目的某个 issue
-POST /repos/:owner/:repo/issues					为某个项目创建 issue
-PATCH /repos/:owner/:repo/issues/:number		修改某个 issue
-PUT /repos/:owner/:repo/issues/:number/lock 	锁住某个 issue
+GET /issues                                     列出所有的 issue
+GET /orgs/:org/issues                           列出某个项目的 issue
+GET /repos/:owner/:repo/issues/:number          获取某个项目的某个 issue
+POST /repos/:owner/:repo/issues                 为某个项目创建 issue
+PATCH /repos/:owner/:repo/issues/:number        修改某个 issue
+PUT /repos/:owner/:repo/issues/:number/lock     锁住某个 issue
 DELETE /repos/:owner/:repo/issues/:number/lock  接收某个 issue
 ```
 ### HTTP 动词描述
 
 ---
+<style>
+	table {
+		border-spacing: 0;
+		border-collapse: collapse;
+	}
+	table tr {
+		border-top: 1px solid #ccc;
+	}
+	table th {
+		border: 1px solid #ddd;
+  		padding: 10px 15px;
+	}
+	table td {
+		border: 1px solid #ddd;
+  		padding: 10px 15px;
+	}
+</style>
 | 动词 | 描述 | 是否幂等 |
 | :- | :- | :- |
 | GET | 获取资源，单个或多个 | 是 |
@@ -37,7 +59,7 @@ DELETE /repos/:owner/:repo/issues/:number/lock  接收某个 issue
 | PATCH | 更新资源，客户端提供部分的资源 | 否 |
 | DELETE | 删除资源 | 是 |
 
-### 资源过滤
+### 资源过滤约定
 
 ---
 ```
@@ -74,11 +96,11 @@ http://api.larabbs.com/
 ```
 对于错误数据
 ```
-'message' => ':message',			// 错误的具体描述
-'errors' => ':error',				// 参数的具体错误描述，422 等状态提供
-'code' => ':code',					// 自定义的异常码
-'status_code' => ':status_code',	// http 状态码
-'debug' => ':debug',				// debug 信息，非生产环境提供
+'message' => ':message',            // 错误的具体描述
+'errors' => ':error',               // 参数的具体错误描述，422 等状态提供
+'code' => ':code',                  // 自定义的异常码
+'status_code' => ':status_code',    // http 状态码
+'debug' => ':debug',                // debug 信息，非生产环境提供
 ```
 ### 调用频率限制
 
@@ -126,6 +148,7 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', [
 	'namespace' => 'App\Http\Controller\Api', // 使得 v1 版本的路由都指向 App\Http\Controllers\Api
+	'middleware' => ['serializer:array', 'bindings'], // 增加了两个中间件，切换数据格式以及路由模型绑定
 ], function ($api) {
 	$api->group([
 		// 通过中间件添加频率限制
@@ -176,6 +199,30 @@ class xxxRequest extends FormRequest
 ---
 ```php
 return $this->response->array([xxx])->setMeta([xxx])->setStatusCode(xxx);
+return $this->response->noContent();
+```
+### API 的异常处理
+
+---
+利用 DingoApi 提供的方法
+
+*app/Providers/AppServiceProvider.php*
+```php
+...
+public function register()
+{
+	...
+	// 路由模型没有找到模型
+	\API::error(function (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
+		abort(404);
+	});
+
+	// 未授权
+	\API::error(function (\Illuminate\Auth\Access\AuthorizationException $exception) {
+		abort(403, $exception->getMessage());
+	});
+}
+...
 ```
 ### 防止时序攻击的字符串比较
 
@@ -276,6 +323,43 @@ class UserTransformer extends TransformerAbstract
 ```php
 return $this->response->item($this->user(), new UserTransformer());
 ```
+**3. Include 机制**
+
+将额外的资源以合理的结构返回
+
+*app/Transformers/TopicTransformer.php*
+```php
+...
+class TopicTransformer extends TransformerAbstract
+{
+	// 获取的额外资源模型
+	protected $availableIncludes = ['user', 'category'];
+
+	public function transform(Topic $topic)
+	{
+		...
+	}
+
+	// 通过 include + model 的方法获取
+	public function includeUser(Topic $topic)
+	{
+		return $this->item($topic->user, new UserTransformer());
+	}
+
+	public function includeCategory(Topic $topic)
+	{
+		return $this->item($topic->category, new CategoryTransformer());
+	}
+
+	// 如果关系是一对多，可以通过 $this->collection() 返回
+	public function includeComments(Topic $topic)
+	{
+		return $this->collection($topic->comments, new CommentTransformer());
+	}
+}
+...
+```
+请求的时候需要在 `url` 中增加 `include=user,category` 参数，或者使用 `点` 关联下一级资源：`include=topic.user`
 ### 数据的提交方式
 
 ---
@@ -285,6 +369,132 @@ HTTP 提交数据有两种方式
 * multipart/form-data
 
 `form` 表单提交文件的时候，需要增加 `enctype="multipart/form-data"` 才能正确的传输文件，因为默认的 `enctype` 是 `enctype="application/x-www-form-urlencoded"`
+
+### 在错误响应中增加 code 错误码字段
+
+---
+*app/Http/Controllers/Api/Controller.php*
+```php
+...
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
+class Controller extends BaseController
+{
+	...
+	public function errorResponse($statusCode, $message=null, $code=0)
+	{
+		throw new HttpException($statusCode, $message, null, [], $code);
+	}
+}
+```
+在 API 控制器中直接使用 `$this->errorResponse` 即可
+```php
+return $this->errorResponse(403, '您还没有通过认证', 1003);
+```
+### 根据客户端语言切换错误信息
+
+---
+增加中间件
+```bash
+$ php artisan make:middleware ChangeLocale
+```
+*app/Http/Middleware/ChangeLocale.php*
+```php
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+
+class ChangeLocale
+{
+	public function handle($request, Closure $next)
+	{
+		$language = $request->header('accept-language');
+		if ($language) {
+			\App::setLocale($language);
+		}
+
+		return $next($request);
+	}
+}
+```
+注册中间件
+
+*app/Http/Kernel.php*
+```php
+'change-locale' => \App\Http\Middleware\ChangeLocale::class
+```
+路由文件使用
+
+*routes/api.php*
+```php
+$api->version('v1', [
+	'namespace' => 'App\Http\Controllers\Api',
+	'middleware' => ['serializer:array', 'bindings', 'change-local'],
+], function($api){})
+```
+### API 集成测试
+
+---
+创建测试文件
+```bash
+$ php artisan make:test TopicApiTest
+```
+添加测试代码
+
+思路：先创建一个用户，测试以该用户的身份进行，`testStoreTopic` 为测试一个用户发布话题，使用 `$this->json` 模拟各种 HTTP 请求
+
+*tests/Feature/TopicApiTest.php*
+```php
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\User;
+use App\Models\Topic;
+...
+class TopicApiTest extends TestCase
+{
+	protected $user;
+
+	public function setUp()
+	{
+		parent::setUp();
+		$this->user = factory(User::class)->create();
+	}
+
+	public function testStoreTopic()
+	{
+		$data = ['category_id' => 1, 'body' => 'test body', 'title' => 'test title'];
+
+		$token = \Auth::guard('api')->fromUser($this->user);
+
+		// json 方法的参数：1.请求的方法 2.请求地址 3.请求参数 4.请求 Header，可以直接设置 Header，也可以利用 withHeader 方法
+		$response = $this->withHeader(['Authorization' => 'Bearer '.$token])
+			->json('POST', '/api/topics', $data);
+
+		$assertData = [
+			'category_id' => 1,
+			'user_id' => $this->user->id,
+			'title' => 'test title',
+			'body' => clean('test body', 'user_topic_body'),
+		];
+
+		// 通过 assertStatus 断言响应结果为 201，通过 assertJsonFragment 断言响应结果包含 assertData 数据
+		$response->assertStatus(201)
+			->assertJsonFragment($assertData);
+	}
+}
+```
+执行测试
+```bash
+$ phpunit
+```
+### [第三方黑盒测试](https://laravel-china.org/courses/laravel-advance-training-5.5/808/third-party-black-box-test#f6da43)
+
+---
+说明：利用第三方工具，对整套系统的 API 接口进行测试，可以模拟真实用户的请求
 
 ### 用到的扩展包
 
@@ -395,7 +605,7 @@ try {
 	$message = $exception->getException('xxx')->getMessage();
 }
 ```
-#### 3.[gregwar/captcha][3]
+#### 3. [gregwar/captcha][3]
 
 用途：生成图片验证码，不依赖 session
 
@@ -415,7 +625,7 @@ $captcha = $captchaBuilder->build();
 // 得到 base64 格式的图片验证码
 $captcha->inline();
 ```
-#### 4.[socialiteproviders/weixin][4]
+#### 4. [socialiteproviders/weixin][4]
 
 用途：提供第三方登录方式
 
@@ -457,7 +667,7 @@ $oauthUser->getNickname(); //获取昵称
 $oauthUser->getAvatar(); // 获取头像
 $oauthUser->getId(); // 获取 openid
 ```
-#### 5.[jwt-auth][5]
+#### 5. [jwt-auth][5]
 
 用途：使用 JWT 规范在用户与服务器之间传递用户信息
 
@@ -535,7 +745,7 @@ $token = Auth::guard('api')->refresh();
 // 删除 token
 Auth::guard('api')->logout();
 ```
-#### 6.[liyu/dingo-serializer-switch][6]
+#### 6. [liyu/dingo-serializer-switch][6]
 
 用途：方便地切换 `DataArraySerializer` 和 `ArraySerializer`
 
@@ -552,8 +762,25 @@ $api->version('v1', [
 	'middleware' => 'serializer:array' // 添加了一个中间件
 ], function ($api) {})
 ```
+#### 7. [laravel-query-logger][7]
 
-相关链接：[https://laravel-china.org/courses/laravel-advance-training-5.5](https://laravel-china.org/courses/laravel-advance-training-5.5)
+用途：查询日志组件
+
+安装
+```bash
+$ composer require overtrue/laravel-query-logger --dev
+```
+使用
+```bash
+$ tail -f ./storage/logs/laravel.log
+```
+
+---
+>文章内容摘录自 [L03 Laravel 教程 - 实战构架 API 服务器](https://laravel-china.org/courses/laravel-advance-training-5.5)，作者 [Liyu](https://laravel-china.org/users/3995)、[Summer](https://laravel-china.org/users/1)，转载请注明出处，请不要将文章用于商业用途，谢谢。
+
+---
+
+原著链接：[https://laravel-china.org/courses/laravel-advance-training-5.5](https://laravel-china.org/courses/laravel-advance-training-5.5)
 
 [1]: https://github.com/dingo/api/
 [2]: https://github.com/overtrue/easy-sms
@@ -561,3 +788,4 @@ $api->version('v1', [
 [4]: https://socialiteproviders.github.io/
 [5]: https://github.com/tymondesigns/jwt-auth
 [6]: https://github.com/liyu001989/dingo-serializer-switch
+[7]: https://github.com/overtrue/laravel-query-logger

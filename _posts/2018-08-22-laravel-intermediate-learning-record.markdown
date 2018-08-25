@@ -1,5 +1,5 @@
 ---
-title:  "Laravel 进阶知识学习记录"
+title:  "Laravel 学习总结 —— 进阶"
 layout: post
 date: 2018-08-22 10:51
 headerImage: false
@@ -10,7 +10,12 @@ category: blog
 author: circle
 description: 记录一些学习 laravel 的过程中的知识点
 ---
-&emsp;&emsp;接着上一篇『Laravel 基础知识学习记录』，这篇文章的目的在于记录一些在[L02 Laravel 教程 - Web 开发实战进阶 ( Laravel 5.5 ) ](https://laravel-china.org/courses/laravel-intermediate-training-5.5)学到的知识点。原则是记录如何使用框架的各种功能，侧重点在于如何使用。
+&emsp;&emsp;接触 Laravel 已经有半年左右，得益于 [Laravel China 社区](https://laravel-china.org/) 的学习资源，从这个社区接触到了许多高质量的文章，无论是 php 层面还是其他层面都学到了许多，非常感谢。
+
+&emsp;&emsp;接着上一篇『Laravel 基础知识学习记录』，这篇文章的目的在于记录一些在[L02 Laravel 教程 - Web 开发实战进阶 ( Laravel 5.5 ) ](https://laravel-china.org/courses/laravel-intermediate-training-5.5)学到的知识点。记录的原则是如何使用框架的各种功能，侧重点在于如何使用。记录的目的是方便日后快速查阅。
+
+---
+>文章内容摘录自 [L02 Laravel 教程 - Web 开发实战进阶 ( Laravel 5.5 ) ](https://laravel-china.org/courses/laravel-intermediate-training-5.5)，作者 [Summer](https://laravel-china.org/users/1)，转载请注明出处，请不要将文章用于商业用途，谢谢。
 
 ---
 ### 访问配置
@@ -1084,7 +1089,12 @@ return [
 include('sudosu:user-selector')
 ```
 
-相关链接：
+---
+>文章内容摘录自 [L02 Laravel 教程 - Web 开发实战进阶 ( Laravel 5.5 ) ](https://laravel-china.org/courses/laravel-intermediate-training-5.5)，作者 [Summer](https://laravel-china.org/users/1)，转载请注明出处，请不要将文章用于商业用途，谢谢。
+
+---
+
+原著链接：
 [https://laravel-china.org/courses/laravel-intermediate-training-5.5](https://laravel-china.org/courses/laravel-intermediate-training-5.5)
 
 [1]: https://github.com/mewebstudio/captcha
