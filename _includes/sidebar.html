@@ -31,6 +31,10 @@ a {text-decoration: none;color: #337ab7;}
 .hidden {
 	display: none;
 }
+.stop-scroll{
+	overflow: hidden;
+	height: 100%;
+}
 </style>
 <div id="left_sidebar" style="left: 0px;" class="hidden">
 	<div class="sidebar_catelog">
@@ -45,5 +49,6 @@ a {text-decoration: none;color: #337ab7;}
 let showSidebar = function() {
 	document.querySelector('#left_sidebar').classList.remove('hidden');
 	document.querySelector('.left-button').classList.add('hidden');
+	document.querySelector('body').classList.add('stop-scroll');
 }
 </script>
