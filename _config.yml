@@ -19,6 +19,9 @@ resume-url: https://google.com/?q=my+resume
 url: https://circle.hero666.cn
 # your url: http://USERNAME.github.io
 
+# 仓库名
+repo: blog
+
 permalink: /:title/
 
 # To enable google analytics, supply your token below
