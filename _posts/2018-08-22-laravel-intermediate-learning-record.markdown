@@ -149,9 +149,6 @@ Schema::table('topics', function (Blueprint $table) {
 
 Schema::table('replies', function (Blueprint $table) {
 
-    // 当 user_id 对应的 users 表数据被删除时，删除此条数据
-    $table->foreign('user_id')->reference('id')->on('users')->onDelete('cascade');
-
     // 当 topic_id 对应的 topics 表数据被删除时，删除此条数据
     $toble->foreign('topic_id')->reference('id')->on('topic')->onDelete('cascade');
 });
@@ -251,7 +248,7 @@ class AppServiceProvider extends ServiceProvider
     {
         \App\Models\User::observe(\App\Observers\UserObserver::class);
         \App\Models\Reply::observe(\App\Observers\ReplyObserver::class);
-        \App\Models\Topic::observe(\App\Observers\TopicObserver::class);
+        \App\Models\Topic::observe(\App\Observers\TopicObserver::class); // 指定观察器文件与其对应观察的模型
 
         \Carbon\Carbon::setLocale('zh');
     }
@@ -397,7 +394,7 @@ public function toDatabase($notifiable)
 }
 ...
 ```
-说明：Laravel 中一条通知就是一个类（通常位于 app/Notifications 文件夹下），每个通知都有一个 `via()` 方法，决定了通知在哪个频道上发送。使用数据库通知频道，需要定义 `toDatabase()`。这个方法接收 `$notifiable` 实例参数并返回普通的 PHP 数组。这个返回的数组将被转成 JSON 存储到数据库的 `data` 字段中。
+说明：Laravel 中一条通知就是一个类（通常位于 app/Notifications 文件夹下），每个通知都有一个 `via()` 方法，决定了通知在哪个频道上发送。使用数据库通知频道，需要定义 `toDatabase()`。这个方法接收 `$notifiable` 实例参数并返回普通的 PHP 数组。这个数组就是通知的内容，这个返回的数组将被转成 JSON 存储到数据库的 `data` 字段中。
 
 **3. 触发通知**
 
@@ -516,7 +513,7 @@ class Policy
 ### 缓存操作
 
 ---
-尝试用缓存中获取数据，没有数据则执行函数
+尝试用缓存中获取数据，没有数据则执行函数，并将函数的返回值存入缓存
 ```php
 Cache::remember($this->key, $this->cache_expire_in_minutes, function(){
     return $this->calculateActiveUsers();
@@ -915,7 +912,7 @@ str_slug(app(Pinyin::class)->permalink($text));
 
 #### 10. [Horizon][10]
 
-用途：Horizon 为 Laravel Redis 提供了一个漂亮的仪表盘界面，可以很方便的查看和管理 Redis 队列执行任务
+用途：Horizon 为 Laravel Redis 提供了一个漂亮的仪表盘界面，用于方便的查看和管理 Redis 队列执行任务
 
 安装
 ```bash
