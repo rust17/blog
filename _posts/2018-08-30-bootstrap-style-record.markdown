@@ -113,6 +113,30 @@ description: 记录前端框架bootstrap的使用
 </ul>
 ```
 
+```html
+<div v-show="show" :class="`alert alert-${type} alert-dismissible`">
+	...
+</div>
+```
+
+```html
+<ul v-if="auth" class="nav navbar-nav github-login">
+  <li>
+	<a href="javascript:;">
+	  <span v-if="user">
+		<img v-if="user.avatar" :src="user.avatar" class="avatar-topnav">
+		<span v-if="user.name">{{ user.name }}</span>
+	  </span>
+	  <span v-else>佚名</span>
+	  <span class="caret"></span>
+	</a>
+	<ul class="dropdown-menu">
+	  <li><a href="#"><i class="fa fa-sign-out text-md"></i>退出</a></li>
+	</ul>
+  </li>
+</ul>
+```
+
 ### Font-Awesome
 ```html
 <i class="fa fa-camera"></i>
