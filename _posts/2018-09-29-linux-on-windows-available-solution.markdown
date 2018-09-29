@@ -1,5 +1,5 @@
 ---
-title: "使用 wsl 代替虚拟机的可行性方案"
+title: "打开新大门，使用 wsl 代替虚拟机的可行性方案"
 layout: post
 date: 2018-09-28 17:30
 headerImage: false
@@ -131,10 +131,110 @@ wget -qO- https://raw.githubusercontent.com/summerblue/laravel-ubuntu-init/maste
 
 此脚本会安装 Git、PHP 7.2、Nginx、MySql、Sqlite3、Composer、Nodejs 8、Yarn、Redis、Beansalkd、Memcached，安装结束会输出 Mysql 的 root 账号的密码，需要保存。
 
+### 创建测试站点
+
 脚本自带的新增 Nginx 站点命令
 
 ```bash
 ./laravel-ubuntu-init/16.04/nginx_add_site.sh
 ```
 
-会提示输入站点名称、域名，确认后会创建对于的 Nginx 配置并重启 Nginx，为了测试，创建两个项目，分别是 example、example2，域名为 example.com、example2.com
+会提示输入站点名称、域名，确认后会创建对于的 Nginx 配置并重启 Nginx，为了便于测试，创建两个项目，分别是 example、example2，域名为 example.com、example2.com，将这两个域名添加到本地的 Host 文件，配置好 nginx 配置文件，创建软连接，重启 nginx
+
+```bash
+service nginx restart
+```
+
+### 启动 php、mysql
+
+安装好 php7.2-fpm 之后，发现直接启动会报错，需要执行以下命令
+
+```bash
+sudo mkdir -p /var/run/php
+sudo service php7.2-fpm start
+```
+
+启动 mysql
+
+```bash
+sudo service mysql start
+```
+
+这时候访问 example.com 和 example2.com 应该可以显示网页内容了，不过会发现网页打开的速度极慢，通常需要一两分钟才能完全加载一个页面，需要修改 nginx 的配置文件`/etc/nginx/nginx.conf`，添加以下代码
+
+```bash
+...
+http {
+	fastcgi_buffering off;
+}
+...
+```
+
+### 共享 windows 文件夹
+
+再次刷新页面就可以正常打开了。到这里，基本上标志着已经可以在 wsl 上进行 web 开发了，不过每次在 windows 上写好代码再同步到 wsl 上比较麻烦，可不可以直接将 windows 上的项目目录直接链接到 wsl 上呢？这样只要一保存就可以在 wsl 上看到效果，不用复制代码岂不是美滋滋。答案是可以的，在 wsl 上可以找到 windows 的目录，路径是 `/mnt/c`、`mnt/d`、`mnt/e`，添加一个软连接，指向需要在 wsl 上执行的项目。比如：我 windows 上的 d 盘下存放着项目目录 www，我想把 www 目录下的 laravel_demo 项目放到 wsl 上执行，只需要执行
+
+```bash
+ln -s /mnt/d/www/laravel_demo /var/www/laravel_demo
+```
+
+这样，就在 wsl 上创建了一个 laravel_demo 项目，为其配置 nginx 
+
+
+```bash
+cp /etc/nginx/sites-avalible/example.conf /etc/nginx/sites-avalible/laravel_demo.conf
+vim /etc/nginx/sites-avalible/laravel_demo.conf
+
+...
+server {
+	...
+	server_name   laravel_demo.test www.laravel_demo.test; // 修改成对应的域名
+	root        /var/www/laravel_demo/public; // 修改成项目的文件夹路径
+	...
+}
+...
+```
+
+将 laravel_demo.test 添加进本地 hosts 文件，这样就可以在 windows 上编写的项目,在 linux 上运行该项目了。
+
+### 支持多版本 php 
+
+很多时候，不同的项目可能需要用到不同版本的 php，需要为不同的项目配置不一样的 php-fpm.sock 文件，首先，安装所需要的 php 版本，装好之后，启动，例如，需要同时支持 5.6 和 7.2 版本的 php
+
+```bash
+service php5.6-fpm start
+```
+
+为对应项目修改 nginx 配置文件的 php 分配
+
+```bash
+vim /etc/nginx/sites-avalible/example.conf
+
+...
+fastcgi_pass unix:/var/run/php5.6-fpm/php-fpm.sock;// 修改成想要的 php5.6 版本
+...
+
+vim /etc/nginx/sites-avalible/laravel_demo.conf
+
+...
+fastcgi_pass unix:/var/run/php-fpm/php7.2-fpm.sock;// 修改成想要的 php7.2 版本
+...
+```
+
+重启 nginx 使其生效
+
+```bash
+service nginx restart
+```
+
+再次访问 example.com 和 laravel_demo.test 发现均能正常访问。折腾完毕，在 windows 上也可以进行 linux web 开发了，好好玩耍 php 吧！
+
+### 参考链接
+
+(不用装双系统，直接在 Windows 上体验 Linux：Windows Subsystem for Linux)[https://sspai.com/post/43813]
+(Ubuntu环境下SSH的安装及使用)[https://blog.csdn.net/netwalk/article/details/12952051]
+(laravel-ubuntu-init)[https://github.com/summerblue/laravel-ubuntu-init]
+(Nginx and PHP 7 running on WSL?)[https://www.reddit.com/r/bashonubuntuonwindows/comments/65385r/nginx_and_php_7_running_on_wsl/]
+(PHP7.0-fpm extremly slow on Ubuntu Windows Subsystem Linux)[https://stackoverflow.com/questions/46286420/php7-0-fpm-extremly-slow-on-ubuntu-windows-subsystem-linux]
+(NGINX + PHP-FPM net::ERR_INCOMPLETE_CHUNKED_ENCODING)[https://github.com/Microsoft/WSL/issues/2100]
+
