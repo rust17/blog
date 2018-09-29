@@ -231,10 +231,10 @@ service nginx restart
 
 ### 参考链接
 
-[不用装双系统，直接在 Windows 上体验 Linux：Windows Subsystem for Linux](https://sspai.com/post/43813)
-[Ubuntu环境下SSH的安装及使用](https://blog.csdn.net/netwalk/article/details/12952051)
-[laravel-ubuntu-init](https://github.com/summerblue/laravel-ubuntu-init)
-[Nginx and PHP 7 running on WSL?](https://www.reddit.com/r/bashonubuntuonwindows/comments/65385r/nginx_and_php_7_running_on_wsl/)
-[PHP7.0-fpm extremly slow on Ubuntu Windows Subsystem Linux](https://stackoverflow.com/questions/46286420/php7-0-fpm-extremly-slow-on-ubuntu-windows-subsystem-linux)
-[NGINX + PHP-FPM net::ERR_INCOMPLETE_CHUNKED_ENCODING](https://github.com/Microsoft/WSL/issues/2100)
+* [不用装双系统，直接在 Windows 上体验 Linux：Windows Subsystem for Linux](https://sspai.com/post/43813)
+* [Ubuntu环境下SSH的安装及使用](https://blog.csdn.net/netwalk/article/details/12952051)
+* [laravel-ubuntu-init](https://github.com/summerblue/laravel-ubuntu-init)
+* [Nginx and PHP 7 running on WSL?](https://www.reddit.com/r/bashonubuntuonwindows/comments/65385r/nginx_and_php_7_running_on_wsl/)
+* [PHP7.0-fpm extremly slow on Ubuntu Windows Subsystem Linux](https://stackoverflow.com/questions/46286420/php7-0-fpm-extremly-slow-on-ubuntu-windows-subsystem-linux)
+* [NGINX + PHP-FPM net::ERR_INCOMPLETE_CHUNKED_ENCODING](https://github.com/Microsoft/WSL/issues/2100)
 
