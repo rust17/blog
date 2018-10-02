@@ -118,7 +118,13 @@ PasswordAuthentication yes(原来是 no)
 sudo /etc/init.d/ssh start
 ```
 
-接下来就可以使用 Xshell 来登录了，地址是 127.0.0.1，端口号 8022，用户名和密码分别是 root、刚才为 root 用户设置的密码。
+接下来就可以使用 Xshell 来登录了，地址是 127.0.0.1，端口号 8022，用户名和密码分别是 root、刚才为 root 用户设置的密码。我在 Ubuntu 18.04 内核版本当中，会遇到`登录上然后瞬间断开`的情况，这时候在 wsl 执行
+
+```bash
+sudo ssh-keygen -A
+```
+
+然后再登录就能正常连上了。
 
 ### 使用脚本搭建环境
 
@@ -241,4 +247,4 @@ service nginx restart
 * [Nginx and PHP 7 running on WSL?](https://www.reddit.com/r/bashonubuntuonwindows/comments/65385r/nginx_and_php_7_running_on_wsl/)
 * [PHP7.0-fpm extremly slow on Ubuntu Windows Subsystem Linux](https://stackoverflow.com/questions/46286420/php7-0-fpm-extremly-slow-on-ubuntu-windows-subsystem-linux)
 * [NGINX + PHP-FPM net::ERR_INCOMPLETE_CHUNKED_ENCODING](https://github.com/Microsoft/WSL/issues/2100)
-
+* [OpenSSH Client Connection #3355](https://github.com/Microsoft/WSL/issues/3355)
