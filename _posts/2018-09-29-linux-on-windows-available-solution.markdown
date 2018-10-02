@@ -152,19 +152,13 @@ wget -qO- https://raw.githubusercontent.com/summerblue/laravel-ubuntu-init/maste
 service nginx restart
 ```
 
-### 启动 php、mysql
+### 启动 php
 
 在使用脚本命令安装好 php7.2-fpm 之后，发现直接启动会报错，执行以下命令即可
 
 ```bash
 sudo mkdir -p /var/run/php
 sudo service php7.2-fpm start
-```
-
-启动 mysql
-
-```bash
-sudo service mysql start
 ```
 
 这时候浏览器访问 example.com 和 example2.com 应该可以显示网页内容了，不过会发现网页打开的速度极慢，通常需要一两分钟才能完全加载一个页面，需要修改 nginx 的配置文件`/etc/nginx/nginx.conf`，添加以下代码
@@ -178,6 +172,16 @@ http {
 ```
 
 再次刷新页面就可以正常打开了。
+
+### 启动 Mysql
+
+执行命令启动 mysql 
+
+```bash
+sudo service mysql start
+```
+
+在 winsows 本地可以用 mysql 可视化工具直接访问，地址是 127.0.0.1，端口 3306，密码是搭建环境时脚本自动设置的密码。
 
 ### 共享 windows 文件夹
 
