@@ -49,7 +49,7 @@ cp /etc/apt/sources.list /etc/apt/sources.list.old
 vim /etc/apt/sources.list
 ```
 
-将以下代码复制添加到文件当中
+使用以下代码复制替换
 
 ```
 # deb cdrom:[Ubuntu 16.04 LTS _Xenial Xerus_ - Release amd64 (20160420.1)]/ xenial main restricted
@@ -118,7 +118,7 @@ PasswordAuthentication yes(原来是 no)
 sudo /etc/init.d/ssh start
 ```
 
-接下来就可以使用 Xshell 来登录了，地址是 127.0.0.1，端口号 8022，用户名和密码分别是 root、刚才为 root 用户设置的密码。我在 Ubuntu 18.04 内核版本当中，会遇到`登录上然后瞬间断开`的情况，这时候在 wsl 执行
+接下来就可以使用 Xshell 来登录了，地址是 127.0.0.1，端口号 8022，用户名和密码分别是 root、刚才为 root 用户设置的密码。我登录的过程会遇到`登录上然后瞬间断开`的情况，这时候在 wsl 执行
 
 ```bash
 sudo ssh-keygen -A
