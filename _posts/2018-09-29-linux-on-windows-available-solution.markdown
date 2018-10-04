@@ -243,12 +243,31 @@ service nginx restart
 
 再次访问 example.com 和 laravel_demo.test 发现均能正常访问。折腾完毕，在 windows 上也可以进行 linux web 开发了，好好玩耍 php 吧！
 
+### 如何卸载
+
+有几种方式卸载这个子系统：
+* 在 『开始』 菜单找到 ubuntu 图标，把鼠标放到上面右键显示 『卸载』，直接卸载
+* 组合键`win + x`，选择 『运行』，输入 `cmd` 进入 windows 命令行界面，分为两种卸载：
+    * 删掉 ubuntu 系统以及下载安装的组件，保留创建的账户信息，输入 `lxrun /uninstall`
+    * 删掉 ubuntu 系统以及下载安装的组件，不保留创建的账户信息，输入 `lxrun /unistall /full`
+
+### 遇到的一些报错以及解决办法
+
+* @dreamfish 整理的帖，[win10 系统下安装 wsl laravel开发环境 ubuntu16.04LTS + WIN10](https://laravel-china.org/articles/17871?#reply66313)
+* ssh
+    * [启动sshd时，报“Could not load host key”错](https://www.cnblogs.com/netonline/p/7410586.html)
+    * ssh 连接重置，[OpenSSH Client Connection #3355](https://github.com/Microsoft/WSL/issues/3355)
+* php
+    * php 安装成功但是无法启动，[Nginx and PHP 7 running on WSL?](https://www.reddit.com/r/bashonubuntuonwindows/comments/65385r/nginx_and_php_7_running_on_wsl/)
+    * 访问 php 网页脚本时响应极慢，一直在加载，[PHP7.0-fpm extremly slow on Ubuntu Windows Subsystem Linux](https://stackoverflow.com/questions/46286420/php7-0-fpm-extremly-slow-on-ubuntu-windows-subsystem-linux)，[NGINX + PHP-FPM net::ERR_INCOMPLETE_CHUNKED_ENCODING](https://github.com/Microsoft/WSL/issues/2100)
+* mysql
+    * 启动 mysql，显示 "No directory, logging in with HOME=/"，[MySQL 5.7 No directory, logging in with HOME=/](https://askubuntu.com/questions/737903/mysql-5-7-no-directory-logging-in-with-home)
+
 ### 参考链接
 
+* [WSL 文档](https://docs.microsoft.com/zh-cn/windows/wsl/about)
 * [不用装双系统，直接在 Windows 上体验 Linux：Windows Subsystem for Linux](https://sspai.com/post/43813)
-* [Ubuntu环境下SSH的安装及使用](https://blog.csdn.net/netwalk/article/details/12952051)
+* [Ubuntu 环境下 SSH 的安装及使用](https://blog.csdn.net/netwalk/article/details/12952051)
 * [laravel-ubuntu-init](https://github.com/summerblue/laravel-ubuntu-init)
-* [Nginx and PHP 7 running on WSL?](https://www.reddit.com/r/bashonubuntuonwindows/comments/65385r/nginx_and_php_7_running_on_wsl/)
-* [PHP7.0-fpm extremly slow on Ubuntu Windows Subsystem Linux](https://stackoverflow.com/questions/46286420/php7-0-fpm-extremly-slow-on-ubuntu-windows-subsystem-linux)
-* [NGINX + PHP-FPM net::ERR_INCOMPLETE_CHUNKED_ENCODING](https://github.com/Microsoft/WSL/issues/2100)
-* [OpenSSH Client Connection #3355](https://github.com/Microsoft/WSL/issues/3355)
+* [How to Uninstall (or Reinstall) Windows 10’s Ubuntu Bash Shell](https://www.howtogeek.com/261188/how-to-uninstall-or-reinstall-windows-10s-ubuntu-bash-shell/)
+* [Ubuntu 下轻松实现 PHP 多版本共存](https://www.mf8.biz/ubuntu-multip-php/)
