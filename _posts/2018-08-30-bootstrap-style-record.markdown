@@ -137,6 +137,20 @@ description: 记录前端框架bootstrap的使用
 </ul>
 ```
 
+```html
+<div class="col-md-3 main-col">
+	<div class="box">
+		<div class="padding-md">
+		  <div class="list-group text-center">
+		    <a class="list-group-item" href="xxx">
+		      <i :class="`text-md fa fa-${link.icon}`"></i>
+		    </a>
+		  </div>
+		</div>
+	</div>
+</div>
+```
+
 ### Font-Awesome
 ```html
 <i class="fa fa-camera"></i>
@@ -145,4 +159,5 @@ description: 记录前端框架bootstrap的使用
 <i class="fa fa-camera fa-4x"></i>
 <i class="fa fa-camera fa-5x"></i>
 <i class="fa fa-spinner fa-spin"></i>
+<i class="fa fa-cog text-md i-middle"></i>
 ```
