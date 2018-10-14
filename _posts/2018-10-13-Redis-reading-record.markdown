@@ -20,7 +20,7 @@ description: redis 读书记录经验总结
 
 ### 当我在使用 Redis SET 的时候，Redis 在干什么？
 
-> Redis 命令：SET key value [EX seconds] [PX milliseconds] [NX|XX]，将字符串值 value 关联到 key，如果 key 已经持有其他值， SET 就覆写旧值，无视类型。
+> Redis 命令：SET key value，将字符串值 value 关联到 key，如果 key 已经持有其他值， SET 就覆写旧值，无视类型。
 
 这个应该算是最常用的命令了，书中第8章第一节介绍了，每次当我们在 Redis 的数据库中新建一个键值对时，至少会创建两个对象，一个用作键值对的键（键对象），另一个用作键值对的值（值对象）。字符串对象的编码可以是 int、raw 和 embstr。当字符串值的长度大于39字节的时候，字符串对象使用一个简单动态字符串（SDS）来保存这个字符串值，并将对象的编码设置为 raw。
 
