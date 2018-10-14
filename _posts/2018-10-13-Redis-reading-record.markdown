@@ -107,7 +107,56 @@ typeof struct listNode {
 
 ### 哈希对象
 
+哈希对象的编码可以是 ziplist 和 hashtable。ziplist 编码的哈希对象每当有新的键值对要加入到哈希对象时，程序会先将保存了键的压缩列表节点推入到压缩列表表尾，然后再将保存了值的压缩列表节点推入到压缩列表表尾。hashtable 使用字典作为底层实现，
 
+### 什么是字典？
+
+* 字典使用哈希表 dict.h/dictht 结构定义：
+```c
+typedef struct dictht {
+	// 哈希表数组
+	dictEntry **table;
+	// 哈希表大小
+	unsigned long size;
+	// 哈希表大小掩码，用于计算索引
+	unsigned long sizemask;
+	// 哈希表已有的节点数量
+	unsigned long used;
+} dictht;
+```
+table 属性是一个数组，数组中的每一个元素是一个指向 dict.h/dictEntry 结构的指针，每个 dictEntry 结构保存着一个键值对
+
+* 哈希表节点，哈希表节点使用 dictEntry 结构表示：
+```c
+typedef struct dictEntry {
+	// 键
+	void *key;
+	// 值
+	union {
+		void *val;
+		uint64_t u64;
+		int64_t s64;
+	} v;
+	// 指向下一个哈希表节点，形成链表
+	struct dictEntry *next;
+} dictEntry;
+```
+key 属性保存键值对的键，v 属性保存键值对的值，其中值可以是一个指针，或者是一个 uint64_t 整数，又可以是一个 int64_t 整数
+
+* 字典，Redis 中的字典由 dict.h/dict 结构表示：
+```c
+typedef struct dict {
+	// 类型特定函数
+	dictType *type;
+	// 私有数据
+	void *privdata;
+	// 哈希表
+	dictht ht[2];
+	// rehash 索引
+	int trehashidx;
+} dict;
+```
+type 属性是一个指向 dictType 结构的指针，每个 dictType 结构保存了一簇用于操作特定类型键值对的函数；privdata 属性保存了需要传给那些函数的可选参数；ht 属性是一个两个项的数组，数组中每个项都是一个 dictht 哈希表
 
 
 ### 参考链接
