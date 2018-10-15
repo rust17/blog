@@ -158,6 +158,36 @@ typedef struct dict {
 ```
 type 属性是一个指向 dictType 结构的指针，每个 dictType 结构保存了一簇用于操作特定类型键值对的函数；privdata 属性保存了需要传给那些函数的可选参数；ht 属性是一个两个项的数组，数组中每个项都是一个 dictht 哈希表
 
+### 集合对象(set)
+
+Redis set 可以自动排重，可以用于存放不希望出现重复数据的列表。Redis 为集合提供了求交集、并集、差集等操作，可以非常方便地实现共同关注、共同喜好、共同好友等功能。集合对象的编码可以是 intset 或者 hashtable。
+
+### 什么是 intset (整数集合)？
+
+**整数集合的实现**
+
+每个 intset.h/intset 结构表示一个整数
+```c
+typedef struct intset {
+	// 编码方式
+	uint32_t encoding;
+	// 集合包含的元素数量
+	uint32_t length;
+	// 保存元素的数组
+	int8_t contents[];
+} intset;
+```
+
+intset 的每个元素都是 contents 数组的一个数组项，各个项在数组中按值的大小从小到大有序地排列，并且数组中不包含任何重复项；length 属性记录了整数集合包含的元素数量，也即是 contents 数组的长度；contents 数组的真正类型取决于 encoding 属性的值
+
+### 有序集合对象(sorted set)
+
+Redis sorted set 与 set 类似，区别是 sorted set 可以提供一个优先级参数为成员排序，并且是根据插入顺序自动排序。有序集合的编码可以是 ziplist 和 skiplist。
+
+**有序集合对象的 ziplist**
+
+每个集合元素使用两个紧挨一起的压缩列表节点来保存，第一个节点保存元素的成员，第二个元素保存元素的分值。压缩列表内的集合元素按分值从小到大进行排序，分值较小的排在表头，分值较大的排在表尾。
+
 
 ### 参考链接
 
