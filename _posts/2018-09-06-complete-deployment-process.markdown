@@ -74,6 +74,13 @@ $ cp .env.example .env
 
 * 修改一些列配置：应用名称 APP_NAME、域名 APP_URL、数据库即上面新建的库名 DB_DATABASE、登录用户名 DB_USERNAME、数据库密码 DB_PASSWORD
 
+### 安装依赖
+
+项目根目录下运行
+```bash
+composer install
+```
+
 * 生成 laravel key
 ```bash
 $ php artisan key:generate
