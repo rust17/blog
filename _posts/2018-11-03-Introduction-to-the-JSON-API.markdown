@@ -58,4 +58,98 @@ Accept: application/vnd.api+json
 
 ### 复合文本
 
-> 为了减少 HTTP 请求数量，服务器会在一个响应中携带
+> 为了减少 HTTP 请求数量，服务器允许响应中除了请求的主要资源外还会携带关联的资源。这样的响应被称为“复合文本”。
+
+一个复合文本同时也是一个包含了关联信息的集合资源。例如，当请求了一个文章资源的时候，显示的资料当中还包含了文章的作者信息，这样就不需要发送第二个请求来获取作者信息了。
+
+这简直太棒了，原因有几个。除非终端编写了特定的程序，否则一次性获取你想要使用的资源的完整数据是闻所未闻的。而在服务端，缓存和废止一个请求时很简单的。
+
+来看一下这个返回一套单份文件的例子。
+
+```json
+{
+	"data": [{
+		"type": "articles",
+		"id": "1",
+		"attributes": {
+			"title": "JSON API paints my bikeshed!"
+		},
+		"links": {
+			"self": "http://example.com/articles/1"
+		},
+		"relationships": {
+			"author": {
+				"links": {
+					"self": "http://example.com/articles/1/relationships/author",
+					"related": "http://example.com/articles/1/author"
+				},
+				"data": {
+					"type": "people",
+					"id": "9"
+				}
+			},
+			"comments": {
+				"links": {
+					"self": "http://example.com/articles/1/relationships/comments",
+					"related": "http://example.com/articles/1/comments"
+				},
+				"data": [{
+					"type": "comments",
+					"id": "5"
+				}, {
+					"type": "comments",
+					"id": "12"
+				}]
+			}
+		}
+	}],
+	"included": [{
+		"type": "people",
+		"id": "9",
+		"attributes": {
+			"first-name": "Dan",
+			"last-name": "Gebhardt",
+			"twitter": "dgeb"
+		},
+		"links": {
+			"self": "http://example.com/people/9"
+		}
+	}, {
+		"type": "comments",
+		"id": "5",
+		"attributes": {
+			"body": "First!"
+		},
+		"relationships": {
+			"author": {
+				"data": {
+					"type": "people",
+					"id": "2"
+				}
+			}
+		},
+		"links": {
+			"self": "http://example.com/comments/5"
+		}
+	}, {
+		"type": "comments",
+		"id": "12",
+		"attributes": {
+			"body": "I like XML better"
+		},
+		"relationships": {
+			"author": {
+				"data": {
+					"type": "people",
+					"id": "9"
+				}
+			}
+		},
+		"links": {
+			"self": "http://example.com/comments/12"
+		}
+	}]
+}
+```
+
+如果你仔细查看关联属性的话会发现这篇文章的所有关联资源
