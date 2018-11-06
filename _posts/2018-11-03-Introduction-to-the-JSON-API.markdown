@@ -155,3 +155,37 @@ Accept: application/vnd.api+json
 如果你仔细查看关联属性的话会发现这篇文章的所有关联资源。每一个包含的文档都有一个表明返回资源类型的 `type` 属性以及一个关于文档的超链接。
 
 你可能会觉得奇怪的地方是在 `article` 中仅仅依靠 `id`、`type` 和从 `included` 标签中装载的关联 `people` 资源来表明作者的信息。但是想象一下，当有很多文章都是一个相同的作者的时候，返回文档当中只包含了一处关联信息。太高效了。
+
+### 包含关联的资源
+
+上面的例子中，服务端在响应中返回了所有的关联信息，但是你可能不需要在响应中默认带上这些东西，因为这样会导致响应变得臃肿。因此，规范指明了什么样的关联资源应该被包含在响应中。
+
+例如，如果你只需要 `author` 关系包含在响应中，你只需要在请求中携带上 `include` 参数。这样服务端就会知道在响应中返回特指的关联资源。
+
+```json
+GET /articles/1?include=author HTTP/1.1
+Accept: application/vnd.api+json
+```
+
+如果你需要在响应中返回多重关联资源，只需要用逗号隔开关联参数。你甚至可以更进一步地定义嵌套资源。例如，你需要 `comments`，需要携带 `comments` 的 `author` 只需要在参数中这样写 `comments.author`：
+
+```json
+GET /articles/1?include=author,comments.author HTTP/1.1
+Accept: application/vnd.api+json
+```
+
+这样的灵活性使得你可以获取正确的资源只需要根据需要做出轻微的调整。
+
+### 用得少的字段
+
+当你需要携带复合文档的时候，请求可能会因此快速变得庞大。特别是关联关系包含了大量数据的时候。许多时候，你不需要每一个资源中定义的属性只需要像 `author name` 这样的属性。针对这种情况 JSON API 提供了一种稀疏字段集。
+
+你只需要设置 `fields` 请求参数就能指定需要检索的需要的内容。格式是 `字段名[类型]`，因此你可以根据自己的需求在请求中特指每一个资源。
+
+
+```json
+GET /articles?include=author&fields[article]=title,body&fields[people]=name HTTP/1.1
+Accept: application/vnd.api + json
+```
+
+这样就可以把 `title` 和 `body` 字段从 `articles` 和 `people` 信息表中获取。
