@@ -1,5 +1,5 @@
 ---
-title: "翻译文章 —— 理解 Laravel 中的管道途径"
+title: "翻译文章 —— 理解 Laravel 的管道方式"
 layout: post
 date: 2018-11-10 09:00
 headerImage: false
@@ -11,15 +11,15 @@ author: circle
 description: 翻译文章 —— Laravel 代码解析
 ---
 
-基本上，通过使用 laravel 的管道方式，你可以在几个类之间以一种流畅的方式传递对象以实现任何种类的任务以及最后一旦在所有任务都被完成之后返回结果值。
+基本上，通过使用 laravel 的管道方式，你可以在几个类之间以一种流畅的方式传递对象以实现任何类型的任务，在所有任务一旦被完成之后返回结果。
 
-> 你可以在这里学到更多的 [laravel 管道方式](https://laracasts.com/series/whip-monstrous-code-into-shape/episodes/14)
+> 你可以在这里学到更多的 [laravel 的管道方式](https://laracasts.com/series/whip-monstrous-code-into-shape/episodes/14)
 
-关于管道方式是如何工作的最显著的例子莫过于这个框架自身使用最多的组件 —— 中间件。
+关于管道方式的工作原理最显著的例子就是框架自身使用最多的组件 —— 中间件。
 
-> 中间件提供了一种方便的机制用于过滤对你的应用发起的 HTTP 请求......
+> 中间件提供了一种方便的机制用于过滤经过你的应用的 HTTP 请求......
 
-中间件长的是这个样子的：
+中间件是长的这个样子的：
 
 ```
 <?php
@@ -46,7 +46,7 @@ class TestMiddleware
 }
 ```
 
-这种中间件实质上只是通过管道发送请求的地方，目的是为了执行必要的任务。比如你可以检查请求是否是一个 HTTP 请求，是否是一个 JSON 请求，是否存在用户的认证信息等等。
+中间件实际上只是通过管道的方式传递请求，目的是为了执行必要的任务。比如你可以检查请求是否是一个 HTTP 请求，是否是一个 JSON 请求，是否存在用户的认证信息等等。
 
 如果你看一下 `\Illuminate\Foundation\Http\Kernel` 这个类，你就会发现中间件是如何被一个 `Pipeline` 类的实例执行的。
 
@@ -66,9 +66,9 @@ class TestMiddleware
  	$this->bootstrap();
 
  	return (new Pipeline($this->app))
- 					->send($request)
- 					->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
- 					->then($this->dispatchToRouter());
+		->send($request)
+		->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
+		->then($this->dispatchToRouter());
  }
 ```
 
@@ -78,7 +78,7 @@ class TestMiddleware
 
 ### 处理一个需要运行多个任务的类
 
-思考下这样的场景。假如你正在搭建一个论坛，用户可以产生进程以及留下评论。但是你的客户要求你每当有内容产生的时候自动移除或者修改标签。
+思考下这样的场景。假如你正在搭建一个论坛，用户可以产生进程以及留下评论。但是你的客户要求你每当有内容产生的时候自动移除或者修改相关的标签。
 
 因此这些事你需要做的：
 
@@ -96,7 +96,7 @@ $pipes = [
 ];
 ```
 
-然后将指定的"内容"传递给其中一个任务处理，之后将处理结果传递给下一个任务。我们可以使用管道方式实现一样的效果。
+然后将指定的"内容"传递给其中一个任务处理，之后将处理结果传递给下一个任务。我们可以使用管道的方式实现一样的效果。
 
 ```
 <?php
@@ -120,7 +120,7 @@ public function create(Request $request)
 }
 ```
 
-每个“任务”类应该有一个“处理”方法来执行动作。也许约定好每一个类都有一个锲约来实施会是一个不错的主意：
+每个“任务”类应该有一个“处理”方法来执行动作。也许定一个每个类都有一个方法来实施的“锲约”会是一个不错的主意：
 
 ```
 <?php
@@ -155,7 +155,7 @@ class RemoveBadWords implements Pipe
 }
 ```
 
-处理任务的方法应该接收两个参数，第一个是可传递的对象，第二个是一个闭包，这个闭包的作用是在执行完最后一个管道后将处理好的对象重定向到指定的地方。
+处理任务的方法应该接收两个参数，第一个是可传递的对象，第二个是一个闭包，这个闭包的作用是在执行完最后一个管道方法后将处理好的对象重定向到指定的地方。
 
 你可以自定义方法名称替代 "handle"，然后你需要指定被管道执行的方法名称，就好像这样子
 
@@ -184,11 +184,11 @@ $post = app(Pipeline::class)
 
 ### 结语
 
-记住，有很多方法可以实现这种方式，你想用哪一种取决于你自己。但是在你的武器库里新增一项工具以备不时之需总归是一件好事。
+记住，有很多方法可以实现这种管道方式，想用哪一种取决于你自己。但是在你的武器库里新增一项工具以备不时之需总归是一件好事。
 
-我希望这个例子可以帮助你更好的理解所谓的 "laravel 管道"是如何运行的。
+我希望这个例子可以帮助你更好的理解所谓的 "laravel 的管道"是如何运行的。
 
-如果你想了解更多这方面的知识，你可以看看 laravel 的文档。
+如果你想了解更多这方面的知识，你可以看看 laravel 的文档
 
 [https://laravel.com/api/5.4/Illuminate/Pipeline/Pipeline.html](https://laravel.com/api/5.4/Illuminate/Pipeline/Pipeline.html)
 
@@ -196,7 +196,7 @@ $post = app(Pipeline::class)
 
 这就需要你自己慢慢发现了......如果你有任何建议请告知我。😉
 
-[jeff(@jeffer_8a)|Twiter](https://twitter.com/Jeffer_8a)
+[jeff 的 Twiter](https://twitter.com/Jeffer_8a)
 
 ---  
 原文地址：[https://medium.com/@jeffochoa/understanding-laravel-pipelines-a7191f75c351](https://medium.com/@jeffochoa/understanding-laravel-pipelines-a7191f75c351)
