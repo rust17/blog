@@ -53,7 +53,47 @@ class TestMiddleware
 ```php
 /**
  * 通过中间件或者路由发送发送特定的请求
+ * 
+ * @参数 \Illuminate\Http\Request $request
+ * @返回值 \Illuminate\Http\Response
+ */
+ protected function sendRequestThroughRouter($request)
+ {
+ 	$this->app->instance('request', $request);
 
+ 	Facade::clearResoledInstance('request');
+
+ 	$this->bootstrap();
+
+ 	return (new Pipeline($this->app))
+ 					->send($request)
+ 					->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
+ 					->then($this->dispatchToRouter());
+ }
+```
+
+从这段代码当中，你可以看到，一个 `pipeline` 实例发送请求经过一些 `middleware` 然后分发到 `router`。
+
+如果这一段代码看不懂也不要紧，让我们尝试着通过以下几个例子解释清楚这个概念。
+
+### 处理一个需要运行多个任务的类
+
+思考下这样的场景。假如你正在搭建一个论坛，用户可以产生进程以及留下评论。但是你的客户要求你每当有内容产生的时候自动移除或者修改标签。
+
+因此这些事你需要做的：
+
+1. 用原始文本替换掉链接标签
+2. 使用 * 符号替换掉恶意词汇
+3. 将 script 标签从文本中移除
+
+你可能会新建一些类来处理这些任务。
+
+```php
+$pipes = [
+	RemoveBadWords::class,
+	ReplaceLinkTags::class,
+	RemoveScriptTags::class
+];
 ```
 
 ---  
