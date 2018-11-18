@@ -461,3 +461,68 @@ Vue.component('upload-files',
 require('./components/UploadFiles.vue'));
 ```
 
+你可以根据自己的需要命名。在这篇教程里，我选择以 `"upload-files"` 来命名。
+
+一旦编写完程序，就可以编译 Vue 项目了。在你的 laravel 项目根目录下，执行以下命令：
+
+> npm run watch
+
+也可以使用 `run dev` 或者 `run build` 命令，但是由于项目还在编写中，我更倾向于用 `watch`，因为每当改变代码的时候，就会自动重新编译。
+
+### 提交文件
+
+现在我们开发好了组件，就可以在 laravel 中创建上传文件的视图了。新建文件 `resources/views/files/create.blade.php` 然后输入以下代码：
+
+```
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+	<div class="row justify-content-center">
+		<div class="col-md-8">
+			<div class="card">
+				<div class="card-header">Add files</div>
+
+				<div class="card-body">
+					<upload-files></upload-files>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+@endsection
+```
+
+注意添加了新建的 `<upload-files></upload-files>` 组件。
+
+现在只需要新建各自的控制器方法已经对应的路由。在文件 `FileEntriesController` 当中添加以下方法：
+
+```
+public function create()
+{
+	return view('files.create');
+}
+```
+
+在文件 `routes/web.php` 文件中添加这个视图的路由，以及接收 `Axios` 的 POST 请求的路由：
+
+```
+Route::get('files/create', 'FileEntriesController@create');
+Route::post('files/upload-file',
+'FileEntriesController@uploadFile');
+```
+
+测试一下吧。
+
+我们的脚本将提交的文件保存到数据库当中了。如果返回视图文件，已上传的文件就会显示出来。
+
+如果通过点击文件就下载，只需要添加如下路由：
+
+```
+Route::get('files/{path_file}/{file}', function($path_file = null, $file = null) {
+	$path = storage_path().'/files/uploads/'.$path_file.'/'.$file;
+	if(file_exists($path) {
+		return Response::download($path);
+		})
+});
+```
