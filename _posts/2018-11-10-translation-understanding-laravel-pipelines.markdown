@@ -1,5 +1,5 @@
 ---
-title: "文章 —— 理解 Laravel 的管道方式"
+title: "翻译 —— 理解 Laravel 的管道方式"
 layout: post
 date: 2018-11-10 09:00
 headerImage: false
