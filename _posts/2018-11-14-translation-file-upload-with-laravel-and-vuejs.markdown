@@ -198,3 +198,266 @@ Route::group(['middleware' => 'auth'], function () {
 写在 `Route::group(['middleware' => 'auth'], function () {})` 当中的代码会只允许已登录的用户访问。我们添加了 "get" 路由方式：`Route::get('files', 'FileEntriesController@index')`，第一个参数代表了路由的名字，第二个参数代表将要匹配的路由。
 
 在浏览器中访问该 url，将会看到上传表单。
+
+### 使用 VueJS 上传
+
+现在是时候制作我们的 vue 组件来帮助我们上传文件了，除了实用，优雅还有对终端用户来说非常简单。
+
+在开始开发 VueJS 之前，我们必须要安装一些必要的依赖。只需要在项目的根目录下执行以下命令：
+
+> npm install
+
+稍等一会，这个命令会安装好了依赖放在项目中。注意：当部署到 web 服务器的时候，你必须要在服务器上再次执行这个命令。
+
+现在，新建文件 `resources/assets/js/components/UploadFiles.vue`
+
+Vue 组件一般有这样的基本结构：
+
+```
+<template>
+</template>
+<script>
+	export default {
+
+	}
+</script>
+
+<style>
+
+</style>
+```
+
+`<template></template>` 标签限定了显示在页面的 HTML 代码。`<script></script>` 标签定义了程序如何执行。`<style></style>` 标签定义了组件的样式。后者是可选的。
+
+### Template
+
+在文件中，`<template></template>` 标签之间，添加如下代码：
+
+```
+<template>
+	<div class="container">
+		<div class="large-12 medium-12 small-12 filezone">
+			<input type="file" id="files" ref="files" multiple v-on:change="handleFiles()" />
+			<p>
+				Drop your files here <br>or click to search
+			</p>
+		</div>
+
+		<div v-for="(file, key) in files" class="file-listing">
+			<img class="preview" v-bind:ref="'preview'+parseInt(key)" />
+			{{ file.name }}
+			<div class="success-container" v-if="file.id > 0">
+				Success
+			</div>
+			<div class="remove-container" v-else>
+				<a class="remove" v-on:click="removeFile(key)">Revome</a>
+			</div>
+		</div>
+
+		<a class="submit-button" v-on:click="submitFiles()" v-show="files.length > 0">Submit</a>
+	</div>
+</template>
+```
+
+有些地方需要重点说明一下：
+
+#### 输入
+
+首先，在 `<input>` 标签里有 `"ref"` 属性，声明了输入，这样一来我们就可以在 VueJS 中访问到该标签。接着，`handleFiles` 方法会在该领域有变化时执行。
+
+#### 预览和移除
+
+下边是一个 `<div>` 标签中的 `for 循环`，每个由 `files` 变量映射出的文件时会显示出来。在 `div` 标签内部进行了图片的预览，根据文件所在的数组中的索引显示，显示顺序依次是文件名、两个 div：成功 和 移除。两个 div 收到了 v-if 和 v-else 的限制，如果文件没有被提交时，显示移除的选项。如果该文件已被提交，则该文件不能被移除，“成功”信息则会显示，表明该文件已被正确的发送了。
+
+#### 提交
+
+最后，提交按钮中的 `"submitFiles"` 方法会在该按钮被点击时触发(`v-on: click`)。根据 Vue 的 `v-show` 规则，该按钮只会在文件没提交的时候显示。
+
+### Script
+
+首先，实例化需要的变量：
+
+```
+data() {
+	return {
+		files: []
+	}
+}
+```
+
+`files` 是一个存放上传文件的数组变量，初始值是空。
+
+接下来，创建方法，应该包含 methods 当中：
+
+```
+methods: {
+	// 在这里书写方法的代码
+}
+```
+
+第一个方法是 `handleFiles()`：
+
+```
+handleFiles() {
+	let uploadedFiles = this.$refs.files.files;
+
+	for(var i = 0; i < uploadFiles.length; i++) {
+		this.files.push(uploadedFiles[i]);
+	}
+	this.getImagePreviews();
+}
+```
+
+这个方法的作用是将添加到 input 标签中的文件整理到一个文件数组变量中。最后，调用显示图片预览的方法 `getImagePreviews`。
+
+```
+getImagePreviews() {
+	for( let i = 0; i < this.files.length; i++) {
+		if ( /\.(jpe?g|png|gif)$/i.test( this.files[i].name)) {
+			let reader = new FileReader();
+			reader.addEventListener("load", function(){
+				this.$refs['preview'+parseInt(i)][0].src = reader.result;
+			}.bind(this), false);
+			reader.readAsDataURL( this.files[i]);
+		} else {
+			this.$nextTick(function(){
+				this.$refs['preview'+parseInt(i)][0].src = '/img/generic.png';
+			});
+		}
+	}
+},
+```
+
+基本上，该方法遍历了整个文件数组变量，第一步判断变量是否是图片，如果是，则生成一个预览文件并将其展示到各自的文件 div 标签当中。如果不是，则展示一个默认图片。默认展示的图片是存放在 `public/img/generic.png` 的目录中。
+
+接下来是移除文件的方法：
+
+```
+removeFile(key) {
+	this.files.splice(key, 1);
+	this.getImagePreviews();
+},
+```
+
+这个方法仅仅是移除选中的文件，然后更新预览图片。
+
+最后是提交方法：
+
+```
+submitFiles() {
+	for ( let i = 0; i < this.files.length; i++) {
+		if(this.files[i].id) {
+			continue;
+		}
+		let formData = new FormData();
+		formData().append('file', this.files[i]);
+
+		axios.post('/' + this.post_url, 
+			formData,
+			{
+				headers: {
+					'Content-Type': 'multipart/form-data'
+				}
+			}
+		).then(function(data) {
+			this.files[i].id = data['data']['id'];
+			this.files.splice(i, 1, this.files[i]);
+			console.log('success');
+		}.bind(this)).catch(function(data) {
+			console.log('error');
+		});
+	}
+}
+```
+
+这个方法遍历了整个文件数组，确认文件是否被发送（如果文件有 id 值，则代表以及被提交过了）然后一个一个发送。如果成功，更新模板当中的 `files` 变量。让我们来仔细看看发生了什么：
+
+首先新建一个表单：`let formData = new FormData()`，然后将文件添加进待发送的表单：`formData.append('file', this.files[i])`。
+
+使用 `axios` 发送 `"post"` 表单请求。该方法有三个参数。第一个是目标 url，在本例子当中是 `"/files/upload-file"`。第二个参数是需要发送的内容，在本例子当中是前面创建的表单数据 `formData`。第三个参数当中添加了请求头部信息，包含了 `'Content-Type':'multipart/form-data'` 以明确表示可以通过表单发送文件。
+
+最后，对于成功与失败都有对应的回调函数。注意没有成功更新时将会使用新上传文件的 ID 信息来更新文件数组变量 `files`。
+
+### Style
+
+我不会在 CSS 上面钻研太深以免得造成文章太长，基本上就是隐藏了文件的输入框，渲染了可拖放的虚线框。
+
+```
+<style scoped>
+    input[type="file"]{
+        opacity: 0;
+        width: 100%;
+        height: 200px;
+        position: absolute;
+        cursor: pointer;
+    }
+    .filezone {
+        outline: 2px dashed grey;
+        outline-offset: -10px;
+        background: #ccc;
+        color: dimgray;
+        padding: 10px 10px;
+        min-height: 200px;
+        position: relative;
+        cursor: pointer;
+    }
+    .filezone:hover {
+        background: #c0c0c0;
+    }
+
+    .filezone p {
+        font-size: 1.2em;
+        text-align: center;
+        padding: 50px 50px 50px 50px;
+    }
+    div.file-listing img{
+        max-width: 90%;
+    }
+
+    div.file-listing{
+        margin: auto;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    div.file-listing img{
+        height: 100px;
+    }
+    div.success-container{
+        text-align: center;
+        color: green;
+    }
+
+    div.remove-container{
+        text-align: center;
+    }
+
+    div.remove-container a{
+        color: red;
+        cursor: pointer;
+    }
+
+    a.submit-button{
+        display: block;
+        margin: auto;
+        text-align: center;
+        width: 200px;
+        padding: 10px;
+        text-transform: uppercase;
+        background-color: #CCC;
+        color: white;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+</style>
+```
+
+### 注册组件以及编译
+
+我们已经完成了我们的 Vue 组件，接下来必须注册组件名字以用于在视图中调用。打开文件 `resources/assets/js/app.js` 然后在示例组件下添加如下代码：
+
+```
+Vue.component('upload-files', 
+require('./components/UploadFiles.vue'));
+```
+
