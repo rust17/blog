@@ -526,3 +526,117 @@ Route::get('files/{path_file}/{file}', function($path_file = null, $file = null)
 		})
 });
 ```
+
+以及在文件名处添加：
+
+```
+<a href="{{ url('files/'.$file->path.'/'.$file->filename) }}">{{ $file->filename }}</a>
+```
+
+### 额外奖励：将文件添加到其他模型
+
+我们的组件已经完美地运行并且将文件保存到了各自的文件表当中，但是通常希望将文件与其他的模型比如用户个人文档联系起来。通过添加一点点小改动，就可以让新建的组件变得多重功能以及在整个项目中复用。
+
+为了达到这点，在 Vue 组件当中，我们必须新增一些将要通过视图发送的参数。它们对于每个模型都是必要的，Axios 发送的文件地址可能会改变，以及文件输入框的名字可能会改变。打开文件 `resources/assets/js/components/UploadFiles.vue` 在模板中添加以下加粗的改变：
+
+```
+<template>
+    <div class="container">
+        <div class="large-12 medium-12 small-12 filezone">
+            <input type="file" id="files" ref="files" multiple v-on:change="handleFiles()"/>
+            <p>
+                Drop your files here <br>or click to search
+            </p>
+        </div>
+        <div v-for="(file, key) in files" class="file-listing">
+            <img class="preview" v-bind:ref="'preview'+parseInt(key)"/>
+            {{ file.name }}
+            <div class="success-container" v-if="file.id > 0">
+                Success
+                **<input type="hidden" :name="input_name" :value="file.id"/>**
+            </div>
+            <div class="remove-container" v-else>
+                <a class="remove" v-on:click="removeFile(key)">Remove</a>
+            </div>
+        </div>
+        <a class="submit-button" v-on:click="submitFiles()" v-show="files.length > 0">Submit</a>
+    </div>
+</template>
+```
+
+注意我们新加了一个只有文件有 id 值的时候才会显示的输入框，就是说当文件已经被发送到指定路径了才会显示。输入框被命名为 `"input_name"`，它的名称将会通过 VueJS 的 `props` 传递。由于上传文件的 URL 会取决于模型，我们新建一个名叫 `"post_url"` 的 props 来接收它。添加以下加粗的代码到 script 开始处：
+
+```
+<script>
+	export default {
+		**props: ['input_name', 'post_url'],**
+		data() {
+			return {
+				files: []
+			}
+		},
+```
+
+接着，在 Axios 请求中添加 URL prop。新的上传文件 id 值是以前保存的，所以是不变的。`submitFiles` 方法是这样的：
+
+```
+submitFiles() {
+	for( let i = 0; i < this.files.length; i++) {
+		if (this.files[i].id) {
+			continue;
+		}
+		let formData = new FormData();
+		formData.append('file', this.files[i]);
+
+		axios.post('/' + this.post_url,
+			formData,
+			{
+				headers: {
+					'Content-Type': 'multipart/form-data'
+				}
+			}
+		).then(function(data) {
+			this.files[i].id = data['data']['id'];
+			this.files.splice(i, 1, this.files[i]);
+			console.log('success');
+		}.bind(this)).catch(function(data) {
+			console.log('error');
+		});
+	}
+}
+``` 
+
+添加了两个 props 到 Vue 组件中，我们需要在使用到这个组件的地方像下面这样传递参数：
+
+```
+<upload-files :input_name="'users[]'" :post_url="'files/upload-file'"></upload-files>
+```
+
+在这个例子中，我们自定义的输入是 `users[]` 以及附属 URL 是 `files/upload-file`。现在已经可以在任意表单中使用了，只需要简单的指定输入的名称（由于上传可以是多个文件，所以要用括号 [] 来指定是数组），还有提交文件的 URL 路径。
+
+每一个成功上传的文件，你的 ID 都将存放于输入框中并通过表单提交，这样就跟模型联系起来了。
+
+在处理表单提交的结果的时候，还需要这样做：
+
+```
+foreach($input['users'] as $file) {
+	// 保存文件的 id 
+}
+```
+
+以上就是所有内容。希望能有所帮助。尽管在下方的评论链接中问问题。我还制作了这个项目的 GITHUB 教程链接来给有需要的人。
+
+[Project on GitHub](https://github.com/arthursorriso/laravueupload)
+
+### 更多关于这篇文章的来源信息
+
+这篇文章是发布于 [Noteworthy](https://blog.usejournal.com/)，每天都有数千人访问学习关于塑造我们想要的产品以及想法。
+
+关注我们的出版物以及 [Journal团队](https://usejournal.com/?utm_source=usejournal.com&utm_medium=blog&utm_campaign=guest_post)的特色设计故事。
+
+---  
+原文地址：[https://blog.usejournal.com/file-upload-with-laravel-and-vuejs-a70ae85e34a1](https://blog.usejournal.com/file-upload-with-laravel-and-vuejs-a70ae85e34a1)
+
+作者：[Arthur Henrique](https://blog.usejournal.com/@arthursorriso)
+
+---

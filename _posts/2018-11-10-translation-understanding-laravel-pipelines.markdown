@@ -201,5 +201,7 @@ $post = app(Pipeline::class)
 ---  
 原文地址：[https://medium.com/@jeffochoa/understanding-laravel-pipelines-a7191f75c351](https://medium.com/@jeffochoa/understanding-laravel-pipelines-a7191f75c351)
 
+作者：[Jeff](https://medium.com/@jeffochoa)
+
 ---
 

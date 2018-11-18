@@ -336,4 +336,6 @@ Accept: application/vnd.api+json
 ---  
 原文地址：[https://laravel-news.com/json-api-introduction](https://laravel-news.com/json-api-introduction)
 
+作者：[Björn Brala](https://laravel-news.com/@bbrala)
+
 ---
