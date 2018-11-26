@@ -12,19 +12,19 @@ author: circle
 description: 翻译文章 —— Laravel 的上传功能实现
 ---
 
-在搭建一个系统的过程中，每个开发者都会碰到文件上传的功能。当然了，对于缺乏经验的开发者来说，这可能是一个棘手的问题。并且，当你希望系统更简单并且对用户更友好的时候，这个任务就会成为一个头痛的问题。这篇教程的目的就在于逐步促进此过程的开发。
+在搭建一个系统的过程中，每个开发者都会碰到文件上传的功能。当然了，对于缺乏经验的开发者来说，这可能是一个棘手的问题。并且，当你希望系统更简单并且对用户更友好的时候，这就会成为一个头痛的问题。这篇教程的目的就在于逐步促进此过程的开发。
 
 ### 前提
 
-这篇教程的前提是，假设你已经有一个 laravel 项目以及掌握了一些关于 php、[VueJS](https://vuejs.org/) 和 laravel 自身的知识点。
+这篇教程的前提是，你已经有一个 laravel 项目以及掌握了一些关于 php、[VueJS](https://vuejs.org/) 和 laravel 的知识点。
 
-另外还有一个前提条件是我认为你已经掌握一个支持表单类型数据的现代化浏览器的使用。
+另外还有一个前提条件是我认为你已经掌握一个支持现代化表单数据提交的浏览器的使用。
 
 ### 后端
 
-首先，我们的系统应该将我们的文件保存在某个目录下。Laravel 自带了一个配置简单并且功能强大的文件系统。我们可以使用本地目录来存储文件，或者存储于云端服务器，比如 Amazon S3。这篇教程，我们将使用本地路径作为存储目录。
+首先，我们的系统应该将我们的文件保存在某个目录下。Laravel 自带了一个配置简单并且功能强大的文件系统。我们可以使用本地目录来存储文件，或者存储于云端服务器，比如 Amazon S3。这篇教程当中，我们将使用本地路径作为存储目录。
 
-在你的 Laravel 项目中，打开 `config/filesystems.php` 这个文件。找到 `disks` 这个配置项。你会看到已经预设好了一些硬盘选项。让我们来新建一个硬盘选项用来存储我们的新文件。在 `local` 路径下方，添加如下代码：
+在你的 Laravel 项目中，打开 `config/filesystems.php` 这个文件。找到 `disks` 这个配置项。你会看到一些已经预设好的硬盘选项。让我们来新建一个硬盘选项用来存储我们的新文件。在 `local` 下方，添加如下代码：
 
 ```
 'uploads' => [
@@ -41,7 +41,7 @@ description: 翻译文章 —— Laravel 的上传功能实现
 
 > php artisan make:migration create_file_entries_table
 
-这个命令将新建一个用于数据库建表的文件，文件的位置是 `database/migrations`。在迁移文件中添加一些需要的字段，就好像这样：
+这个命令将新建一个数据库建表的文件，文件的位置是 `database/migrations`。在迁移文件中添加一些需要的字段，像这样：
 
 ```
 class CreateFileEntriesTable extends Migration
@@ -75,7 +75,7 @@ class CreateFileEntriesTable extends Migration
 }
 ```
 
-我将这个表命名为 file_entries，不过你可以起你自己想要的名字。在这个文件中，在默认字段 `id` 和 `timestamps`(`created_at`、`updated_at` 字段)，我们新建了以下字段：
+我将这个表命名为 file_entries，不过你可以起你自己想要的名字。这个文件表示，在默认字段 `id` 和 `timestamps`(`created_at`、`updated_at` 字段)之间，我们新建了以下字段：
 
 1. filename：上传文件名；
 2. mime：文件的 mime 类型；
@@ -87,7 +87,7 @@ class CreateFileEntriesTable extends Migration
 > php artisan make:model FileEntry
 > php artisan make:controller FileEntriesController
 
-在模型类当中，我们应该添加一些上传文件时需要填充的字段。就像这样：
+在模型类当中，我们应该添加一些上传文件时需要填充的字段。像这样：
 
 ```
 class FileEntry extends Model
@@ -96,7 +96,7 @@ class FileEntry extends Model
 }
 ```
 
-在控制器里，我们必须添加一个方法用于接收文件上传表单提交过来的数据，并经过处理，保存在正确的路径以及数据库当中。打开 `app/Http/Controllers/FileEntriesControlle.php` 控制器文件新建 `uploadFile` 方法：
+在控制器里，我们必须添加一个方法用于接收文件上传表单提交过来的数据，并经过处理，将正确的路径保存到数据库当中。打开 `app/Http/Controllers/FileEntriesControlle.php` 控制器文件新建 `uploadFile` 方法：
 
 ```
 public function uploadFile(Request $request) {
@@ -137,7 +137,7 @@ public function uploadFile(Request $request) {
 
 > php artisan make:auth
 
-这条命令将会新建登录，注册以及密码找回相关的页面。
+这条命令将会新建登录，注册以及密码找回的相关页面。
 
 现在新建文件夹 `resources/views/files` 以及新建文件 `index.blade.php` 填写入以下代码：
 
@@ -149,7 +149,7 @@ public function uploadFile(Request $request) {
 	<div class="row justify-content-center">
 		<div class="col-md-8">
 			<div class="card">
-				<div class="card-header">Files <a href="{{ url('files/create') }}" class="btn btn-info">Add files</a> </div>
+				<div class="card-header">Files <a href="{ { url('files/create') } }" class="btn btn-info">Add files</a> </div>
 				<div class="card-body">
 					@if($files->count())
 						<table class="table">
@@ -157,8 +157,8 @@ public function uploadFile(Request $request) {
 							<th>Size</th>
 							@foreach($files as $file)
 								<tr>
-									<td>{{ $file->filename }}</td>
-									<td>{{ $file->size }} Bytes</td>
+									<td>{ { $file->filename } }</td>
+									<td>{ { $file->size } } Bytes</td>
 								</tr>
 							@endforeach
 						</table>
@@ -185,9 +185,9 @@ public function index() {
 }
 ```
 
-这里，我们将获取到的存放于数据库的文件信息写入文件变量(`$files = FileEntry::all()`)，然后返回给我们的视图(`return view('files.index', compact('files'))`)。
+这里，我们将获取到的存放于数据库的文件信息写入变量(`$files = FileEntry::all()`)，然后返回给我们的视图(`return view('files.index', compact('files'))`)。
 
-最后，我们需要将路由注册到可通过 URL 的方式访问。在 `routes/web.php` 文件中添加以下代码片段：
+最后，我们需要将路由注册，使得外界可通过 URL 的方式访问。在 `routes/web.php` 文件中添加以下代码片段：
 
 ```
 Route::group(['middleware' => 'auth'], function () {
@@ -201,17 +201,17 @@ Route::group(['middleware' => 'auth'], function () {
 
 ### 使用 VueJS 上传
 
-现在是时候制作我们的 vue 组件来帮助我们上传文件了，除了实用，优雅还有对终端用户来说非常简单。
+现在是时候制作我们的 vue 组件来帮助我们上传文件了，使用 vue 的原因，除了实用，优雅还有对终端用户来说非常简单。
 
-在开始开发 VueJS 之前，我们必须要安装一些必要的依赖。只需要在项目的根目录下执行以下命令：
+在开始开发 VueJS 之前，我们必须要安装一些必备的依赖。只需要在项目的根目录下执行以下命令：
 
 > npm install
 
-稍等一会，这个命令会安装好了依赖放在项目中。注意：当部署到 web 服务器的时候，你必须要在服务器上再次执行这个命令。
+稍等几分钟，这个命令会自动安装好了依赖并放在项目目录中。注意：当部署到 web 服务器的时候，你必须要在服务器上再次执行这个命令。
 
 现在，新建文件 `resources/assets/js/components/UploadFiles.vue`
 
-Vue 组件一般有这样的基本结构：
+Vue 组件的基本结构如下：
 
 ```
 <template>
@@ -227,7 +227,7 @@ Vue 组件一般有这样的基本结构：
 </style>
 ```
 
-`<template></template>` 标签限定了显示在页面的 HTML 代码。`<script></script>` 标签定义了程序如何执行。`<style></style>` 标签定义了组件的样式。后者是可选的。
+`<template></template>` 标签之间的代码限定了显示在页面的 HTML。`<script></script>` 标签之间的代码定义了程序如何执行。`<style></style>` 标签之间的代码定义了组件的样式。后者是可选的。
 
 ### Template
 
@@ -263,11 +263,11 @@ Vue 组件一般有这样的基本结构：
 
 #### 输入
 
-首先，在 `<input>` 标签里有 `"ref"` 属性，声明了输入，这样一来我们就可以在 VueJS 中访问到该标签。接着，`handleFiles` 方法会在该领域有变化时执行。
+首先，在 `<input>` 标签里有 `"ref"` 属性，声明了输入，这样一来我们就可以在 VueJS 中访问到输入的文件。接着，`handleFiles` 方法会监听输入有变化时执行。
 
 #### 预览和移除
 
-下边是一个 `<div>` 标签中的 `for 循环`，每个由 `files` 变量映射出的文件时会显示出来。在 `div` 标签内部进行了图片的预览，根据文件所在的数组中的索引显示，显示顺序依次是文件名、两个 div：成功 和 移除。两个 div 收到了 v-if 和 v-else 的限制，如果文件没有被提交时，显示移除的选项。如果该文件已被提交，则该文件不能被移除，“成功”信息则会显示，表明该文件已被正确的发送了。
+下边是一个 `<div>` 标签中的 `for 循环`，每个由 `files` 变量映射出的文件会一一显示出来。在 `div` 标签内部进行了图片的预览，根据文件所在的数组中的索引显示，显示顺序依次是文件名、两个 div：分别是成功和移除的选项。两个 div 受到了 v-if 和 v-else 的限制，如果文件没有被提交时，显示移除的选项。如果该文件已被提交，则该文件不能被移除，“成功”信息则会显示，表明该文件已被正确的发送了。
 
 #### 提交
 
@@ -287,7 +287,7 @@ data() {
 
 `files` 是一个存放上传文件的数组变量，初始值是空。
 
-接下来，创建方法，应该包含 methods 当中：
+接下来，创建方法，应该包含在 methods 当中：
 
 ```
 methods: {
@@ -328,7 +328,7 @@ getImagePreviews() {
 },
 ```
 
-基本上，该方法遍历了整个文件数组变量，第一步判断变量是否是图片，如果是，则生成一个预览文件并将其展示到各自的文件 div 标签当中。如果不是，则展示一个默认图片。默认展示的图片是存放在 `public/img/generic.png` 的目录中。
+基本上，该方法遍历了整个上传文件数组变量，第一步判断变量是否是图片，如果是，则生成一个预览文件并将其展示到 div 标签当中。如果不是，则展示一个默认图片。默认展示的图片的存放路径是 `public/img/generic.png`。
 
 接下来是移除文件的方法：
 
@@ -370,7 +370,7 @@ submitFiles() {
 }
 ```
 
-这个方法遍历了整个文件数组，确认文件是否被发送（如果文件有 id 值，则代表以及被提交过了）然后一个一个发送。如果成功，更新模板当中的 `files` 变量。让我们来仔细看看发生了什么：
+这个方法遍历了整个文件数组，确认文件是否被发送（如果文件有 id 值，则代表以经被提交过）然后一个一个发送。如果成功，更新模板当中的 `files` 变量。让我们来仔细看看这个方法做了什么：
 
 首先新建一个表单：`let formData = new FormData()`，然后将文件添加进待发送的表单：`formData.append('file', this.files[i])`。
 
@@ -380,7 +380,7 @@ submitFiles() {
 
 ### Style
 
-我不会在 CSS 上面钻研太深以免得造成文章太长，基本上就是隐藏了文件的输入框，渲染了可拖放的虚线框。
+我不会在 CSS 上面钻研太深以免得造成文章篇幅太长，这部分基本上就是隐藏文件的输入框，渲染可拖放的虚线框。
 
 ```
 <style scoped>
@@ -467,7 +467,7 @@ require('./components/UploadFiles.vue'));
 
 > npm run watch
 
-也可以使用 `run dev` 或者 `run build` 命令，但是由于项目还在编写中，我更倾向于用 `watch`，因为每当改变代码的时候，就会自动重新编译。
+也可以使用 `run dev` 或者 `run build` 命令，但是由于项目还在编写中，我更倾向于用 `watch`，因为每当代码改变的时候，就会自动重新编译。
 
 ### 提交文件
 
@@ -495,7 +495,7 @@ require('./components/UploadFiles.vue'));
 
 注意添加了新建的 `<upload-files></upload-files>` 组件。
 
-现在只需要新建各自的控制器方法已经对应的路由。在文件 `FileEntriesController` 当中添加以下方法：
+现在只需要新建各自的控制器方法已及对应的路由。在文件 `FileEntriesController` 当中添加以下方法：
 
 ```
 public function create()
@@ -504,7 +504,7 @@ public function create()
 }
 ```
 
-在文件 `routes/web.php` 文件中添加这个视图的路由，以及接收 `Axios` 的 POST 请求的路由：
+在文件 `routes/web.php` 文件中添加这个视图的路由，以及接收 `Axios` POST 请求的路由：
 
 ```
 Route::get('files/create', 'FileEntriesController@create');
@@ -514,7 +514,7 @@ Route::post('files/upload-file',
 
 测试一下吧。
 
-我们的脚本将提交的文件保存到数据库当中了。如果返回视图文件，已上传的文件就会显示出来。
+我们的脚本将提交的文件保存到数据库当中了。如果返回列表视图文件，已上传的文件就会显示出来。
 
 如果通过点击文件就下载，只需要添加如下路由：
 
@@ -523,14 +523,14 @@ Route::get('files/{path_file}/{file}', function($path_file = null, $file = null)
 	$path = storage_path().'/files/uploads/'.$path_file.'/'.$file;
 	if(file_exists($path) {
 		return Response::download($path);
-		})
+	})
 });
 ```
 
 以及在文件名处添加：
 
 ```
-<a href="{{ url('files/'.$file->path.'/'.$file->filename) }}">{{ $file->filename }}</a>
+<a href="{ { url('files/'.$file->path.'/'.$file->filename) } }">{ { $file->filename } }</a>
 ```
 
 ### 额外奖励：将文件添加到其他模型
@@ -553,7 +553,7 @@ Route::get('files/{path_file}/{file}', function($path_file = null, $file = null)
             {{ file.name }}
             <div class="success-container" v-if="file.id > 0">
                 Success
-                **<input type="hidden" :name="input_name" :value="file.id"/>**
+                <input type="hidden" :name="input_name" :value="file.id"/> <-- 修改的地方
             </div>
             <div class="remove-container" v-else>
                 <a class="remove" v-on:click="removeFile(key)">Remove</a>
@@ -564,12 +564,12 @@ Route::get('files/{path_file}/{file}', function($path_file = null, $file = null)
 </template>
 ```
 
-注意我们新加了一个只有文件有 id 值的时候才会显示的输入框，就是说当文件已经被发送到指定路径了才会显示。输入框被命名为 `"input_name"`，它的名称将会通过 VueJS 的 `props` 传递。由于上传文件的 URL 会取决于模型，我们新建一个名叫 `"post_url"` 的 props 来接收它。添加以下加粗的代码到 script 开始处：
+注意我们新加了一个只有文件有 id 值的时候才会显示的输入框，就是说当文件已经被发送到指定路径时才会显示。输入框被命名为 `"input_name"`，它的名称将会通过 VueJS 的 `props` 传递。由于上传文件的 URL 会取决于模型，我们新建一个名叫 `"post_url"` 的 props 来接收它。添加以下加粗的代码到 script 开始处：
 
 ```
 <script>
 	export default {
-		**props: ['input_name', 'post_url'],**
+		props: ['input_name', 'post_url'],  <-- 修改的地方
 		data() {
 			return {
 				files: []
