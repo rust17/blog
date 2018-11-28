@@ -346,6 +346,61 @@ public function flag()
 }
 ```
 
+### 创建变形器
+
+Laravel 5.5 自带了一个非常棒的特性，如果你熟悉构建 API 那你肯定清楚一个痛点是经常要改变你的数据以防止暴漏你的数据表结构给你的客户端，因为如果你出于安全考虑而改变表结构，你就会打破任何依赖于 API 的东西。暴漏你的表结构对你没有任何好处。
+
+在我们的这个例子当中，我们只需要一个 Signature 变形器，我们可以通过运行该命令来创建它：
+
+```shell
+php artisan make:resource SignatureResource
+```
+
+该文件的内容如下：
+
+```php
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Resources\Json\Resource;
+
+class SignatureResource extends Resource
+{
+    /_*
+     _ Transform the signature into an array.
+     _ 
+     _ @param \Illuminate\Http\Request
+     _ @return array
+     _/
+    public function toArray($request)
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'avatar' => $this->avatar,
+            'body' => $this->body,
+            'date' => $this->created_at->diffForHumans()
+        ];
+    }
+}
+```
+
+由于我们使用了一个不存在的 **avatar** 属性，我们需要为此写一个访问器。把这个放在我们的 **Signature** 模型中最合适了，因为我们不希望暴漏我们的用户邮件地址。
+
+```php
+/_*
+ _ Get the user Gravatar by their email address.
+ _
+ _ @return string */
+public function getAvatarAttribute()
+{
+    return sprintf('https://www.gravatar.com/avatar/%s?s=100', md5($this->email));
+} 
+```
+
+### 使用 Postman 终端测试
+
 
 ---  
 原文地址：[https://scotch.io/tutorials/build-a-guestbook-with-laravel-and-vuejs](https://scotch.io/tutorials/build-a-guestbook-with-laravel-and-vuejs)
