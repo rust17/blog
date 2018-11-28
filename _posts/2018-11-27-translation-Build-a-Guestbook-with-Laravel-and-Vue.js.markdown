@@ -214,6 +214,139 @@ routes/api.php
     Route::put('signatures/{signature}/report', 'Api\ReportSignature@update');
 ```
 
+#### 创建控制器
+
+在定义路由部分你已经看到了，我们需要的控制器是 **SignatureController** 和 **ReportSignature**。
+
+* 创建并编写 SignatureController
+
+```shell
+php artisan make:controller Api/SignatureController
+```
+
+控制器的内容如下：
+
+```php
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Signature;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\SignatureResource;
+
+class SignatureController extends Controller
+{
+    /**
+     **_ Return a paginated list of signatures.
+     _**
+     **_ @return SignatureResource
+     _**/
+    public function index()
+    {
+        $signatures = Signature::latest()
+            ->ignoreFlagged()
+            ->paginate(20);
+
+        return SignatureResource::collection($signatures);
+    }
+
+    /**
+     _ Fetch and return the signature.
+     _
+     _ @param Signature @signature
+     _ @return SignatureResource
+     _/
+    public function show(Signature $signature)
+    {
+        return new SignatureResource($signature);
+    }
+
+    /**
+    _ Validate and save a new signature to the database.
+    _
+    _ @param Request $request
+    _ @return SignatureResource
+    _/
+    public function store(Request $request)
+    {
+        $signature = $this->validate($request, [
+            'name' => 'required|min:3|max:50',
+            'email' => 'required|email',
+            'body' => 'required|min:3',
+        ]);
+
+        $signature = Signature::create($signature);
+
+        return new SignatureResource($signature);
+    }
+}
+```
+
+正如你所见，在我们的 **index** 方法中，我们使用了一个名为 **ignoreFlagged** 的作用域来限制返回没有被标记过的签名。你可以在 **Signature** 模型中添加下列代码：
+
+```php
+/_*
+ _ Ignore flagged signatures.
+ _
+ _ @param $query
+ _ @return mixed
+ _/
+public function scopeIgnoreFlagged($query)
+{
+    return $query->where('flagged_at', null);
+}
+```
+
+* 创建以及编写 ReportSignature
+
+```shell
+php artisan make:controller Api/ReportSignature
+```
+
+以下是该文件所包含的内容：
+
+```php
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Signature;
+use App\Http\Controllers\Controller;
+
+class ReportSignature extends Controller
+{
+    /_*
+     _ Flag the given signature.
+     _
+     _ @param Signature $signature
+     _ @return Signature
+     _/
+    public function update(Signature $signature)
+    {
+        $signature->flag();
+
+        return $signature;
+    }
+}
+```
+
+当我们收到使用 Laravel 模型绑定的签名模型实例时，我们就调用一个 flag 方法将该实例的 **flagged_at** 属性值设置成当前时间，跟 Laravel 软删除的工作原理一致。你可以在 **Signature** 模型中通过定义这个方法添加这个功能。
+
+```php
+/_*
+ _ Flag the given signature.
+ _ 
+ _ @return bool
+ */
+public function flag()
+{
+    return $this->update(['flagged_at' => \Carbon\Carbon::now()]);
+}
+```
+
+
 ---  
 原文地址：[https://scotch.io/tutorials/build-a-guestbook-with-laravel-and-vuejs](https://scotch.io/tutorials/build-a-guestbook-with-laravel-and-vuejs)
 
