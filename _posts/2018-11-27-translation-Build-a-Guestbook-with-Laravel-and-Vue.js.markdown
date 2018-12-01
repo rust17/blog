@@ -420,6 +420,101 @@ public function getAvatarAttribute()
 
 ### 前端搭建
 
+目前为止，我们已经差不多完成了后端的工作，剩下的就是将后端与前端连接起来。
+
+#### 建立首页
+
+GET:/ 这个路由是我们的留言板入口，主要是负责渲染首页。
+
+routes/web.php:
+
+```php
+Route::get('/', 'SignaturesController@index')->name('home');
+```
+
+然后通过执行以下命令新建控制器：
+
+```shell
+php artisan make:controller SignaturesController
+```
+
+控制器的内容如下：
+
+```php
+<?php 
+
+namespace App\Http\Controllers;
+
+class SignaturesController extends Controller
+{
+    /_*
+     _ Display the GuestBook homepage.
+     _
+     _ @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public functionn index()
+    {
+        return view('signatures.index');
+    }
+}
+```
+
+然后，我们需要新建我们的 **signatures.index** 视图。在 **/resources/views/** 目录下新建一个文件 **master.blade.php**，该文件主要是制定了整个网站的布局以及允许其他页面的继承。
+
+```php
+<!doctype html>
+<html lang="{{ app()->getLocale() }}">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scoth.io GuestBook</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" type="text/css" href="{{ mix('css/app.css') }}">
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar navbar-findcond">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="{{ route('home') }}">GuestBook</a>
+                </div>
+                <div class="collapse navbar-collapse" id="navbar">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="active">
+                            <a href="{{ route('sign') }}">Sign the GuestBook</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        @yield('content')
+    </div>
+    <script src="{{ mix('js/app.js') }}"></script>
+</body>
+</html>
+```
+
+然后，我们将在 **signatures** 文件夹下新建一个视图文件 **index.blade.php**
+
+```php
+@extends('master')
+
+@section('content')
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <signatures></signatures>
+        </div>
+    </div>
+</div>
+@endsection
+```
+
+#### 建立签名新增页面
+
+
+
 
 ---  
 原文地址：[https://scotch.io/tutorials/build-a-guestbook-with-laravel-and-vuejs](https://scotch.io/tutorials/build-a-guestbook-with-laravel-and-vuejs)
