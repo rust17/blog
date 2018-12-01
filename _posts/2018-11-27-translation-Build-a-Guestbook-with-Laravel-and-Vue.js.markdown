@@ -513,7 +513,197 @@ class SignaturesController extends Controller
 
 #### 建立签名新增页面
 
+GET:/sign 这个页面负责显示签名新增表单
 
+```php
+Route::get('sign', 'SignaturesController@create')->name('sign');
+```
+
+我们早已新建了这个控制器，现在让我们新增这个方法：
+
+```php
+/_*
+ _ Display the GuestBook form page.
+ _ 
+ _ @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+ */
+public function create()
+{
+    return view('signatures.sign');
+}
+```
+
+在 **resources/views/signatures/** 目录下新建视图文件 **sign.blade.php**
+
+```php
+@extends('master')
+
+@section('content')
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <signature-form></signature-form>
+        </div>
+    </div>
+</div>
+@endsection
+```
+
+### 使用 Laravel 预设
+
+在 Laravel 5.5 之前，Laravel 自带了 Bootstrap 和 Vue.js 的脚手架。但是并不是每个人都想使用这些技术，因此在 Laravel 5.5 当中你可以通过执行命令直接替换成你喜欢的框架：
+
+```shell
+php artisan preset react
+```
+
+或者你只希望安装 Bootstrap 不需要任何 JS 框架：
+
+```shell
+php artisan preset bootstrap
+```
+
+或者你完全不需要任何脚手架工具：
+
+```shell
+php artisan preset none
+```
+
+在我们的例子当中，我们会保留 Vue.js 和 Bootstrap 的预设，因此执行以下命令来安装所需的依赖：
+
+```shell
+npm install
+```
+
+打开文件 **/resources/assets/sass/app.scss** ，我早已为项目创建了 css 样式，添加以下代码：
+
+```css
+$color_1: #f14444;
+$color_2: #444;
+$color_3: #fff;
+$border_color_1: #ccc;
+$border_color_2: #fff;
+$border_color_3: #f14444;
+
+nav.navbar-findcond {
+  background: #fff;
+  border-color: $border_color_1;
+  box-shadow: 0 0 2px 0 #ccc;
+  a {
+    color: $color_1;
+  }
+  ul.navbar-nav {
+    a {
+      color: $color_1;
+      border-style: solid;
+      border-width: 0 0 2px 0;
+      border-color: $border_color_2;
+      &:hover {
+        background: #fff;
+        border-color: $border_color_3;
+      }
+      &:visited {
+        background: #fff;
+      }
+      &:focus {
+        background: #fff;
+      }
+      &:active {
+        background: #fff;
+      }
+    }
+  }
+  ul.dropdown-menu {
+    >li {
+      >a {
+        color: $color_2;
+        &:hover {
+          background: #f14444;
+          color: $color_3;
+        }
+      }
+    }
+  }
+}
+button[type="submit"] {
+  border-radius: 2px;
+  color: $color_3;
+  background: #e74c3c;
+  padding: 10px;
+  font-size: 13px;
+  text-transform: uppercase;
+  margin: 0;
+  font-weight: 400;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  width: 10%;
+  transition: background .5s;
+  &:hover {
+    background: #2f3c4e;
+  }
+}
+```
+
+执行以下命令编译：
+
+```shell
+npm run dev
+```
+
+### Vue.js 组件
+
+到此，在运行我们的应用之前还需要新建我们提到过的两个组件：
+
+```html
+<signatures></signatures> <!-- In index.blade.php -->
+<signature-form></signature-form> <!-- In sign.blade.php -->
+```
+
+在 **/resources/assets/components/js/** 目录下新建以下文件
+
+* Signatures.vue
+
+```js
+<template>
+    <div>
+        // Our HTML template
+    </div>
+</template>
+
+<script>
+    export default {
+        // Our Javascript logic
+    }
+</script>
+```
+
+* SignatureForm.vue
+
+```js
+<template>
+    <div>
+        // Our HTML template
+    </div>
+</template>
+
+<script>
+    export default {
+        // Our Javascript logic
+    }
+</script>
+```
+
+再将组件注册好之后（就在我们创建 Vue 实例之前），我们的应用就能使用它们了。打开 **/resources/assets/app.js**
+
+```js
+Vue.component('signatures', require('./components/Signatures.vue'));
+Vue.component('signature-form', require('./components/SignatureForm.vue'));
+
+const app = new Vue({
+    el: '#app'
+});
+```
 
 
 ---  
