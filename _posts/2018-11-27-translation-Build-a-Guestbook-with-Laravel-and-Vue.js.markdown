@@ -401,6 +401,25 @@ public function getAvatarAttribute()
 
 ### 使用 Postman 终端测试
 
+创建好了路由，控制器以及变形器之后，就可以开始测试啦！让我们确保一切都是按照预期进行的。你可能会问我，“但是，理查德，为什么要用 Postman 呢？我们不是可以直接用浏览器访问吗？”是的！我同意，我们确实可以用浏览器访问 API，但是如果你没有真正针对代码写过测试，我建议你还是使用 Postman 来测试，因为至少可以在保存代码改动过后保存立即执行而不是每次打开浏览器查看效果。
+
+如需安装 Postman，请访问该网站 [Postman | Supercharge your API workflow](https://www.getpostman.com/) 然后选择对应系统的版本。
+
+我新建了一个叫 **Scotch Guestbook** 的集合，将我所有的测试用例都放在里面，你也可以按照一样的方式，点击 **New** 按钮选择 **Collection** 选项。
+
+在创建完测试用例之后，点击 **Save** 然后命名，添加描述，选择所属集合点击 **Save**：
+
+#### 测试我们的 API
+
+* 所有签名的列表；
+* 根据 ID 值查找一个签名；
+* 新建一个签名；
+* 报道一个签名；
+
+我会把这一部分连同项目代码一起打包放到 GitHub。
+
+### 前端搭建
+
 
 ---  
 原文地址：[https://scotch.io/tutorials/build-a-guestbook-with-laravel-and-vuejs](https://scotch.io/tutorials/build-a-guestbook-with-laravel-and-vuejs)
