@@ -705,6 +705,98 @@ const app = new Vue({
 });
 ```
 
+### 显示所有的签名
+
+为了将签名以分页的形式显示，我们将使用这个[依赖包](https://www.npmjs.com/package/vuejs-paginate)，你可以通过执行以下命令安装：
+
+```shell
+npm install vuejs-paginate --save
+```
+
+然后在 **/resources/assets/app.js** 文件中注册：
+
+```js
+Vue.component('paginate', require('vuejs-paginate'));
+```
+
+我们的 Signatures 组件内容如下：
+
+```js
+<template>
+    <div>
+        <div class="panel panel-default" v-for="signature in signatures">
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-user" id="start"></span>
+                <label id="started">By</label> {{ signature.name }}
+            </div>
+            <div class="panel-body">
+                <div class="col-md-2">
+                    <div class="thumbnail">
+                        <img :src="signature.avatar" :alt="signature.name">
+                    </div>
+                </div>
+                <p>{{ signature.body }}</p>
+            </div>
+            <div class="panel-footer">
+                <span class="glyphicon glyphicon-calendar" id="visit"></span> {{ signature.date }} |
+                <span class="glyphicon glyphicon-flag" id="comment"></span>
+                <a href="#" id="comments" @click="report(signature.id)">Report</a>
+            </div>
+        </div>
+        <paginate 
+            :page-content="pageCount"
+            :click-handler="fetch"
+            :prev-text="'Prev'"
+            :next-text="'Next'"
+            :container-class="'pagination'"
+        ></paginate>
+    </div>
+</template>
+
+<script>
+export default {
+    data() {
+        return {
+            signatures: [],
+            pageCount: 1,
+            endpoint: 'api/signatures?page='
+        };
+    },
+    
+    created() {
+        this.fetch();
+    },
+
+    methods: {
+        fetch(page = 1) {
+            axios.get(this.endpoint + page)
+                .then(({data}) => {
+                    this.signature = data.data;
+                    this.pageCount = data.meta.last_page;
+                });
+        },
+
+        report(id) {
+            if (confirm('Are you sure you want to report this signature?')) {
+                axios.put('api/signatures/'+id+'/report')
+                .then(response => this.removeSignature(id));
+            }
+        },
+
+        removeSignature(id) {
+            this.signatures = _.remove(this.signatures, function (signature) {
+                return signature.id !== id;
+            });
+        }
+    }
+}
+</script>
+```
+
+正如你所见，当组件创建的时候我们调用了 **fetch** 方法，并且产生了一个对在 **data object** 当中定义好的 url 的 **GET** 请求，然后我们将 api 返回的数据设置到 **signatures** 当中。
+
+在 HTML 代码当中，我们通过迭代的方式显示 **signatures**。当用户点击报道的链接时，我们就调用 **report** 方法，并将签名的 ID 值作为一个参数，发起一个 **PUT** 请求隐藏被报道的签名记录，然后再调用 **removeSignature** 方法将该 ID 从数组中移除。
+
 
 ---  
 原文地址：[https://scotch.io/tutorials/build-a-guestbook-with-laravel-and-vuejs](https://scotch.io/tutorials/build-a-guestbook-with-laravel-and-vuejs)
