@@ -797,6 +797,122 @@ export default {
 
 在 HTML 代码当中，我们通过迭代的方式显示 **signatures**。当用户点击报道的链接时，我们就调用 **report** 方法，并将签名的 ID 值作为一个参数，发起一个 **PUT** 请求隐藏被报道的签名记录，然后再调用 **removeSignature** 方法将该 ID 从数组中移除。
 
+### 签署留言板
+
+对于 **SignatureForm** 组件，我们需要添加表单，将输入框与 **data object** 绑定在一起。当用户输入了信息然后点击提交按钮之后，我们将发起一个 **POST** 请求来保存新的签名，如果保存成功，我们将改变 **saved** 属性然后重置表单，如果失败，我们将 Laravel 验证过的返回信息注入到 **assign** 变量中然后显示出来。
+
+```js
+<template>
+    <div>
+        <div class="alert alert-success" v-if="saved">
+            <strong>Success!</strong> Your signature has been saved successfully.
+        </div>
+
+        <div class="well well-sm" id="signature-form">
+            <form class="form-horizontal" method="post" @submit.prevent="onSubmit">
+                <fieldset>
+                    <legend class="text-center">Sian the GuestBook</legend>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="name">Name</label>
+                        <div class="col-md-9" :class="{'has-error': errors.name}">
+                            <input id="name" 
+                                   v-model="signature.name"
+                                   type="text" 
+                                   placeholder="Your name"
+                                   class="form-control">
+                            <span v-if="errors.name" class="help-block text-danger">{{ errors.name[0] }}</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="email">Your E-mail</label>
+                        <div class="col-md-9" :class="{'has-error': errors.email}">
+                            <input id="email" 
+                                   v-model="signature.email"
+                                   type="text"
+                                   placeholder="Your email"
+                                   class="form-control">
+                            <span v-if="errors.email" class="help-block text-danger">{{ errors.email[0] }}</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="body">Your message</label>
+                        <div class="col-md-9" :class="{'has-error': errors.body}">
+                            <textarea class="form-control"
+                                      id="body"
+                                      v-model="signature.body"
+                                      placeholder="Please enter your message here..."
+                                      rows="5"></textarea>
+                            <span v-if="errors.body" class="help-block text-danger">{{ errors.body[0] }}</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-12 text-right">
+                            <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    data() {
+        return {
+            errors: [],
+            saved: false,
+            signature: {
+                name: null,
+                email: null,
+                body: null,
+            }
+        }
+    },
+
+    methods: {
+        onSubmit() {
+            this.saved = false;
+
+            axios.post('api/signatures', this.signature)
+                .then(({data}) => this.setSuccessMessage())
+                .catch(({response}) => this.setErrors(response));
+        },
+
+        setErrors(response) {
+            this.errors = response.data.errors;
+        },
+
+        setSuccessMessage() {
+            this.reset();
+            this.saved = true;
+        },
+
+        reset() {
+            this.errors = [];
+            this.signature = {name: null, email: null, body: null};
+        }
+    }
+}
+</script>
+```
+
+在新建了这两个组件后，一旦产生了改动，别忘了执行以下命令重新编译：
+
+```shell
+npm run dev
+```
+
+### 结语
+
+我希望你能从这篇文章中学到一点东西，如果你在独自完成的过程中遇到问题的话，我可以帮助你，请在下方留下评论。如果你希望找我谈谈，我的 Twitter 账号是 [RashidLaasri](https://twitter.com/rashidlaasri)，欢迎过来打招呼！
+
+敬请关注更多的 Vue.js 教程，再见！
+
 
 ---  
 原文地址：[https://scotch.io/tutorials/build-a-guestbook-with-laravel-and-vuejs](https://scotch.io/tutorials/build-a-guestbook-with-laravel-and-vuejs)
