@@ -416,7 +416,7 @@ public function getAvatarAttribute()
 * 新建一个签名；
 * 报道一个签名；
 
-我会把这一部分连同项目代码一起打包放到 GitHub。
+我会把这一部分连同项目代码一起打包放到 [GitHub](https://github.com/rashidlaasri/build-a-guestbook-with-laravel-and-vuejs)。
 
 ### 前端搭建
 
