@@ -403,11 +403,11 @@ public function getAvatarAttribute()
 
 创建好了路由，控制器以及变形器之后，就可以开始测试啦！让我们确保一切都是按照预期进行的。你可能会问我，“但是，理查德，为什么要用 Postman 呢？我们不是可以直接用浏览器访问吗？”是的！我同意，我们确实可以用浏览器访问 API，但是如果你没有真正针对代码写过测试，我建议你还是使用 Postman 来测试，因为至少可以在保存代码改动过后保存立即执行而不是每次打开浏览器查看效果。
 
-如需安装 Postman，请访问该网站 [Postman | Supercharge your API workflow](https://www.getpostman.com/) 然后选择对应系统的版本。
+如需安装 Postman，请访问该网站 [Postman Supercharge your API workflow](https://www.getpostman.com/) 然后选择对应系统的版本。
 
-我新建了一个叫 **Scotch Guestbook** 的集合，将我所有的测试用例都放在里面，你也可以按照一样的方式，点击 **New** 按钮选择 **Collection** 选项。
+我新建了一个叫 **Scotch Guestbook** 的集合，将我所有的测试用例都放在里面，你也可以按照像我一样的方式，点击 **New** 按钮选择 **Collection** 选项。
 
-在创建完测试用例之后，点击 **Save** 然后命名，添加描述，选择所属集合点击 **Save**：
+在创建完测试用例之后，点击 **Save** 输入命名，添加描述，选择所属集合点击 **Save**：
 
 #### 测试我们的 API
 
@@ -463,26 +463,26 @@ class SignaturesController extends Controller
 
 ```php
 <!doctype html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="{ { app()->getLocale() } }">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Scoth.io GuestBook</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" type="text/css" href="{{ mix('css/app.css') }}">
+    <meta name="csrf-token" content="{ { csrf_token() } }">
+    <link rel="stylesheet" type="text/css" href="{ { mix('css/app.css') } }">
 </head>
 <body>
     <div id="app">
         <nav class="navbar navbar-findcond">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="{{ route('home') }}">GuestBook</a>
+                    <a class="navbar-brand" href="{ { route('home') } }">GuestBook</a>
                 </div>
                 <div class="collapse navbar-collapse" id="navbar">
                     <ul class="nav navbar-nav navbar-right">
                         <li class="active">
-                            <a href="{{ route('sign') }}">Sign the GuestBook</a>
+                            <a href="{ { route('sign') } }">Sign the GuestBook</a>
                         </li>
                     </ul>
                 </div>
@@ -490,7 +490,7 @@ class SignaturesController extends Controller
         </nav>
         @yield('content')
     </div>
-    <script src="{{ mix('js/app.js') }}"></script>
+    <script src="{ { mix('js/app.js') } }"></script>
 </body>
 </html>
 ```
@@ -513,7 +513,7 @@ class SignaturesController extends Controller
 
 #### 建立签名新增页面
 
-GET:/sign 这个页面负责显示签名新增表单
+GET:/sign 这个页面负责显示新增签名的表单
 
 ```php
 Route::get('sign', 'SignaturesController@create')->name('sign');
@@ -551,7 +551,7 @@ public function create()
 
 ### 使用 Laravel 预设
 
-在 Laravel 5.5 之前，Laravel 自带了 Bootstrap 和 Vue.js 的脚手架。但是并不是每个人都想使用这些技术，因此在 Laravel 5.5 当中你可以通过执行命令直接替换成你喜欢的框架：
+在 Laravel 5.5 版本之前，Laravel 自带了 Bootstrap 和 Vue.js 的脚手架。但是并不是每个人都想使用这些技术，因此在 Laravel 5.5 当中你可以通过执行命令直接替换成你喜欢的框架：
 
 ```shell
 php artisan preset react
@@ -575,7 +575,7 @@ php artisan preset none
 npm install
 ```
 
-打开文件 **/resources/assets/sass/app.scss** ，我早已为项目创建了 css 样式，添加以下代码：
+打开文件 **/resources/assets/sass/app.scss** ，我早已为项目创建好了 css 样式，添加以下代码：
 
 ```css
 $color_1: #f14444;
@@ -664,7 +664,7 @@ npm run dev
 
 * Signatures.vue
 
-```js
+```html
 <template>
     <div>
         // Our HTML template
@@ -680,7 +680,7 @@ npm run dev
 
 * SignatureForm.vue
 
-```js
+```html
 <template>
     <div>
         // Our HTML template
@@ -721,13 +721,13 @@ Vue.component('paginate', require('vuejs-paginate'));
 
 我们的 Signatures 组件内容如下：
 
-```js
+```html
 <template>
     <div>
         <div class="panel panel-default" v-for="signature in signatures">
             <div class="panel-heading">
                 <span class="glyphicon glyphicon-user" id="start"></span>
-                <label id="started">By</label> {{ signature.name }}
+                <label id="started">By</label> { { signature.name } }
             </div>
             <div class="panel-body">
                 <div class="col-md-2">
@@ -735,10 +735,10 @@ Vue.component('paginate', require('vuejs-paginate'));
                         <img :src="signature.avatar" :alt="signature.name">
                     </div>
                 </div>
-                <p>{{ signature.body }}</p>
+                <p>{ { signature.body } }</p>
             </div>
             <div class="panel-footer">
-                <span class="glyphicon glyphicon-calendar" id="visit"></span> {{ signature.date }} |
+                <span class="glyphicon glyphicon-calendar" id="visit"></span> { { signature.date } } |
                 <span class="glyphicon glyphicon-flag" id="comment"></span>
                 <a href="#" id="comments" @click="report(signature.id)">Report</a>
             </div>
@@ -793,15 +793,15 @@ export default {
 </script>
 ```
 
-正如你所见，当组件创建的时候我们调用了 **fetch** 方法，并且产生了一个对在 **data object** 当中定义好的 url 的 **GET** 请求，然后我们将 api 返回的数据设置到 **signatures** 当中。
+正如你所见，当组件创建的时候我们调用了 **fetch** 方法，并且对在 **data object** 当中定义好的 url 发起一个 **GET** 请求，然后我们将 api 返回的数据设置到 **signatures** 当中。
 
-在 HTML 代码当中，我们通过迭代的方式显示 **signatures**。当用户点击报道的链接时，我们就调用 **report** 方法，并将签名的 ID 值作为一个参数，发起一个 **PUT** 请求隐藏被报道的签名记录，然后再调用 **removeSignature** 方法将该 ID 从数组中移除。
+在 HTML 代码当中，我们通过迭代的方式显示 **signatures**。当用户点击报道的链接时，我们就调用 **report** 方法，并将签名的 ID 值作为一个参数，发起一个 **PUT** 请求使得被报道的签名记录隐藏掉，然后再调用 **removeSignature** 方法将该 ID 从数组中移除。
 
 ### 签署留言板
 
 对于 **SignatureForm** 组件，我们需要添加表单，将输入框与 **data object** 绑定在一起。当用户输入了信息然后点击提交按钮之后，我们将发起一个 **POST** 请求来保存新的签名，如果保存成功，我们将改变 **saved** 属性然后重置表单，如果失败，我们将 Laravel 验证过的返回信息注入到 **assign** 变量中然后显示出来。
 
-```js
+```html
 <template>
     <div>
         <div class="alert alert-success" v-if="saved">
@@ -901,7 +901,7 @@ export default {
 </script>
 ```
 
-在新建了这两个组件后，一旦产生了改动，别忘了执行以下命令重新编译：
+在新建了这两个组件后，一旦改动了它们，别忘了执行以下命令重新编译：
 
 ```shell
 npm run dev
