@@ -95,7 +95,7 @@ touch database/database.sqlite
 通过以下命令同时创建这两个文件：
 
 ```shell
-php artisan make:model Sinature -m
+php artisan make:model Signature -m
 ```
 
 当在 `php artisan make:model` 命令中携带一个 `-m` 参数时，将会自动为你生成迁移文件。这个小技巧会帮助你节省许多时间以及敲击键盘的次数。
@@ -103,7 +103,7 @@ php artisan make:model Sinature -m
 这就是我们的迁移文件的内容：
 
 ```php
-class CreateSianaturesTable extends Migration
+class CreateSignaturesTable extends Migration
 {
     /**
      **_ Run the migrations.
@@ -155,7 +155,7 @@ php artisan migrate
 
 如果你不知道这样做的目的是什么，这里有一个解释说明：
 
-> 当用户在一次批量填充的请求中携带了一个额外参数的时候，就会存在漏洞，因为这个参数会导致数据库中的一列发生无法预期的更改。例如，一个恶意用户可能会在 HTTP 请求中携带一个 is_admin 参数，经过模型新建方法后，会使得用户将自己升级为一个管理员。
+> 当用户在一次批量填充的请求中携带了一个额外参数的时候，就会存在漏洞，因为这个参数又可能会导致数据库中的一列发生无法预期的更改。例如，一个恶意用户可能会在 HTTP 请求中携带一个 is_admin 参数，经过模型新建方法后，会使得用户将自己升级为一个管理员。
 
 ### 模型工厂
 
@@ -811,7 +811,7 @@ export default {
         <div class="well well-sm" id="signature-form">
             <form class="form-horizontal" method="post" @submit.prevent="onSubmit">
                 <fieldset>
-                    <legend class="text-center">Sian the GuestBook</legend>
+                    <legend class="text-center">Sign the GuestBook</legend>
 
                     <div class="form-group">
                         <label class="col-md-3 control-label" for="name">Name</label>
