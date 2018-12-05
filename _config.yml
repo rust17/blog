@@ -8,7 +8,7 @@ description: A blog about technology and stuff related
 # if it's an external image, update below for true
 # better with square images
 external-image: false
-picture: assets/images/profile.jpg
+picture: https://en.gravatar.com/avatar/1d4af52b8c765b883a165174eaf4c39d?s=400
 
 # If you want to include your resume, set to true
 # and specify source (external or local).
@@ -68,7 +68,7 @@ authors:
         name: circle
         bio: Keep taking risks till you find your passion
         external-image: false
-        picture: assets/images/profile.jpg
+        picture: https://en.gravatar.com/avatar/1d4af52b8c765b883a165174eaf4c39d?s=400
         twitter: circle_liang
 
 # do you want a larger site? change the option below
