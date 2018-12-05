@@ -12,6 +12,9 @@ author: circle
 description: 翻译文章 —— 构建一个 Laravel 翻译包
 ---
 
+## 第一部分
+
+---
 ### 介绍
 
 在接下来的多部分篇幅当中，我们将介绍使用 Laravel 构建以及维护一个开源包的过程。在这当中，我们将尽我们所能涵盖从自动加载包解决第一个问题、拉与请求等内容。
@@ -68,6 +71,12 @@ Laravel 的本地化机制允许你的应用程序切换多个语言环境以及
 我很兴奋可以开始这个系列，也很期待与你分享我的经历。如果在这个过程当中你有任何疑问或者建议，都可以随意在 [Twitter](https://twitter.com/_joedixon) 上跟我沟通。
 
 接下来，我们准备开始第二部分——[利用脚手架搭建项目](https://laravel-news.com/scaffolding-a-package/)。
+
+---
+## 第二部分
+---
+
+---
 
 ---  
 原文地址：[https://laravel-news.com/building-laravel-translation-package](https://laravel-news.com/building-laravel-translation-package)
