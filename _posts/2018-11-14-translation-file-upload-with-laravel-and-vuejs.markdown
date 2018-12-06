@@ -628,6 +628,11 @@ foreach($input['users'] as $file) {
 
 [Project on GitHub](https://github.com/arthursorriso/laravueupload)
 
+---
+译者注：在使用 Laravel 的上传功能的时候，如需访问上传的文件，需要在 public 文件夹下新建一个指向文件实际存放的路径的软链接。例如，在本例子中，访问上传好的图片，需要新建一个软链接 `ln -s /mnt/d/WWW/learn/laravel/Laravel/storage/files/uploads/ /var/www/Laravel/public/storage`。使用 Laravel 内置的建立符号链接命令 `php artisan storage:link` 建立的软链接指向的是 `storage/app/public` 目录。参考：[https://laravel-china.org/docs/laravel/5.7/filesystem/2281#69e36e](https://laravel-china.org/docs/laravel/5.7/filesystem/2281#69e36e)  
+
+---
+
 ### 更多关于这篇文章的来源信息
 
 这篇文章是发布于 [Noteworthy](https://blog.usejournal.com/)，每天都有数千人访问学习关于塑造我们想要的产品以及想法。
