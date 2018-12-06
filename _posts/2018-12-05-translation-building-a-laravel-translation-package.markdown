@@ -96,8 +96,72 @@ Laravel 的本地化机制允许你的应用程序切换多个语言环境以及
     "psr-4": {
         "Joedixon\\Translation\\": "src"
     }
+},
+```
+
+最后，在编写第一行代码之前，我还修改了项目根目录下的 `composer.json` 文件，目的是告诉 Composer 如何加载我的程序。
+
+```json
+"require": {
+    ...
+    "joedixon/laravel-translation": "dev-mastar"
+},
+"repositories": [
+    {
+        "type": "path",
+        "url": "./packages/joedixon/laravel-translation",
+        "options": {
+            "symlink": true
+        }
+    }
+]
+```
+也许你对于 `require` 部分已经是相当熟悉了。然而，`repositories` 部分不是。
+
+repositories 部分的作用是告诉 Composer 链接到本地路径。使用这种方式允许我们本地测试我们的扩展包的时候不需要使用 `composer update` 来同步更新。
+
+当使用本地路径的时候，值得注意的是，扩展包可以安装在任意目录下。然而，我更喜欢将它包含在开发环境目录当中。
+
+现在，我们的扩展包经过配置后已经可以自动加载了，我们可以敲代码了。
+
+### 包结构
+
+当构建一个扩展包的时候，我总是希望尽可能的与 Laravel 的目录结构相同。因此，我会将一些 `app` 目录下典型的文件夹如 controllers，console commands，event listeners 等等，搬到我的扩展包目录 `src` 下，这样路由以及资源文件就位于我的包根目录下了。
+
+### 服务提供者
+
+为了让 Laravel 开始使用我们的扩展包，我们需要新建一个[服务提供者](https://laravel.com/docs/5.7/providers)。服务提供者的作用是通过一些引导操作如：绑定服务到容器，注册路由，发表配置文件以及任何其它的你可想象到的操作来加载扩展包。
+
+提示:
+
+通常，我会运行 `php artisan make:provider TranslationServiceProvider` 命令来新建一个位于 Laravel Providers 目录下的服务提供者文件。然后移动到我的扩展包里，同时有根据性地更新命名空间。
+
+这一部分，我将注册路由，配置信息，视图文件以及翻译等内容，不必充实所有细节。我发现这种方式可以加快开发速度。
+
+### 测试
+
+好的扩展包不可能没有单元测试。
+
+在扩展包中构建单元测试是一件棘手的事情。主要原因在扩展包内访问 Laravel 的测试助手不是一件容易的事。幸运的是，`orchestra/testbench` 这个扩展包可以帮助你实现在扩展包内部访问 Laravel 所有的测试助手方法。
+
+执行 `composer require --dev orchestra/testbench` 以 dev 依赖的方式安装。执行完此命令后会在你的 `composer.json` 文件中添加以下配置：
+
+```json
+"require-dev": {
+    "orchestra/testbench": "~3.0"
 }
 ```
+
+在结束本部分之前，让我们来提交改动并合并到 `master` 分支：
+
+```shell
+# within ./packages/joedixon/laravel-translation
+echo "vendor/" >> .gitignore
+git add. 
+git commit -m "Initial Commit"
+```
+
+这部分主要是关于打包扩展包脚手架。下一部分，我们将创建一些扩展包的功能，从构建基于文件的翻译驱动开始。
 
 ---
 
