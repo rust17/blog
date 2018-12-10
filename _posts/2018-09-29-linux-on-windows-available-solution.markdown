@@ -243,6 +243,17 @@ service nginx restart
 
 再次访问 example.com 和 laravel_demo.test 发现均能正常访问。折腾完毕，在 windows 上也可以进行 linux web 开发了，好好玩耍 php 吧！
 
+### 权限问题
+
+在使用的过程中遇到的权限问题：
+* php 脚本执行 `chmod` 方法提示权限不足，解决办法：在该路径下新建 `/etc/wsl.conf`，并输入
+
+> [automount]
+> enabled = true
+> options = "metadata" 
+
+参考 [chmod WSL (Bash) doesn't work](https://stackoverflow.com/questions/46610256/chmod-wsl-bash-doesnt-work/50856772#50856772)
+
 ### 如何卸载
 
 有几种方式卸载这个子系统：
