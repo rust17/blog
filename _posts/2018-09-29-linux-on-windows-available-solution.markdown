@@ -248,9 +248,9 @@ service nginx restart
 在使用的过程中遇到的权限问题：
 * php 脚本执行 `chmod` 方法提示权限不足，参考 [chmod WSL (Bash) doesn't work](https://stackoverflow.com/questions/46610256/chmod-wsl-bash-doesnt-work/50856772#50856772)，解决办法：在该路径下新建 `/etc/wsl.conf`，并输入
 
->[automount]
->enabled = true
->options = "metadata" 
+>[automount]  
+enabled = true  
+options = "metadata"
 
 ### 如何卸载
 
