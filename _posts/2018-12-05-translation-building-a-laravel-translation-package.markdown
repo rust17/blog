@@ -405,7 +405,7 @@ $this->publishes([
 
 ### 资源
 
-为了我的理智，我喜欢用 [Laravel Mix](https://laravel-mix.com/) 来为扩展包构建前端资源。它提供了一种很棒的开发机制，可以让开发者快速上手进行开发。
+为了保持我的理智，我喜欢用 [Laravel Mix](https://laravel-mix.com/) 来为扩展包构建前端资源。它提供了一种很棒的开发机制，可以让开发者快速上手进行开发。
 
 我在项目根目录下运行 `npm init` 开始，根据指示搭建环境。
 
@@ -416,6 +416,36 @@ $this->publishes([
 ```shell
 cp node_modules/laravel-mix/setup/webpack.mix.js ./
 ```
+
+#### CSS
+
+接下来，我们将安装配置 CSS 框架 Tailwind，并整合到我们的扩展包中。通过执行 `npm install tailwindcss --save-dev` 获取依赖包。
+
+依赖包安装好之后，我们可以开始配置安装了。首先，我们生成一个 Tailwind 配置文件。可以通过执行 `./node_modules/.bin/tailwind init tailwind.js` 来实现，`tailwind.js` 是将要生成的配置文件名称。这个文件允许你调整基色设置、字体和字体大小、宽和高等等。花点时间阅读 [Tailwind 的文档](https://tailwindcss.com/docs/configuration) 获取更多信息是值得的。然而，出于本教程的目的，我们将保持默认的设置。
+
+最后，我们需要告诉 Laravel Mix 使用 Tailwind 配置作为构建的一部分运行 PortCSS。
+
+我们第一步需要在 `webpack.mix.js` 中引入 Tailwind PortCSS
+
+```js
+var tailwindcss = require('tailwindcss');
+```
+
+然后作为构建管道的一部分，我们可以使用 Mix 的 `postCss` 方法，传入存储在上文提到的 `tailwindcss` 变量中导出函数来构建配置。
+
+```js
+mix.portCss('resources/assets/css/main.css', 'css', [
+    tailwindcss('./tailwind.js'),
+]);
+```
+
+这个方法的意思是，获取文件 `resources/assets/css/main.css` 的内容，应用 tailwind PortCSS 插件并输出到 `css` 目录。
+
+现在，我们可以执行 `npm run dev|production|watch`，进程将自动运行。
+
+#### Javascript
+
+我们
 
 ---
 
