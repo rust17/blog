@@ -478,7 +478,15 @@ $this->publishes([
 我们现在已经建立好了基础，已经初步搭建好了路由、控制器、视图，还需要将用户操作界面的资源构建好，我们将在下一部分介绍。
 
 ---
+## 第五部分——构建前端
 
+在[上一部分](https://laravel-news.com/laravel-translation-package-frontend)中，我告诉了你通过我的方式，将所有需要的东西放在一个地方开始构建前端。这篇文章将在上一篇文章的基础上完成用户界面。
+
+### 用户操作界面可以做什么？
+
+首先，我们需要定义任务的清单。用户操作界面的目的是什么以及允许用户做什么？有时候，通过这样的任务，限定范围可能具有挑战性。对我来说，幸运的是，这是我长期的需要，因此我有一个好办法最小化需求以解决我的问题：
+
+---
 ---
 原文地址：[https://laravel-news.com/building-laravel-translation-package](https://laravel-news.com/building-laravel-translation-package)
 
