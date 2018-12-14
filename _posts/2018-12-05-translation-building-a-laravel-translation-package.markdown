@@ -486,6 +486,52 @@ $this->publishes([
 
 首先，我们需要定义任务的清单。用户操作界面的目的是什么以及允许用户做什么？有时候，通过这样的任务，限定范围可能具有挑战性。对我来说，幸运的是，这是我长期的需要，因此我有一个好办法最小化需求以解决我的问题：
 
+* 列出所有的语言
+* 新增语言
+* 列出一种语言的所有翻译
+* 切换不同语言的翻译
+* 搜索的键和翻译
+* 新增翻译
+* 修改已有的翻译
+
+正如我在上一篇文章中提到的那样，我很高兴可以使用 Laravel 后端来进行构建这个工具的繁重工作。你可能认为我这样做很老派，但是实际上我更喜欢页面加载的视觉显示因为这样可以让我知道某件事正在发生。唯一一个我不想看到页面加载的情况是修改现有的翻译的时候——如果这个工作在后台进行将会变得更优雅。
+
+### 路由
+
+基于上面的列举，看起来我们需要定义七个路由。
+
+* GET /languages
+* GET /languages/create
+* POST /languages
+* GET /languages/{language}/translations
+* GET /languages/{language}/translations/create
+* POST /languages/{languages}/translations
+* POST /languages/{language}/translations
+
+### 控制器
+
+在控制器里，我们严重依赖于[先前文章](https://laravel-news.com/wrangling-translations)建立的类。事实上，我们将控制器的构造函数中注入 Laravel 的容器来解决这个问题。
+
+```php
+public function __construct(Translation $translation)
+{
+    $this->translation = $translation;
+}
+```
+
+现在，在控制器里与翻译交互已经是一件相当简单的工作了。例如，获取一个语言的列表然后返回给视图就这么简单：
+
+```php
+public function index(Request $request)
+{
+    $languages = $this->translation->allLanguages();
+
+    return view('translation::languages.index', compact('languages'));
+}
+```
+
+*注意*你可能注意到了上面的不同寻常的
+
 ---
 ---
 原文地址：[https://laravel-news.com/building-laravel-translation-package](https://laravel-news.com/building-laravel-translation-package)
