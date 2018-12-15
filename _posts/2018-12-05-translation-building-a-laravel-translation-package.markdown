@@ -640,13 +640,48 @@ export default {
 
 另外，当数据对象里的 `isActive` 属性为真时，我们将输入框的类切换为已激活状态。当输入框聚焦的时候，`setActive` 方法监听着该属性的变化。
 
-当用户从输入框导航过来的时候，我们需要调用我们的 `update` 方法并将用户的修改过的数据发送。
-
 ```js
 setActive: function() {
     this.isActive = true;
 },
 ```
+
+当用户从输入框导航过来的时候，我们需要调用我们的 `update` 方法并将用户的修改过的数据发送。你可以在上面看到我们使用了 Vue 的 `v-on` 直接监听 `blur` 事件，同时调用了 `storeTranslation` 方法。下面是该方法的详细代码。
+
+```js
+storeTranslation: function () {
+    this.isActive = false;
+    this.isLoading = true;
+    window.axios.put(`/${this.route}/${this.language}`, {
+        language: this.language,
+        group: this.group,
+        key: this.translationKey,
+        value: this.translation,
+    }).then((response) => {
+        this.hasSaved = true;
+        this.isLoading = false;
+        this.hasChanged = false;
+    }).catch((error) => {
+        this.hasErrored = true;
+        this.isLoading = false;
+    });
+}
+```
+
+这里，我们使用了 [axios](https://github.com/axios/axios)，一个 Javascript 的 HTTP 客户端，发起一个对 `update` 路由的请求。我们使用了所有传递给组件的属性以生成 URL 然后根据这些数据生成用户想要的翻译。
+
+我们依据请求的结果更新组件的状态并返回给用户一个操作是否成功的虚拟提示。我们通过渲染一个合适的 SVG 图标来实现。
+
+```
+<svg v-show="!isActive && isLoading">...</svg> // default state, pencil icon
+<svg v-show="!isActive && hasSaved">...</svg> // success state, green check icon
+<svg v-show="!isActive && hasErrored">...</svg> // error state, red cross icon
+<svg v-show="!isActive && !hasSaved && !hasErrored && !isLoading">...</svg> // saving state, disk icon
+```
+
+在这篇文章当中，我们介绍了前端当中最重要的两个组件。我们制作了一个不仅美观而且功能强大的用户界面。
+
+在下一部分当中，我们将构建一个可以扫描整个项目中可能会被遗漏的语言文件的功能。同时，如果你有任何问题，欢迎来 [Twitter](https://twitter.com/_joedixon) 向我提问。
 
 ---
 ---
