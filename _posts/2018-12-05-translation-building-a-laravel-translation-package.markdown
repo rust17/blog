@@ -530,7 +530,123 @@ public function index(Request $request)
 }
 ```
 
-*注意*你可能注意到了上面的不同寻常的
+*注意* 你可能注意到了上面不同寻常的视图路径包含了 `translation::`，这个是告诉 Laravel 根据在服务提供者中定义好的扩展包命名空间加载视图。
+
+```php
+$this->loadViewsFrom(__DIR__.'/../resources/views', 'translation');
+```
+
+这个控制器唯一复杂的方法是翻译的 index 方法，该方法复杂是因为我们不仅要列出所有的翻译也会根据搜索条件以及筛选条件列出符合条件的翻译资料。
+
+```php
+$translation = $this->translation->filterTranslationsFor($language, $request->get('filter'));
+
+if ($request->get('group') === 'single') {
+    $translations = $translations->get('single');
+    $translations = new Collection(['single' => $translations]);
+} else {
+    $translations = $translations->get('group')->filter(function ($values, $group) use ($request) {
+        return $group === $request->get('group');
+    });
+    $translations = new Collection(['group' => $translations]);
+}
+
+return view('translations::languages.translastions.index', compact('translations'));
+```
+这里，我们根据用户传递的搜索条件获取到了符合条件的翻译资料。然后决定是筛选 `单个` 还是 `多个`，然后根据性地返回数据集合给视图文件。
+
+### 视图 & 资源
+
+每个视图都继承自 `layout.blade.php` 视图文件，该文件包含了基本的 HTML 骨架以及通过 [Laravel Mix](https://laravel.com/docs/5.7/mix) 编译加载的 Javascript 和 CSS 资源链接。
+
+#### 样式
+
+对于没听过的人来说，Tailwind CSS 是一个效率第一的框架。 它提供了一些简易的类可用于有层次地制作复杂的页面设计。如果希望了解更多信息可以阅读[官方文档](https://tailwindcss.com/docs/what-is-tailwind/)，我是这样子使用 Tailwind 发挥其威力的。
+
+Tailwind 自带的配置文件，其中设置好了颜色基调和默认字体。该文件规定了一些不错的默认设置，因此通常我不会去修改任何地方，除非我需要打上一些个人风格印记。
+
+通常，我会将类实例运用到 HTML 组件上，直到它们看起来是我想要的样子。如果是一个我不需要复用的组件的话，我会经常把它们留在标签中。
+
+```html
+<div class="bg-red-lightest text-red-darker p-6 shadow-md" role="alert">
+    <div class="flex justify-center">
+        <p>{!! Session::get('error') !!}</p>
+    </div>
+</div>
+```
+
+然而，如果是一些我会在应用中复用的类的话。我会使用 Tailwind 的 `@apply` 标明以提取到公共组件类。
+
+```html
+// before 
+<div class="p-4 text-lg border-b flex items-center font-thin">
+    { {__('translation::languages.languages') } }
+</div>
+
+// after
+.panel-header {
+    @apply p-4 text-lg border-b flex items-center font-thin
+}
+
+<div class="panel-header">
+    { {__('translation::languages.languages') } }
+</div>
+```
+
+在[上一篇文章](https://laravel-news.com/laravel-translation-package-frontend)中，我解释了如何将 PortCSS 和 Tailwind 风格的 PortCSS 作为插件嵌入到 Laravel Mix 的编译管道中。当这个插件运行的时候，它将寻找项目中 `@apply` 标明的部分，从实例中抽取出并注入到所包含的类当中。
+
+下面这张图展示了我用 Tailwind 创建的用户界面风格。
+
+#### Javascript
+
+正如前面提到的那样，在这个扩展包里面我们打算让后端参与许多繁重的工作。这样，我们就可以专注于使用 Javascript 来提升用户体验了。
+
+翻译是一项烦人的工作，因此我们必须确保此扩展包对于我们的用户来说经可能地可靠，操作人性化。我能想到的一个使用 Javascript 帮助提升体验的地方就是当用户浏览翻译列表的时候自动保存内容。这个提升减少了一个额外不必要的点击按钮和一次页面刷新。为了进一步提升用户体验，我们将新建一个虚拟提示以让用户知道他们将要做出的改变。
+
+我们将新建一个 Vue 组件叫做 `TranslationInput` 以实现该功能。
+
+```js
+export default {
+    props: ['initialTranslation', 'language', 'group', 'translationKey', 'route'],
+
+    data: function() {
+        return {
+            isActive: false,
+            hasSaved: false,
+            hasErrored: false,
+            isLoading: false,
+            hasChanged: false,
+            translation: this.initialTranslation
+        }
+    },
+    ....
+}
+```
+
+在这里，我们定义的组件应该接收 `initialTranslation`、`language`、`group`、`translationKey` 和 `route` 作为无论什么时候都能用到的属性。这些属性提供了所有需要用到的数据，这些数据用于提供给保存翻译的 `update` 路由。
+
+数据属性设置了一些组件的状态。需要指出的是我们设置了 `translation` 为 `initialTranslation` 传递给组件的值。
+
+在组件模板里，我们把 `translation` 属性的值绑定到输入框。
+
+```html
+<textarea
+    v-model="translation"
+    v-bind:class="{ active: isActive }"
+    v-on:focus="setActive"
+    v-on:blur="storeTranslation"
+></textarea>
+```
+
+另外，当数据对象里的 `isActive` 属性为真时，我们将输入框的类切换为已激活状态。当输入框聚焦的时候，`setActive` 方法监听着该属性的变化。
+
+当用户从输入框导航过来的时候，我们需要调用我们的 `update` 方法并将用户的修改过的数据发送。
+
+```js
+setActive: function() {
+    this.isActive = true;
+},
+```
 
 ---
 ---
