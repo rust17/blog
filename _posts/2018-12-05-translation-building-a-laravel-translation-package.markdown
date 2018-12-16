@@ -311,7 +311,7 @@ $this->disk->put(
 这个驱动奠定了我们可以建立的基础。接下来，我们将为扩展包新建用户接口。它使用了 [Tailwind CSS](https://tailwindcss.com/) 和 [Vue.js](https://vuejs.org/)，这两个框架都已被 Laravel 社区广泛地使用了。 
 
 ---
-## 第四部分——连接前端
+## 第四部分 —— 连接前端
 ---
 在[上一部分](https://laravel-news.com/wrangling-translations)，我们谈到了通过将翻译资料以特定的方式转变成应用程序的语言文件，现在我们就来跟这些文件进行交互。在这篇文章中，我们将建立前端界面，并准备通过该界面帮助用户管理翻译资料。
 
@@ -684,7 +684,7 @@ storeTranslation: function () {
 在下一部分当中，我们将构建一个可以扫描整个项目中可能会被遗漏的语言文件的功能。同时，如果你有任何问题，欢迎来 [Twitter](https://twitter.com/_joedixon) 向我提问。
 
 ---
-## 第六部分——处理遗漏的翻译键
+## 第六部分 —— 处理遗漏的翻译键
 ---
 在该系列的[上一篇文章](https://laravel-news.com/building-a-laravel-translation-package-building-the-frontend)当中，我们介绍了构建前端管理工具。在这篇文章当中，我们将注意力从前端移走，并开始构建另一个后端功能。
 
