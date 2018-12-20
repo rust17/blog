@@ -188,7 +188,7 @@ Laravel 翻译扩展包与这些文件进行交互的目的是：
 $directories = Collection::make($this->disk->directories($this->languageFilesPath));
 ```
 
-接下来，我们将使用 `mapWithKeys` 方法遍历所有的目录，从路径中抽取语言（这一部分在最后）然后返回一个键值对数组。
+接下来，我们将使用 `mapWithKeys` 方法遍历所有的目录，从路径中抽取语言名字（这一部分在最后）然后返回一个键值对数组。
 
 ```php
 return $directories->mapWithKeys(function ($directory) {
@@ -233,13 +233,13 @@ if (! $this->disk->exists("{$this->languageFilesPath}/{$language}.json")) {
 
 *多个*
 
-为了获取多个翻译资料，我们首先使用文件系统函数来从语言命名的文件夹下获取所有文件。
+为了获取多个翻译版本，我们首先使用文件系统函数来从我们使用语言命名的文件夹下获取所有文件。
 
 ```php
 $groups Collection($this->disk->allFiles("{$this->languageFilePath}/{$language}"))
 ```
 
-然后，我们遍历所有从该文件夹中取出的文件使用文件系统函数 `getRequire` 获取直接访问文件的地址。
+然后，我们遍历从该文件夹中取出的所有文件，使用文件系统函数 `getRequire` 获取直接访问该文件的地址。
 
 ```php
 $group->mapWithKeys(function ($group) {
@@ -259,7 +259,7 @@ $group->mapWithKeys(function ($group) {
 
 *单个*
 
-我们可以通过 `json_decode` 方法解密文件内容从而获取单个翻译资料。
+我们可以通过 `json_decode` 方法解码文件内容从而获取单个翻译版本。
 
 ```php
 if ($this->disk->exists($this->languageFilesPath."/$language.json")) {
@@ -277,7 +277,7 @@ if ($this->disk->exists($this->languageFilesPath."/$language.json")) {
 
 ### 新增/修改翻译资料
 
-新增和修改翻译资料大多数时候都是相似的。首先，我们获取文件内容，并以数组格式添加到翻译资料中。然后，我们检查数组的键是否已经存在。如果已存在，我们就更新对应数组的值，如果不存在，就在数组中新增一个键值对。最后，将整个数组写进文件中。
+新增和修改翻译资料大多数时候都是相似的。首先，我们获取文件内容，并将内容（也就是翻译资料）以数组格式保存。然后，我们检查数组的键是否已经存在。如果已存在，我们就更新对应数组的值，如果不存在，就在数组中新增一个键值对。最后，将整个数组写进文件中。
 
 *多个*
 
@@ -303,12 +303,13 @@ $this->disk->put(
 );
 ```
 
-为了凸显效果一些代码片段已经被截断。你可以在下方的链接看到完整的代码：
+为了凸显思路一些代码片段已经被截断。你可以在下方的链接看到完整的代码：
 
 [驱动接口](https://github.com/joedixon/laravel-translation/blob/master/src/Drivers/DriverInterface.php)
+
 [文件驱动](https://github.com/joedixon/laravel-translation/blob/master/src/Drivers/File.php)
 
-这个驱动奠定了我们可以建立的基础。接下来，我们将为扩展包新建用户接口。它使用了 [Tailwind CSS](https://tailwindcss.com/) 和 [Vue.js](https://vuejs.org/)，这两个框架都已被 Laravel 社区广泛地使用了。 
+这个驱动为我们奠定了将要构建扩展的包的基础。接下来，我们将为扩展包新建用户界面。将使用了 [Tailwind CSS](https://tailwindcss.com/) 和 [Vue.js](https://vuejs.org/)，这两个框架都已被 Laravel 社区广泛地使用了。 
 
 ---
 ## 第四部分 —— 连接前端
