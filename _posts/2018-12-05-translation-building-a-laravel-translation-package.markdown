@@ -314,17 +314,17 @@ $this->disk->put(
 ---
 ## 第四部分 —— 连接前端
 ---
-在[上一部分](https://laravel-news.com/wrangling-translations)，我们谈到了通过将翻译资料以特定的方式转变成应用程序的语言文件，现在我们就来跟这些文件进行交互。在这篇文章中，我们将建立前端界面，并准备通过该界面帮助用户管理翻译资料。
+在[上一部分](https://laravel-news.com/wrangling-translations)，我们讲解了通过特定的方式将翻译资料转变成我们应用程序的语言文件，现在我们就来跟这些文件进行交互。在本文章中，我们将建立前端界面，并希望通过该界面帮助用户管理翻译资料。
 
 UI 界面将会使用社区里最受欢迎的 [Tailwind CSS](https://tailwindcss.com/) 和 [Vue.js](https://vuejs.org/)。
 
 ### 途径
 
-不管喜欢还是讨厌，我将 [Caleb Porzio](https://twitter.com/calebporzio) 的一本书 《[拥抱后端](https://www.youtube.com/watch?v=uQO4Xh1gMpY)》中的一些观点带到这个扩展包中。在他的演讲中，Caleb 提出了这样一个概念：将重点转移到使用 javascript 构建单页应用，包括负责检索所有数据以及路由和表单提交等功能。相反，他建议将 Laravel 的优势用于制作多平台通用的方法。从中获取灵感，我们将借助我们的控制器和 blade 视图传输数据给 Vue.js 组件，以实现必要的动态功能。[Laravel Mix](https://laravel.com/docs/5.7/mix) 将用于构建和编译包的组件。
+不管是喜欢还是讨厌，我将 [Caleb Porzio](https://twitter.com/calebporzio) 的一本书 《[拥抱后端](https://www.youtube.com/watch?v=uQO4Xh1gMpY)》中的一些观点带到这个扩展包中。在他的演讲中，Caleb 提出了这样一个概念：将重心从使用 javascript 构建单页应用中转移，包括检索所有数据以及路由和表单提交等功能。相反，他建议将 Laravel 的优势充分发挥到制作跨平台通用的方法。从中获取灵感，我们将借助我们的控制器和 blade 视图传输数据给 Vue.js 组件，以实现必要的动态功能。[Laravel Mix](https://laravel.com/docs/5.7/mix) 将用于构建和编译包组件。
 
 ### 路由
 
-一开始，我们得告诉 Laravel 从哪儿加载我们的路由。一个方法就是在我们的扩展包的 `TranslationServiceProvider` 文件中使用 loadRoutesForm 方法。这个方法继承于父类 `Illuminate\Support\ServiceProvider`。
+一开始，我们得告诉 Laravel 从哪加载我们的路由。一个方法就是在我们的扩展包的服务提供者文件 `TranslationServiceProvider` 中使用 loadRoutesForm 方法。这个方法继承于父类 `Illuminate\Support\ServiceProvider`。
 
 ```php
 $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
@@ -347,7 +347,7 @@ Route::group(config('translation.route_group_config') + ['namespace' => 'JoeDixo
 
 在这个文件当中，我们使用了 `Route::group()` 方法来引入任何自定义的配置，以及扩展包内部的控制器的命名空间。
 
-另外一个需要注意的地方是，配置被再用于根据用户需要动态地注册路由。如果引用的是默认的配置，`ui_url` 被设置为 `languages`。因此，以上路由将注册成下列方式：
+另外一个需要注意的地方是，当用户需要动态注册路由时，这个配置将被再次利用。如果引用的是默认的配置，`ui_url` 被设置为 `languages`。因此，以上路由将注册成下列方式：
 
 ```
 my-app.test/languages
@@ -358,7 +358,7 @@ my-app.test/languages/{language}/translations
 
 ### 控制器
 
-在服务提供者里面没有引入控制器。但只要能在定义路由的文件里找到对应的命名空间，一切就会正常执行。
+在服务提供者里面没有引入需要的控制器。但只要能在路由文件里找到对应的命名空间，一切就会正常执行。
 
 在每个控制器里，我们在[之前的文章](https://laravel-news.com/wrangling-translations)中提到的翻译驱动，对于每个方法都是需要的。因此，我们在构造函数中注入它。
 
@@ -369,7 +369,7 @@ public function __construct(Translation $translation)
 }
 ```
 
-现在，先不管驱动，这个功能现在暂时是微不足道的，因为我们已经构建了一些和翻译资料交互的功能。
+现在，先不管驱动，这个功能现在暂时是微不足道的，因为我们已经构建了一些与翻译资料有关的交互功能。
 
 ```php
 public function index(Request $reqeust)
@@ -380,11 +380,11 @@ public function index(Request $reqeust)
 }
 ```
 
-现在唯一看起来还没做的就是视图文件的引入了。`translation::` 只是简单地告诉 Laravel 从翻译扩展包的命名空间中加载视图文件，Laravel 已经知道了服务提供者。我们接下来将介绍这方面的东西。
+现在唯一看起来还没做的就是视图文件的引入了。`translation::` 只是简单地告诉 Laravel 从翻译扩展包的命名空间中加载视图文件，Laravel 已经在服务提供者中定义好了该命名空间。我们接下来将介绍这方面的东西。
 
 ### 视图
 
-首先，我们需要告诉 Laravel 去哪儿加载路由。
+首先，我们需要告诉 Laravel 去哪加载路由。
 
 ```php
 $this->loadViewsFrom(__DIR__.'/../resources/views', 'translation');
@@ -400,9 +400,9 @@ $this->publishes([
 
 上面那行代码告诉 Laravel 去哪找视图文件、复制到哪里以及包的使用者是否希望把它们加入应用程序当中。
 
-在这个例子中，应该从 `/package/root/resources/views` 路径复制资源到 `views/vendor/translation` 路径，也就是主应用程序的[资源路径](https://laravel.com/docs/5.7/helpers#method-resource-path)下。
+在这个例子中，资源将从 `/package/root/resources/views` 路径复制到 `views/vendor/translation` 路径下，也就是主应用程序的[资源路径](https://laravel.com/docs/5.7/helpers#method-resource-path)下。
 
-一般而言，这就一来包的使用者就可以根据自己需求自定义改变视图了。
+一般而言，这就一来包的使用者就可以根据自己的需求自定义改变视图了。
 
 ### 资源
 
@@ -410,7 +410,7 @@ $this->publishes([
 
 我在项目根目录下运行 `npm init` 开始，根据指示搭建环境。
 
-现在，已经可以通过执行命令 `npm install laravel-mix --save-dev` 来安装 Laravel Mix 了。这个命令会安装 Laravel Mix 以及安装所有的依赖并作为开发依赖记录到 `package.json` 文件中。
+现在，已经可以通过执行命令 `npm install laravel-mix --save-dev` 来安装 Laravel Mix 了。这个命令会安装 Laravel Mix 以及安装所有的依赖并记录到 `package.json` 文件中。
 
 现在，我们需要拷贝 Mix 自带的 `webpack.mix.js` 文件到项目根目录下，这样一来就可以开始配置构建了。
 
@@ -420,11 +420,11 @@ cp node_modules/laravel-mix/setup/webpack.mix.js ./
 
 #### CSS
 
-接下来，我们将安装配置 CSS 框架 Tailwind，并整合到我们的扩展包中。通过执行 `npm install tailwindcss --save-dev` 获取依赖包。
+接下来，我们将安装并配置 CSS 框架 Tailwind，并整合到我们的扩展包中。通过执行 `npm install tailwindcss --save-dev` 获取依赖包。
 
-依赖包安装好之后，我们可以开始配置安装了。首先，我们生成一个 Tailwind 配置文件。可以通过执行 `./node_modules/.bin/tailwind init tailwind.js` 来实现，`tailwind.js` 是将要生成的配置文件名称。这个文件允许你调整基色设置、字体和字体大小、宽和高等等。花点时间阅读 [Tailwind 的文档](https://tailwindcss.com/docs/configuration) 获取更多信息是值得的。然而，出于本教程的目的，我们将保持默认的设置。
+依赖包安装好之后，我们就可以开始配置了。首先，我们生成一个 Tailwind 配置文件。可以通过执行 `./node_modules/.bin/tailwind init tailwind.js` 来实现，`tailwind.js` 是将要生成的配置文件名称。这个文件允许你调整基调颜色、字样和字体大小、宽和高等等。值得花点时间阅读 [Tailwind 的文档](https://tailwindcss.com/docs/configuration) 以获取更多信息。然而，本教程由于边幅限制，我们将保持默认的设置。
 
-最后，我们需要告诉 Laravel Mix 使用 Tailwind 配置作为构建的一部分运行 PortCSS。
+最后，我们需要告诉 Laravel Mix 使用 Tailwind 相关的配置作为构建的一部分运行 PortCSS。
 
 我们第一步需要在 `webpack.mix.js` 中引入 Tailwind PortCSS
 
@@ -432,7 +432,7 @@ cp node_modules/laravel-mix/setup/webpack.mix.js ./
 var tailwindcss = require('tailwindcss');
 ```
 
-然后作为构建管道的一部分，我们可以使用 Mix 的 `postCss` 方法，传入存储在上文提到的 `tailwindcss` 变量中导出函数来构建配置。
+然后我们可以使用 Mix 的 `postCss` 方法，传入存储 `tailwindcss` 变量中引入的函数来构建配置。
 
 ```js
 mix.portCss('resources/assets/css/main.css', 'css', [
@@ -440,13 +440,13 @@ mix.portCss('resources/assets/css/main.css', 'css', [
 ]);
 ```
 
-这个方法的意思是，获取文件 `resources/assets/css/main.css` 的内容，应用 tailwind PortCSS 插件并输出到 `css` 目录。
+这个方法的意思是，获取文件 `resources/assets/css/main.css` 的内容，使用 tailwind PortCSS 插件输出到 `css` 文件夹下。
 
-现在，我们可以执行 `npm run dev|production|watch`，进程将自动运行。
+现在，我们可以执行 `npm run dev|production|watch`，进程将自动编译。
 
 #### Javascript
 
-我们将使用 Vue.js 开发 UI，因此需要获取这方面的依赖包。我们将引入一点 ajax 功能所以安装流行的 [axios](https://github.com/axios/axios) 帮助我们处理繁重的任务。
+我们将使用 Vue.js 开发 UI，因此需要获取这方面的依赖包。我们还需要使用到 ajax 功能所以安装流行的 [axios](https://github.com/axios/axios) 包来帮助我们处理繁重的任务。
 
 ```shell
 npm install vue axios
@@ -454,13 +454,13 @@ npm install vue axios
 
 #### 发布
 
-以上，我们已经让 Mix 构建好资源并且放到 `css` 和 `js` 目录下，但是我们还需要告诉它在 `webpack.mix.js` 文件中如何找到这些资源。可以使用下面的方法。
+以上，我们已经使用 Mix 构建好了资源并且放到 `css` 和 `js` 目录下，但是我们还需要告诉它在 `webpack.mix.js` 文件中如何找到这些资源。可以使用下面的方法。
 
 ```js
 mix.setPublicPath('public/assets');
 ```
 
-在一个标准的 Laravel 应用程序中，这些资源将用于发布在一个公共可访问的路径下。然而，在我们扩展包的作用域下，我们需要将其发布到一个可以轻松被发布的路径，只需要执行 `php artisan publish` 即可。这个命令允许终端用户发布文件到应用程序，他们可以自由修改以及加上版本控制。
+在一个标准的 Laravel 应用程序中，这些资源将被发布到一个公共的可访问的路径下。然而，在我们的扩展包的范围内，我们需要将其放到一个可以被轻松发布的路径，只需要执行 `php artisan publish` 即可。这个命令允许终端用户发布文件到应用程序，他们可以自由修改以及加上版本控制。
 
 最后，我们需要告诉 Laravel 去哪找发布的文件。再一次，在服务提供者中添加
 
@@ -470,13 +470,13 @@ $this->publishes([
 ], 'assets');
 ```
 
-第一个参数是一个数组，键代表着扩展包的资源路径，值代表着它们应该发布在 app 哪里。第二个参数是一个定义了文件发布类型的标志。这样就可以在发布命令中作为一个选项，给用户提供了选择发布文件类型的自由度。
+第一个参数是一个数组，键代表着扩展包的资源路径，值代表着它们发布在应用程序中的位置。第二个参数是一个发布文件类型的定义标志。这样，在发布命令中提供一个选项，达到了提供给用户自由选择发布文件类型的目的。
 
 *注意*
 
-在开发的过程中，你可能不想每次改动过后测试你的改动都要执行发布命令。为了减轻负担，修改 `mix.setPublicPath` 方法，将路径改成从测试中加载资源。然而，在发布之前别忘了将它改回来！一个很好的解决这类问题的办法就是使用环境变量。
+在开发的过程中，你可能不想每次改动过前端资源后，为了测试你的改动，都执行发布命令。为了减轻负担，修改 `mix.setPublicPath` 方法，将该路径改成从测试目录中加载资源的方式。然而，在发布之前别忘了将它改回来！解决这类问题一个很好的办法就是使用环境变量。
 
-我们现在已经建立好了基础，已经初步搭建好了路由、控制器、视图，还需要将用户操作界面的资源构建好，我们将在下一部分介绍。
+我们现在已经建立好了基础，初步搭建好了路由、控制器、视图，还需要构建用户操作界面的资源，我们将在下一部分介绍。
 
 ---
 ## 第五部分——构建前端
