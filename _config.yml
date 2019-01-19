@@ -120,7 +120,5 @@ jekyll-mentions:
 markdown: kramdown
 
 # support multiple folder in post
-category: 2015
-category: 2016
 category: 2018
 category: 2019
