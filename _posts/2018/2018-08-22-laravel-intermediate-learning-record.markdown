@@ -6,7 +6,7 @@ headerImage: false
 tag:
 - learn
 - 学习记录
-category: blog
+category: ['blog', '2018']
 author: circle
 description: 记录一些学习 laravel 的过程中的知识点
 sidebar: true

@@ -7,7 +7,7 @@ tag:
 - translation
 - laravel
 - vuejs
-category: blog
+category: ['blog', '2018']
 author: circle
 description: 翻译文章 —— Laravel 的上传功能实现
 ---

@@ -7,7 +7,7 @@ tag:
 - translation
 - laravel
 - vuejs
-category: blog
+category: ['blog', '2018']
 author: circle
 description: 翻译文章 —— 使用 Laravel 和 Vue.js 制作一个留言板
 ---

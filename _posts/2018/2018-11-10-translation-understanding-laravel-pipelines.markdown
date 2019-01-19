@@ -6,7 +6,7 @@ headerImage: false
 tag:
 - translation
 - laravel
-category: blog
+category: ['blog', '2018']
 author: circle
 description: 翻译文章 —— Laravel 代码解析
 ---

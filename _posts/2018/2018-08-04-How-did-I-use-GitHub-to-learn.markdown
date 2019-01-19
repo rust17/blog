@@ -5,7 +5,7 @@ date: 2018-08-04 08:57
 headerImage: false
 tag:
 - learn
-category: blog
+category: ['blog', '2018']
 author: circle
 description: 记录一些我的学习方法
 ---

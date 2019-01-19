@@ -1,6 +1,6 @@
 ---
 layout: post
-category: blog
+category: ['blog', '2018']
 title:  "Linux nginx 配置多站点"
 tags: [php,nginx,linux]
 ---

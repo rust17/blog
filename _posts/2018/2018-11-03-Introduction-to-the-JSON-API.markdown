@@ -6,7 +6,7 @@ headerImage: false
 tag:
 - translation
 - api
-category: blog
+category: ['blog', '2018']
 author: circle
 description: 翻译文章——关于 json api 的一些用法介绍
 ---

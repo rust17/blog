@@ -77,8 +77,8 @@ authors:
 width: large
 
 # if you don't need pagination, comment the *paginate* configs below
-paginate: 10
-paginate_path: "blog/:num/"
+# paginate: 10
+# paginate_path: "blog/:num/"
 
 # if you don't need projects, comment the *projects* configs below
 projects: true
@@ -118,3 +118,8 @@ jekyll-mentions:
 
 # 表明 markdown 渲染器
 markdown: kramdown
+
+# support multiple folder in post
+category: 2015
+category: 2016
+category: 2018

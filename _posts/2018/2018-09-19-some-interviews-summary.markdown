@@ -6,7 +6,7 @@ headerImage: false
 tag:
 - summary
 - interview
-category: blog
+category: ['blog', '2018']
 author: circle
 description: 面试总结
 ---
