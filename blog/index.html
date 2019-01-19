@@ -8,7 +8,11 @@ title: Blog
 	{% if site.posts.size == 0 %}
 		<p class="text-center">Nothing published yet!</p>
 	{% elsif site.paginate %}
-		{% for post in site.categories.2018 %}
+		{% for post in site.categories.2019 %}
+            {% if post.hidden != true %}
+                {% include blog-post.html %}
+            {% endif %}
+        {% endfor %}{% for post in site.categories.2018 %}
             {% if post.hidden != true %}
                 {% include blog-post.html %}
             {% endif %}
