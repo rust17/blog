@@ -12,19 +12,9 @@ title: Blog
             {% if post.hidden != true %}
                 {% include blog-post.html %}
             {% endif %}
-        {% endfor %}{% for post in site.categories.2018 %}
-            {% if post.hidden != true %}
-                {% include blog-post.html %}
-            {% endif %}
         {% endfor %}
-
-        {% for post in site.categories.2016 %}
-            {% if post.hidden != true %}
-                {% include blog-post.html %}
-            {% endif %}
-        {% endfor %}
-
-        {% for post in site.categories.2015 %}
+    
+    {% for post in site.categories.2018 %}
             {% if post.hidden != true %}
                 {% include blog-post.html %}
             {% endif %}
