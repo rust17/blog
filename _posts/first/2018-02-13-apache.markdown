@@ -1,6 +1,6 @@
 ---
 layout: post
-category: ['blog', '2018']
+category: ['blog', 'first']
 title:  "apache配置虚拟站点"
 tags: [apache,linux]
 ---

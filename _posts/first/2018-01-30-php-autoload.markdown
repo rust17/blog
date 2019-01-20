@@ -1,6 +1,6 @@
 ---
 layout: post
-category: ['blog', '2018']
+category: ['blog', 'first']
 title:  "php自动加载__autoload()相关笔记"
 tags: [php]
 ---

@@ -6,7 +6,7 @@ headerImage: false
 tag:
 - record
 - deploy
-category: ['blog', '2018']
+category: ['blog', 'first']
 author: circle
 description: 网站部署流程
 ---

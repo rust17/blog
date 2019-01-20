@@ -7,7 +7,7 @@ tag:
 - translation
 - laravel
 - vuejs
-category: ['blog', '2018']
+category: ['blog', 'first']
 author: circle
 description: 翻译文章 —— 构建一个 Laravel 翻译包第一部分
 ---

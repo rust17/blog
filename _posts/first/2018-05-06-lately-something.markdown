@@ -1,6 +1,6 @@
 ---
 layout: post
-category: ['blog', '2018']
+category: ['blog', 'first']
 title:  "最近的一些事"
 tags: [other]
 ---

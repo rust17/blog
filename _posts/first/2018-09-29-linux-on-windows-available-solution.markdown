@@ -6,7 +6,7 @@ headerImage: false
 tag:
 - summary
 - wsl
-category: ['blog', '2018']
+category: ['blog', 'first']
 author: circle
 description: 经验总结
 ---

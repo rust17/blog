@@ -6,7 +6,7 @@ headerImage: false
 tag:
 - record
 - redis
-category: ['blog', '2018']
+category: ['blog', 'first']
 author: circle
 description: redis 读书记录经验总结
 ---

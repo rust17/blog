@@ -6,7 +6,7 @@ headerImage: false
 tag:
 - learn
 - 踩坑纪录
-category: ['blog', '2018']
+category: ['blog', 'first']
 author: circle
 description: 记录一些踩过的坑
 ---
