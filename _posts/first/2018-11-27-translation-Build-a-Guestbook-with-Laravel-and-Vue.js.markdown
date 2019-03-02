@@ -1,5 +1,5 @@
 ---
-title: "翻译 —— 使用 Laravel 和 Vue.js 制作一个留言板"
+title: "[译] —— 使用 Laravel 和 Vue.js 制作一个留言板"
 layout: post
 date: 2018-11-27 21:30
 headerImage: false

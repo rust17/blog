@@ -1,5 +1,5 @@
 ---
-title: "翻译 —— 使用 Laravel 和 VueJS 实现文件的上传"
+title: "[译] —— 使用 Laravel 和 VueJS 实现文件的上传"
 layout: post
 date: 2018-11-14 18:00
 headerImage: false

@@ -1,5 +1,5 @@
 ---
-title: "翻译 —— 构建一个 Laravel 翻译包（构建前端）"
+title: "[译] —— 构建一个 Laravel 翻译包（构建前端）"
 layout: post
 date: 2018-12-23 08:30
 headerImage: false

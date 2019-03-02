@@ -1,5 +1,5 @@
 ---
-title: "译 —— Laravel 门面模式是如果工作的以及在其它框架中如何使用"
+title: "[译] —— Laravel 门面模式是如果工作的以及在其它框架中如何使用"
 layout: post
 date: 2018-02-28 13:30
 headerImage: false

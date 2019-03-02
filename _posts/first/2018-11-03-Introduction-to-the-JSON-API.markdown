@@ -1,5 +1,5 @@
 ---
-title: "翻译 —— JSON API 的介绍"
+title: "[译] —— JSON API 的介绍"
 layout: post
 date: 2018-11-03 22:00
 headerImage: false
