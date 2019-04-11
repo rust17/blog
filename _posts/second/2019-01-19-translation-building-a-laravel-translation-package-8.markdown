@@ -1,7 +1,7 @@
 ---
 title: "[译] —— 构建一个 Laravel 翻译包（发布扩展包）"
 layout: post
-date: 2018-01-19 17:30
+date: 2019-01-19 17:30
 headerImage: false
 tag:
 - translation

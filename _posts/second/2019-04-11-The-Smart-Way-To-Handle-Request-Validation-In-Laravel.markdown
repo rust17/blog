@@ -1,7 +1,7 @@
 ---
 title: "[译] —— 在 Laravel 中处理请求验证最帅的方法 😎"
 layout: post
-date: 2018-04-11 10:30
+date: 2019-04-11 10:30
 headerImage: false
 tag:
 - translation
