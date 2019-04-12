@@ -150,6 +150,51 @@ class UserController extends Controller
 
 我正在使用 [`Waavi/Sanitizer`][2] 扩展包，该扩展包拥有许多过滤器。
 
+这里让我们为表单请求新建一个 `BaseFormRequest` 抽象类并且使用 `SanitizesInput` trait。
+
+```php
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
+use Waavi\Sanitizer\Laravel\SanitizesInput;
+
+abstract class BaseFormRequest extends FormRequest
+{
+    use ApiResponse, SanitizesInput;
+
+    /**
+     * 打开 https://github.com/Waavi/Sanitizer 查看更多关于消毒器的使用
+     */
+    public function validateResolved()
+    {
+        {
+            $this->sanitize();
+            parent::validateResolved();
+        }
+    }
+
+    /**
+     * 获取适用于请求的验证规则
+     *
+     * @return array
+     */
+    abstract public function rules();
+
+    /**
+     * 判断用户是否已授权访问该请求
+     *
+     * @return bool
+     */
+    abstract public function authorize();
+}
+
+```
+
 ---
 原文地址：[https://medium.com/@kamerk22/the-smart-way-to-handle-request-validation-in-laravel-5e8886279271](https://medium.com/@kamerk22/the-smart-way-to-handle-request-validation-in-laravel-5e8886279271)
 
