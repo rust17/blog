@@ -194,6 +194,76 @@ abstract class BaseFormRequest extends FormRequest
 }
 
 ```
+因此我们可以这样写我们的 `UsersStoreRequest`。从我们的基类继承你的表单输入类，这样我们就不需要在所有的请求类里单独引入 trait 了。
+
+```php
+<?php
+
+namespace App\Http\Requests;
+
+class UserStoreRequest extends BaseFormRequest
+{
+    /**
+     * 决定了该用户是否有权限进行请求
+     * 
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
+
+    /**
+     * 定义了申请请求的验证规则
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            'email' => 'required|email|unique:users',
+            'name' => 'required|string|max:50',
+            'password' => 'required',
+        ];
+    }
+
+    public function message()
+    {
+        return [
+            'email.required' => 'Email is required!',
+            'name.required' => 'Name is required',
+            'password.required' => 'Password is required',
+        ];
+    }
+
+    /**
+     * 应用于输入的过滤器
+     *
+     * @return array
+     */
+    public function filters()
+    {
+        return [
+            'email' => 'trim|lowercase',
+            'name' => 'trim|capitalize|escape',
+        ];
+    }
+}
+```
+
+`SanitizesInput` 的 trait 提供了一个 `filters()` 方法，该方法用于在我们提供数据给验证器之前先格式化该数据。`filters()` 方法会返回一个验证过滤器的数组。这里，我们将用户输入的邮箱转换成小写以及去除空格，同理将姓名转换成大写以及过滤掉 HTML 标签。
+
+你可以在[这里][3]阅读更多关于过滤器的可用规则。
+
+### 结论
+
+刚开始的时候，将请求类单独分离出来看似是不必要的。但是想象一下如果你将所有验证逻辑存放于一个控制器当中，当你或者其他接手的人 😛 想要去维护代码的时候简直就是噩梦 👻。
+
+感谢阅读。
+
+我很乐意听到你的想法。如果你有任何的疑问或者建议，请在下方留下评论。
+
+祝你有美好的一天。 
 
 ---
 原文地址：[https://medium.com/@kamerk22/the-smart-way-to-handle-request-validation-in-laravel-5e8886279271](https://medium.com/@kamerk22/the-smart-way-to-handle-request-validation-in-laravel-5e8886279271)
@@ -204,3 +274,4 @@ abstract class BaseFormRequest extends FormRequest
 
 [1]: https://laravel.com/docs/5.6/validation#form-request-validation
 [2]: https://github.com/Waavi/Sanitizer
+[3]: https://github.com/Waavi/Sanitizer
