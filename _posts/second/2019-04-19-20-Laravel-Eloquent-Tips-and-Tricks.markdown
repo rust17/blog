@@ -284,6 +284,190 @@ public function author()
 }
 ```
 
+### 11. Order by 赋值函数
+
+想象一下这样子：
+
+```php
+function getFullNameAttribute()
+{
+    return $this->attributes['first_name'] . ' ' . $this->attributes['last_name'];
+}
+```
+
+现在，如果你想根据 full_name 排序？这样可不行哦：
+
+```php
+$cilents = Client::orderBy('full_name')->get(); // 这样写是不起作用的
+```
+
+解决办法很简单。我们需要在得到结果**之后**再排序。
+
+```php
+$clients = Client::get()->sortBy('full_name'); // 这样是可以的！
+```
+
+需要注意的是函数名称是不一样的 —— 不是 **orderBy**，而是 **sortBy**。
+
+### 12. 全局作用域下的默认排序
+
+如果你总是希望 User::all() 返回的数据可以按照 name 字段排序应该怎么做呢？你可以注册一个全局的作用域。让我们回到我们前面提到过的 boot() 方法。
+
+```php
+protected static function boot()
+{
+    parent::boot();
+
+    // 按照 name 升序进行排序
+    static::addGlobalScope('order', function (Builder $builder) {
+        $builder->orderBy('name', 'asc');
+    });
+}
+```
+
+在这阅读更多[查询作用域][3]相关的知识。
+
+### 13. 原生的查询方法
+
+有时候我们需要在 Eloquent 的基础上添加原生的查询。幸运的是，有几个函数就是为此而存在的。
+
+```php
+// whereRaw
+$orders = DB::table('orders')
+    ->whereRaw('price > IF(state = "TX", ?, 100)', [200])
+    ->get();
+
+// havingRaw
+Product::groupBy('category_id')->havingRaw('COUNT(*) > 1')->get();
+
+// orderByRaw
+User::where('created_at', '>', '2016-01-01')
+    ->orderByRaw('(updated_at - created_at) desc')
+    ->get();
+```
+
+### 14. Replicate: 复制一个跟原生一模一样的条目
+
+这是一个简短的技巧。不需要深刻的解释，这就是复制一个数据库条目最好的方法：
+
+```php
+$task = Tasks::find(1);
+$newTask = $task->replicate();
+$newTask->save();
+```
+
+### 15. 用来处理大数据的 Chunk() 方法
+
+准确的说跟 Eloquent 没有关系，更多的是关于 Collection。但是仍然是强大的 —— 处理较大的数据集的时候，你可以把它们分成块来处理。
+
+与其这样：
+
+```php
+$users = User::all();
+foreach ($users as $user) {
+    // ...
+}
+```
+
+还不如这样：
+
+```php
+User::chunk(100, function ($users) {
+    foreach ($users as $user) {
+        // ...
+    }
+})
+```
+
+### 16. 新建模型的时候顺带新建相关的文件
+
+我们都知道这个 Artisan 命令：
+
+```shell
+php artisan make model Company
+```
+
+但是你知不知道有三个有用的标记可以帮助生成模型相关的文件？
+
+```shell
+php artisan make:model Company -mcr
+```
+
+* -m 将生成一个**迁移**文件
+* -c 将生成一个**控制器**
+* -r 将指定该控制器是**资源控制器**
+
+### 17. 保存的时候覆盖 updated_at
+
+你知道 save() 方法可以接收参数吗？结果是，我们可以让它“忽略”默认更新 updated_at 的功能，使用指定的时间来填充。看这样：
+
+```php
+$product = Product::find($id);
+$product->updated_at = '2019-01-01 10:00:00';
+$product->save(['timestamps' => false]);
+```
+
+这样我们就使用我们自己预定义的时间覆盖掉了 updated_at 的默认值了。
+
+### 18. update() 方法的结果是什么？
+
+你有没有想过这行代码会返回什么？
+
+```php
+$result = $products->whereNull('category_id')->update(['category_id' => 2]);
+```
+
+我的意思是，update 方法是在数据库中执行，但是 $result 包含了什么呢？
+
+答案是**受影响的行数**。因此，如果你需要检查有更新了多少行，你不需要调用任何方法 —— update() 方法将返回受影响的结果数。
+
+### 19. 将括号转换为 Eloquent 查询语句
+
+如果你有一个混合了且与或的 SQL 语句，好比这样：
+
+```SQL
+... WHERE (gender = 'Male' and age >= 18) or (gender = 'Female' and age >= 65)
+```
+
+怎样把它转成 Eloquent 语句呢？这是错误的方式：
+
+```php
+$q->where('gender', 'Male');
+$q->orWhere('age', '>=', 18);
+$q->where('gender', 'Female');
+$q->orWhere('age', '>=', 65);
+```
+
+这样查询的顺序是不正确的。正确的做法稍微有点复杂，使用了闭包作为子查询语句：
+
+```php
+$q->where(function ($query) {
+    $query->where('gender', 'Male')
+        ->where('age', '>=', 18);
+})->orWhere(function ($query) {
+    $query->where('gender', 'Female')
+        ->where('age', '>=', 65);
+});
+```
+
+### 20. 携带了多个参数的 orWhere
+
+最后，你可以给 `orWhere()` 传递一个数组，通常：
+
+```php
+$q->where('a', 1);
+$q->orWhere('b', 2);
+$q->orWhere('c', 3);
+```
+
+你可以像这样：
+
+```php
+$q->where('a', 1);
+$q->orWhere(['b' => 2, 'c' => 3]);
+```
+
+如果你喜欢这些 Eloquent 小技巧，可以来看看我的在线课程 [Eloquent: Expert Level][4]，从中可以学习新建关联关系，有效地查询数据以及发现你可能不知道的 Eloquent 特色。
 
 ---
 原文地址：[https://laravel-news.com/eloquent-tips-tricks](https://laravel-news.com/eloquent-tips-tricks)
@@ -294,3 +478,5 @@ public function author()
 
 [1]: https://github.com/webpatser/laravel-uuid
 [2]: https://github.com/laravel/framework/blob/5.6/src/Illuminate/Database/Eloquent/Model.php
+[3]: https://laravel.com/docs/5.6/eloquent#query-scopes
+[4]: https://laraveldaily.teachable.com/p/laravel-eloquent-expert-level
