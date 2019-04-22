@@ -12,9 +12,9 @@ author: circle
 description: 翻译文章 —— 介绍一些 Laravel Eloquent 的使用技巧
 ---
 
-Eloquent ORM 看起来像一个简单的机制，但是表面之下，有许多未暴露的方法以及不知名的方式，使用这些方法可以用来实现更强大的功能。在这篇文章里，我将向你展示一些使用技巧。
+Eloquent ORM 看似一个简单的机制，但是在它的表面之下，隐藏着许多很少人知道的方法以及技巧，使用这些方法可以让我们更加高效。在这篇文章里，我将向你展示一些实用技巧。
 
-### 1. 自增和自减
+### 1. 自增与自减
 
 与其这样：
 
@@ -41,7 +41,7 @@ Product::find($product_id)->increment('stock'); // -1
 
 ### 2. XorY 方法
 
-Eloquent 有好几个包含了两个方法的函数，例如“执行 X，不然就执行 Y”。
+Eloquent 有好几个同时包含了两个方法的函数，它们的模式一般像“执行 X，不然就执行 Y”。
 
 **例子 1** - findOrFail():
 
@@ -79,7 +79,7 @@ $user = User::firstOrCreate(['email' => $email]);
 
 ### 3. 模型的 boot() 方法
 
-在 Eloquent 模型内有一个叫 boot() 的神奇方法可以改掉默认的逻辑。
+在 Eloquent 模型类里有一个叫 `boot()` 的神奇方法，使用这个方法可以改掉默认的逻辑。
 
 ```php
 class User extends Model
@@ -95,7 +95,7 @@ class User extends Model
 }
 ```
 
-可能一个最显著的例子就是在模型创建并实例化的阶段设置一些属性的值。假如你想生成 [UUID][1] 字段。
+一个可能是最显著的例子，在模型创建实例化的阶段设置其属性的值。例如你想生成 [UUID][1] 字段。
 
 ```php
 public static function boot()
@@ -119,7 +119,7 @@ public function users() {
 
 但是你知不知道这里我们已经可以使用 `where` 和 `orderBy` 了？
 
-例如，如果你想获得某种类型的用户的关联关系，同时根据 email 排序，你可以这样：
+例如，如果你想获得某种类型的关联用户，同时根据 email 排序，你可以这样：
 
 ```php
 public function approvedUsers() {
@@ -129,7 +129,7 @@ public function approvedUsers() {
 
 ### 5. 模型属性：时间戳，追加属性等等
 
-Eloquent 模型中有一些以类的属性的形式存在的参数。最广为人知的可能是这些：
+Eloquent 模型中有一些特别的参数，它们以类的属性的形式存在。最广为人知的可能是这些：
 
 ```php
 class User extends Model {
@@ -140,7 +140,7 @@ class User extends Model {
 }
 ```
 
-但是除此之外还有这些：
+但是除此之外，还有这些：
 
 ```php
 protected $primaryKey = 'uuid'; // 主键不一定必须是 'id'
@@ -151,7 +151,7 @@ const UPDATED_AT = 'updated_at'; // 是的，这些字段名称也是可以被�
 public $timestamps = false; // 或者干脆不使用时间戳字段
 ```
 
-还有很多，我已经罗列了最有意思的部分，想要知道更多的话可以查看默认的 [抽象类][2] 代码，可以通过使用过的 trait 得知。 
+还有很多，我已经罗列了最有意思的部分，如果你想要知道更多的话可以查看 [抽象类][2] 的代码，还可以通过查看类内使用过的 trait 得知。 
 
 ### 6. 找到多个条目
 
@@ -169,7 +169,7 @@ $users = User::find([1, 2, 3]);
 
 ### 7. WhereX
 
-有一个优雅的办法把这：
+一个优雅的办法可以把这：
 
 ```php
 $users = User::where('approved', 1)->get();
@@ -183,7 +183,7 @@ $users = User::whereApproved(1)->get();
 
 是的，你可以将字段名作为后缀拼接到 'where' 之后，它就会神奇的生效。
 
-同样的，在 Eloquent 当中预定义了一些跟时间/日期相关的方法：
+同样的，在 Eloquent 当中还预定义了一些跟时间/日期有关的方法：
 
 ```php
 User::whereDate('created_at', date('Y-m-d'));
