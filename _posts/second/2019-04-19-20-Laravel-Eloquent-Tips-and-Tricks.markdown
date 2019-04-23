@@ -194,9 +194,9 @@ User::whereYear('created_at', date('Y'));
 
 ### 8. 在关联关系中使用 Order by 排序
 
-这是一个稍稍复杂的“技巧”。如果你想把一个论坛的帖子按照最新**发布**排序应该怎么做？在论坛当中将最近更新的帖子置顶这是一个很常见的需求，对吧？
+这是一个稍稍复杂的“技巧”。如果你想把一个论坛的帖子按照最新**发布**的顺序排序应该怎么做？在论坛当中将最后更新的帖子置顶这是一个很常见的需求，对吧？
 
-首先，在帖子模型中为**最近发布**定义一个单独的关联关系：
+首先，在帖子模型中将**最近发布**定义一个单独的关联关系：
 
 ```php
 public function latestPost()
@@ -205,7 +205,7 @@ public function latestPost()
 }
 ```
 
-然后在控制器中，我们可以这样做，神奇的事情就发生了：
+然后在控制器中，我们可以这样写，神奇的事情就发生了：
 
 ```php
 $users = Topic::with('latestPost')->get()->sortByDesc('latestPost.created_at');
@@ -236,7 +236,7 @@ $query->when(request('filter_by') == 'date', function ($q) {
 });
 ```
 
-看起来好像不够简短优雅，更简洁有力的写法是传递参数：
+看起来好像不够简短优雅，更简洁的写法是传递参数：
 
 ```php
 $query = User::query();
@@ -246,7 +246,7 @@ $query->when(request('role', false), function ($q, $role) {
 $authors = $query->get();
 ```
 
-### 10. 从属关联关系的默认模型
+### 10. 从属关联关系模型的默认值
 
 假如你有一个 Post 模型从属于 Author，在 blade 模板中代码如下：
 
@@ -254,15 +254,15 @@ $authors = $query->get();
 {{ $post->author->name }}
 ```
 
-但是如果作者被删掉了或者由于某个原因没有作者怎么办？你将得到一个错误，类似于“该属性找不到对象”。
+但是如果这个作者被删掉了或者由于某个原因没有作者怎么办？你将得到一个错误，类似于“该属性找不到对象”。
 
-当热，你可能会这样写来防止：
+当然，你可能会这样写来防止：
 
 ```php
 {{ $post->author->name ?? '' }}
 ```
 
-但是其实你可以在 Eloquent 关联关系这一层这样写就能避免：
+但是其实在 Eloquent 定义关联关系的时候这样写就能避免：
 
 ```php
 public function author()
@@ -273,7 +273,7 @@ public function author()
 
 在这个例子中，如果 post 对象没有相应的 author 对象，那么 `author()` 方法将返回一个空的 `\App\Author` 对象。
 
-更进一步地，我们可以给模型指定默认的属性值。
+甚至，我们可以给模型指定默认的属性值。
 
 ```php
 public function author()
@@ -284,7 +284,7 @@ public function author()
 }
 ```
 
-### 11. Order by 赋值函数
+### 11. 给 Order by 赋值
 
 想象一下这样子：
 
@@ -311,7 +311,7 @@ $clients = Client::get()->sortBy('full_name'); // 这样是可以的！
 
 ### 12. 全局作用域下的默认排序
 
-如果你总是希望 User::all() 返回的数据可以按照 name 字段排序应该怎么做呢？你可以注册一个全局的作用域。让我们回到我们前面提到过的 boot() 方法。
+如果你总是希望 User::all() 返回的数据可以按照 name 字段排序应该怎么做呢？你可以添加一个全局的作用域。让我们回到前面提到过的 boot() 方法。
 
 ```php
 protected static function boot()
@@ -325,11 +325,11 @@ protected static function boot()
 }
 ```
 
-在这阅读更多[查询作用域][3]相关的知识。
+你在可以这阅读更多关于[查询作用域][3]相关的知识。
 
 ### 13. 原生的查询方法
 
-有时候我们需要在 Eloquent 的基础上添加原生的查询。幸运的是，有几个函数就是为此而存在的。
+有时候我们不得不在 Eloquent 的基础上添加原生的查询。幸运的是，有几个函数就是专门为此而准备的。
 
 ```php
 // whereRaw
@@ -346,9 +346,9 @@ User::where('created_at', '>', '2016-01-01')
     ->get();
 ```
 
-### 14. Replicate: 复制一个跟原生一模一样的条目
+### 14. Replicate: 复制一个一模一样的条目
 
-这是一个简短的技巧。不需要深刻的解释，这就是复制一个数据库条目最好的方法：
+这是一个简短的技巧。不需要深刻的解释，这就是一个复制数据库条目最好的方法：
 
 ```php
 $task = Tasks::find(1);
@@ -356,9 +356,9 @@ $newTask = $task->replicate();
 $newTask->save();
 ```
 
-### 15. 用来处理大数据的 Chunk() 方法
+### 15. 使用 Chunk() 方法处理大块数据
 
-准确的说跟 Eloquent 没有关系，更多的是关于 Collection。但是仍然是强大的 —— 处理较大的数据集的时候，你可以把它们分成块来处理。
+准确的说跟 Eloquent 没有关系，更多的是关于 Collection。但仍然是强大的 —— 处理较大的数据集的时候，你可以分块处理。
 
 与其这样：
 
@@ -399,7 +399,7 @@ php artisan make:model Company -mcr
 
 ### 17. 保存的时候覆盖 updated_at
 
-你知道 save() 方法可以接收参数吗？结果是，我们可以让它“忽略”默认更新 updated_at 的功能，使用指定的时间来填充。看这样：
+你知道 save() 方法可以接收参数吗？根据这个特性，我们可以让它“忽略”默认更新 updated_at 字段，而使用指定的时间来填充。看这样：
 
 ```php
 $product = Product::find($id);
@@ -452,7 +452,7 @@ $q->where(function ($query) {
 
 ### 20. 携带了多个参数的 orWhere
 
-最后，你可以给 `orWhere()` 传递一个数组，通常：
+最后一个，你可以给 `orWhere()` 传递一个数组，通常情况下：
 
 ```php
 $q->where('a', 1);
@@ -460,14 +460,14 @@ $q->orWhere('b', 2);
 $q->orWhere('c', 3);
 ```
 
-你可以像这样：
+你可以改成这样：
 
 ```php
 $q->where('a', 1);
 $q->orWhere(['b' => 2, 'c' => 3]);
 ```
 
-如果你喜欢这些 Eloquent 小技巧，可以来看看我的在线课程 [Eloquent: Expert Level][4]，从中可以学习新建关联关系，有效地查询数据以及发现你可能不知道的 Eloquent 特色。
+如果你喜欢这些 Eloquent 小技巧，可以来看看我的在线课程 [Eloquent: Expert Level][4]，从中可以学习到怎样添加关联关系，如何有效地查询数据以及发掘你可能不知道的 Eloquent 功能特色。
 
 ---
 原文地址：[https://laravel-news.com/eloquent-tips-tricks](https://laravel-news.com/eloquent-tips-tricks)
