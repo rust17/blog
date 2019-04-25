@@ -43,6 +43,54 @@ php artisan queue:listen
 
 使用 `queue:listen` 确保了每个任务都会诞生一个新的应用实例，这就意味着你如果改动代码也不必每次都去手动重启工作进程了，但也意味着更多的服务器资源将被消耗。
 
+### queue:work 命令行
+
+让我们来看一下 `Queue\Console\WorkCommand` 这个类内部的 `handle()` 方法，当你运行 `php artisan queue:work` 的时候，执行的就是这个方法。
+
+```php
+public function handle()
+{
+    if ($this->downForMaintenance() && $this->option('once')) {
+        return $this->worker->sleep($this->option('sleep'));
+    }
+
+    $this->listenForEvents();
+
+    $connection = $this->argument('connection')
+                    ?: $this->laravel['config']['queue.default'];
+
+    $queue = $this->getQueue($connection);
+
+    $this->runWorker(
+        $connection, $queue
+    );
+}
+```
+
+首先，我们检查了程序是否处于维护模式以及命令行是否使用了 `--once` 参数，如果这两个条件都符合，那么我们希望脚本能优雅地终止，而不必再执行任何任务。为此，在终止整个脚本之前我们将让工作进程进行一段设定时间的睡眠。
+
+`Queue\Worker` 的 `sleep()` 方法大概就是这个样子：
+
+```php
+public function sleep($seconds)
+{
+    sleep($seconds);
+}
+```
+
+**在 handle() 方法中我们为什么不直接返回空来结束掉整个脚本呢？**
+
+正如我们之前所说那样，`queue:listen` 命令是在一个循环内执行 `WorkCommand` 的：
+
+```php
+while (true) {
+    // 这个过程只需要调用 —— 'php artisan queue:work --once'
+    $this->runProgress($process, $options->memory);
+}
+```
+
+如果程序处于维护阶段，
+
 
 ---
 原文地址：[https://divinglaravel.com/queue-workers-how-they-work](https://divinglaravel.com/queue-workers-how-they-work)
