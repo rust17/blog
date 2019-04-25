@@ -12,6 +12,8 @@ author: circle
 description: 翻译文章 —— 描述了 Laravel 队列的工作原理
 ---
 
+现在，我们已经知道了 Laravel 将任务推送到不同的队列，让我们来深入了解工作人员是怎样执行任务的。首先，我将这里的工作人员定义为一个简单的 PHP 工作进程，该进程在后台运行，从存储空间中取出任务，小心翼翼地根据一些配置选项执行。
+
 ```shell
 php artisan queue:work
 ```
@@ -40,6 +42,7 @@ php artisan queue:listen
 * 结束该进程
 
 使用 `queue:listen` 确保了每个任务都会诞生一个新的应用实例，这就意味着你如果改动代码也不必每次都去手动重启工作进程了，但也意味着更多的服务器资源将被消耗。
+
 
 ---
 原文地址：[https://divinglaravel.com/queue-workers-how-they-work](https://divinglaravel.com/queue-workers-how-they-work)
