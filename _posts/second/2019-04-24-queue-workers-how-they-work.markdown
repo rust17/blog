@@ -43,7 +43,7 @@ php artisan queue:listen
 
 使用 `queue:listen` 确保了每个任务都会诞生一个新的应用实例，这就意味着你如果改动代码也不必每次都去手动重启工作进程了，但也意味着更多的服务器资源将被消耗。
 
-### queue:work 命令行
+### queue:work 命令
 
 让我们来看一下 `Queue\Console\WorkCommand` 这个类内部的 `handle()` 方法，当你运行 `php artisan queue:work` 的时候，执行的就是这个方法。
 
@@ -89,7 +89,15 @@ while (true) {
 }
 ```
 
-如果程序处于维护阶段，
+如果程序处于维护阶段，`WorkCommand` 命令立即终止将会使得一次循环结束，并快速开启下一个工作进程。这比故意造成延迟要好得多，因为那样将会创建大量我们不需要的应用实例从而造成消耗过多的服务器资源。
+
+### 监听事件
+
+在 `handle()` 方法内部我们调用了 `listenForEvents()` 方法：
+
+```php
+
+```
 
 
 ---
