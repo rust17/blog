@@ -96,8 +96,25 @@ while (true) {
 在 `handle()` 方法内部我们调用了 `listenForEvents()` 方法：
 
 ```php
+protected function listenForEvents()
+{
+    $this->laravel['events']->listen(JobProcessing::class, function ($event) {
+        $this->writeOutput($event->job, 'starting');
+    });
 
+    $this->laravel['events']->listen(JobProcessed::class, function ($event) {
+        $this->writeOutput($event->job, 'success');
+    });
+
+    $this->laravel['events']->listen(JobFailed::class, function ($event) {
+        $this->writeOutput($event->job, 'failed');
+
+        $this->logFailedJob($event);
+    });
+}
 ```
+
+在这个方法内部，我们监听了一系列工作进程会触发的事件，这将允许我们在每个事件处理、通过或者失败的阶段打印一些信息给用户。
 
 
 ---
