@@ -212,9 +212,50 @@ protected function gatherWorkerOptions()
 }
 ```
 
+### 守护进程
+
+让来我们看下 `Worker::daemon()` 方法，该方法内部的第一行就调用 `listenForSignals()` 方法：
+
+```php
+protected function listenForSignals()
+{
+    if ($this->supportsAsyncSignals()) {
+        pcntl_async_signals(true);
+
+        pcntl_signal(SIGTERM, function () {
+            $this->shouldQuit = true;
+        });
+
+        pcntl_signal(SIGUSR2, function () {
+            $this->paused = true;
+        });
+
+        pcntl_signal(SIGCONT, function () {
+            $this->paused = false;
+        });
+    }
+}
+```
+
+该方法使用了 PHP7.1 的信号处理程序，`supportsAsyncSignals()` 方法检查了我们的 PHP 版本是否是 7.1 然后加载 `pcntl` 模块。
+
+然后调用 `pcntl_async_signals()` 开启信号处理，再然后为多个信号注册处理程序：
+
+* 脚本指示将要关闭时会引发 `SIGTERM`
+* `SIGUSR2` 是一个用户自定义的信号，Laravel 使用其指示脚本将要暂停
+* 暂停的脚本要重新启动时会引发 `SIGOUT`
+
+这些信号是从一个诸如 [Supervisor][1] 的进程监控发送过来的。
+
+`Worker::daemon()` 方法的第二行获取了最后一个队列重启的时间戳，当我们调用 `queue:restart` 的时候该值会被缓存起来，我们通过检查最后重启的时间不匹配来指示进程应该重启，更多内容稍后将介绍。
+
+最终该方法开启了一个循环，我们将继续寻找剩余任务，执行它们，并且在工作进程中执行一些操作。
+
 ---
 原文地址：[https://divinglaravel.com/queue-workers-how-they-work](https://divinglaravel.com/queue-workers-how-they-work)
 
 作者：[Mohamed Said](https://twitter.com/themsaid)
 
 ---
+
+[1]: http://supervisord.org/
