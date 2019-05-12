@@ -116,6 +116,101 @@ protected function listenForEvents()
 
 在这个方法内部，我们监听了一系列工作进程会触发的事件，这将允许我们在每个事件处理、通过或者失败的阶段打印一些信息给用户。
 
+### 失败任务日志记录
+
+一旦任务执行失败，`logFailedJon()` 方法将被调用：
+
+```php
+$this->laravel['queue.failer']->log(
+    $event->connectionName, $event->job->getQueue(),
+    $event->job->getRawBody(), $event->exception
+);
+```
+
+在 `Queue\QueueServiceProvider::registerFailedJobServices()` 方法中已经注册好了 `queue.failer` 容器别名：
+
+```php
+protected function registerFailedJobServices()
+{
+    $this->app->singleton('queue.failer', function () {
+
+        return isset($config['table'])
+                    ? $this->databaseFailedJobProvider($config)
+                    : new NullFailedJobProvider;
+    });
+}
+
+/**
+ * 创建一个新的数据库失败任务服务提供者
+ *
+ * @param array $config
+ * @return \Illuminate\Queue\Failed\DatabaseFailedJobProvider
+ */
+protected function databaseFailedJobProvider($config)
+{
+    return new DatabaseFailedJobProvider(
+        $this->app['db'], $config['database'], $config['table']
+    );
+}
+```
+
+一旦 `queue.failed` 配置信息设置好，数据库队列将启动并且将失败的任务记录到一张数据表当中：
+
+```php
+$this->getTable()->insertGetId(compact(
+    'connection', 'queue', 'payload', 'exception', 'failed_at'
+));
+```
+
+### 启动进程
+
+为了启动进程我们需要收集两方面信息：
+
+* 该进程获取任务的前后关系
+* 该进程寻找任务的队列
+
+你可以在 `queue:work` 命令中添加一个 `--connection=default` 配置项，如果你没有指明默认的连接，那么 `queue.default` 中的配置就将被使用。
+
+同样对于队列方式而言，你可以提供一个 `--queue=emails` 配置项或者使用你选择的连接配置当中的 `queue` 配置。
+
+一旦这些东西设置好，`WorkCommand::handle()` 方法将执行 `runWorker()`：
+
+```php
+protected function runWorker($connection, $queue)
+{
+    $this->worker->setCache($this->laravel['cache']->driver());
+
+    return $this->worker->{$this->option('once') ? 'runNextJob' : 'daemon'}(
+        $connection, $queue, $this->gatherWorkerOptions()
+    );
+}
+```
+
+进程类属性在构造命令的时候已经被设置好了：
+
+```php
+public function __construct(Worker $worker)
+{
+    parent::__construct();
+
+    $this->worker = $worker;
+}
+```
+
+从服务容器中解析出 `Queue\Worker` 实例，在 `runWorker()` 内部我们设置进程将要使用的缓存驱动，同时也设置好基于 `--once` 命令行参数将要调用的方法。
+
+在 `--once` 配置的方法使用过后，我们将调用 `runNextJob` 方法执行下一个待执行的任务，然后脚本终止。不然我们就调用 `daemon` 方法保持进程运行从而一直处理任务。
+
+```php
+protected function gatherWorkerOptions()
+{
+    return new WorkerOptions(
+        $this->option('delay'), $this->option('memory'),
+        $this->option('timeout'), $this->option('sleep'),
+        $this->option('tries'), $this->option('force')
+    );
+}
+```
 
 ---
 原文地址：[https://divinglaravel.com/queue-workers-how-they-work](https://divinglaravel.com/queue-workers-how-they-work)
