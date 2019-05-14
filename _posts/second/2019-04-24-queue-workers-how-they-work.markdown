@@ -251,6 +251,111 @@ protected function listenForSignals()
 
 最终该方法开启了一个循环，我们将继续寻找剩余任务，执行它们，并且在工作进程中执行一些操作。
 
+```php
+while (true) {
+    if (! $this->daemonShouldRun($options, $connectionName, $queue)) {
+        $this->pauseWorker($options, $lastRestart);
+
+        continue;
+    }
+
+    $job = $this->getNextJob(
+        $this->manager->connection($connectionName), $queue
+    );
+
+    $this->registerTimeoutHandler($job, $options);
+
+    if ($job) {
+        $this->runJob($job, $connectionName, $options);
+    } else {
+        $this->sleep($options->sleep);
+    }
+
+    $this->stopIfNecessary($options, $lastRestart);
+}
+```
+
+#### 决定了进程是否处理任务
+
+调用 `daemonShouldRun()` 主要是为了确认以下情况：
+
+* 应用程序不是处于维护模式
+* 进程没有暂停
+* 循环期间没有事件监听器试图停止循环
+
+即使程序处于维护模式，你依然可以通过命令行带上 `--force` 参数来处理任务：
+
+```shell
+php artisan queue:work --force
+```
+
+其中决定了进程是否继续运行的一个条件如下：
+
+```php
+$this->events->until(new \Events\Looping($connectionName, $queue)) === false
+```
+
+这行代码启动了一个 `Queue\Event\Looping` 事件并且检查 `handle()` 有没有监听到返回 false，使用这个判断你可以偶尔强制进程暂时结束。
+
+如果进程需要暂停，将调用`pauseWorker()`方法：
+
+```php
+protected function pauseWorker(WorkerOptions $options, $lastRestart)
+{
+    $this->sleep($options->sleep > 0 ? $options->sleep : 1);
+
+    $this->stopIfNecessary($options, $lastRestart);
+}
+```
+
+该方法调用了 `sleep` 方法并且将 `--sleep` 参数传递到控制台：
+
+```php
+public function sleep($seconds)
+{
+    sleep($seconds);
+}
+```
+
+在脚本休眠一段时间后，我们将检查进程是否应该退出，如果是的话结束掉该脚本，我们之后将继续跟踪 `stopIfNecessary()` 方法，如果脚本不应该被结束我们就调用 `continue`，开启一个新的循环：
+
+```php
+if (! $this->daemonShouldRun($options, $connectionName, $queue)) {
+    $this->pauseWorker($options, $lastRestart);
+
+    continue;
+}
+```
+
+#### 检索仍要进行的任务
+
+```php
+$job = $this->getNextJob(
+    $this->manager->connection($connectionName), $queue
+);
+```
+
+`getNextJob()` 方法接收一个待运行的队列连接实例以及应该获取任务的队列：
+
+```php
+protected function getNextJob($connection, $queue)
+{
+    try {
+        foreach (explode(',', $queue) as $queue) {
+            if (! is_null($job = $connection->pop($queue))) {
+                return $job;
+            }
+        }
+    } catch (Exception $e) {
+        $this->exceptions->report($e);
+
+        $this->stopWorkerIfLostConnection($e);
+    }
+}
+```
+
+我们仅仅循环给定的队列，
+
 ---
 原文地址：[https://divinglaravel.com/queue-workers-how-they-work](https://divinglaravel.com/queue-workers-how-they-work)
 
