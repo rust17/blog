@@ -354,7 +354,20 @@ protected function getNextJob($connection, $queue)
 }
 ```
 
-我们仅仅循环给定的队列，
+我们只是在给定的队列中循环，根据选中的队列，到存储空间（数据库，redis，sqs 等等）中获取并返回一个任务。
+
+为了从存储空间中返回一个任务，我们查询了符合下列条件的任务：
+
+* 我们试图从那些推进 `queue` 当中的任务寻找
+* 不是由其他进程保留的
+* 在设定时间可以运行的，一些任务延迟运行
+* 我们也去获取那些保留了相当长时间被冻结的任务，并从新尝试运行
+
+一旦我们找到了符合规范的任务，我们将标记该任务作为保留的，因此其他进程将不会选中它，我们也将监控尝试运行任务的次数。
+
+#### 监控任务超时
+
+在下一个任务回收之后，我们将调用 `registerTimeoutHandler()` 方法：
 
 ---
 原文地址：[https://divinglaravel.com/queue-workers-how-they-work](https://divinglaravel.com/queue-workers-how-they-work)
