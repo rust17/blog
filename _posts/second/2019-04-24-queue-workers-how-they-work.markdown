@@ -369,6 +369,71 @@ protected function getNextJob($connection, $queue)
 
 在下一个任务回收之后，我们将调用 `registerTimeoutHandler()` 方法：
 
+```php
+protected function registerTimeoutHandler($job, WorkerOptions $options)
+{
+    if ($this->supportsAsyncSignals()) {
+        pcntl_signal(SIGALRM, function () {
+            $this->kill(1);
+        });the
+
+        $timeout = $this->timeoutForJob($job, $options);
+
+        pcntl_alarm($timeout > 0 ? $timeout : 0);
+    }
+}
+```
+
+如果 `pcntl` 插件再次加载，我们将注册一个信号处理终结超时的进程，我们在进程超过配置的超时时间之后使用 `pcntl_alerm()` 来发送一个 `SIGALRM` 信号。
+
+如果处理任务花费的时间超过超时时间，处理器将结束掉整个脚本，如果没有任务被传递到下个循环的话，那么将设置一个覆盖第一个的新警报，因为在这个过程中可以存在单个警报。
+
+任务超时仅在 PHP7.1 以上版本有效，在 Windows 上也无法工作 `¯\_(ツ)_/¯`。
+
+### 处理一个任务
+
+`runJob()` 方法调用了 `process()` 方法：
+
+```php
+public function process($connectionName, $job, WorkerOptions $options)
+{
+    try {
+        $this->raiseBeforeJobEvent($connectionName, $job);
+
+        $this->markJobAsFailedIfAlreadyExceedsMaxAttempts(
+            $connectionName, $job, (int) $options->maxTries
+        );
+
+        $job->fire();
+
+        $this->raiseAfterJobEvent($connectionName, $job);
+    } catch (Exception $e) {
+        $this->handleJobException($connectionName, $job, $options, $e);
+    }
+}
+```
+
+这里 `raiseBeforeJobEvent()` 启动了 `Queue\Events\JobProcessing` 事件，并且 `raiseAfterJobEvent()` 启动了 `Queue\Events\JobProcessed` 事件。
+
+`markJobAsFailedIfAlreadyExceedsMaxAttempts()` 方法检查了进程是否已经到达最大尝试次数并且将任务标记为失败状态：
+
+```php
+protected function markJobAsFailedIfAlreadyExceedsMaxAttempts($connectionName, $job, $maxTries)
+{
+    $maxTries = ! is_null($job->maxTries()) ? $job->maxTries() : $maxTries;
+
+    if ($maxTries === 0 || $job->attempts() <= $maxTries) {
+        return;
+    }
+
+    $this->failJob($connectionName, $job, $e = new MaxAttemptsExceededException(
+        'A queued job has been attempted too many times. The job may have previously timed out.'
+    ));
+
+    throw $e;
+}
+```
+
 ---
 原文地址：[https://divinglaravel.com/queue-workers-how-they-work](https://divinglaravel.com/queue-workers-how-they-work)
 
