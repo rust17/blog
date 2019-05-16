@@ -434,6 +434,31 @@ protected function markJobAsFailedIfAlreadyExceedsMaxAttempts($connectionName, $
 }
 ```
 
+不然我们就调用 `fire()` 方法基于任务对象执行任务。
+
+#### 去哪里获取任务对象？
+
+`getNextJob()` 方法返回了一个 `Contracts\Queue\Job` 实例，我们将根据队列驱动使用相应的任务实例，例如，在该例子中 `Queue\Jobs\DatabaseJob` 对应的是数据库队列驱动。
+
+#### 循环结束
+
+在循环结尾，我们调用 `stopIfNeccessary()` 来检查我们是否需要在下一次循环开启之前终止该进程：
+
+```php
+protected function stopIfNeccessary(WorkerOptions $options, $lastRestart)
+{
+    if ($this->shouldQuit) {
+        $this->kill();
+    }
+
+    if ($this->memoryExceeded($options->memory)) {
+        $this->stop(12);
+    } elseif ($this->queueShouldRestart($lastRestart)) {
+        $this->stop();
+    }
+}
+```
+
 ---
 原文地址：[https://divinglaravel.com/queue-workers-how-they-work](https://divinglaravel.com/queue-workers-how-they-work)
 
