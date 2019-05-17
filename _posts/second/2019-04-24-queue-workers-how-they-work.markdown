@@ -459,6 +459,27 @@ protected function stopIfNeccessary(WorkerOptions $options, $lastRestart)
 }
 ```
 
+`shouldQuit` 属性设置分为两种情况，一种是设置在 `listenForSignals()` 内的 `SIGTERM` 信号处理器，第二种是在 `stopWorkerIfLostConnection()`：
+
+```php
+protected function stopWorkerIfLostConnection($e)
+{
+    if ($this->causedByLostConnection($e)) {
+        $this->shouldQuit = true;
+    }
+}
+```
+
+当回收以及处理任务的时候，该方法会在好几个 try...catch 中被调用，确保了该进程会终止从而控制台会发起一个新的数据库连接。
+
+`causedByLostConnection()` 方法可以在 `Database\DetectsLostConnections` 这个 trait 中找到。
+
+`memoryExceeded()` 检查了内存是否超出当前内存限制，你可以在 `queue:work` 命令中使用 `--memory` 参数设置限制。
+
+最后 `queueShouldRestart()` 方法对比了重启信号与启动进程的时间戳是否一致，如果不一致意味着循环期间已经有一个重启信号发送了，那样的话我们将终止那个进程从而可以稍后在控制台中重启。
+
+
+
 ---
 原文地址：[https://divinglaravel.com/queue-workers-how-they-work](https://divinglaravel.com/queue-workers-how-they-work)
 
