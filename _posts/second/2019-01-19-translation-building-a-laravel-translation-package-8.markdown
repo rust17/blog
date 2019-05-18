@@ -12,13 +12,13 @@ author: circle
 description: 翻译文章 —— 构建一个 Laravel 翻译包第八部分
 ---
 
-在[预发布清单](https://laravel-news.com/building-a-laravel-translation-package-pre-launch-checklist)完成之后，是时候着手发布我们的扩展包提供给别的开发者使用了。
+在[预发布清单](https://laravel-news.com/building-a-laravel-translation-package-pre-launch-checklist)完成之后，是时候着手发布我们的扩展包并提供给别的开发者使用了。
 
-现在的问题是，开发者们一般是使用 [Composer](https://getcomposer.org/) 来管理项目中的扩展依赖。为了兼容 composer ，我们还需要做几件事情。
+现在的问题是，开发者们一般使用 [Composer](https://getcomposer.org/) 来管理项目中的扩展依赖。为了兼容 composer ，我们还需要做几件事情。
 
-### 标记一个版本发布
+### 标记一个发布版本
 
-为了让扩展包的使用者能有效的管理扩展依赖，提供合适的版本号很重要。
+为了让扩展包的使用者能有效的管理扩展依赖，提供合适的版本号就显得很重要。
 
 管理代码版本的常用途径是遵循[语义化版本控制](https://semver.org/)。该协议定义了一系列“关于如何分配和新增版本号的规定”。从该网站中，我们可以知道：
 
