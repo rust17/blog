@@ -12,21 +12,21 @@ author: circle
 description: 翻译文章 —— 介绍了 Laravel 的门面模式以及如何移植到别的框架中
 ---
 
-门面模式是一种常用的面向对象软件设计模式。本质上一个门面就是指一个通过封装功能复杂的类库并提供简单易读的接口的类。门面模式也可以用于为复杂和糟糕设计 API 提供统一的、精心设计的 API。
+门面模式是一种常用的软件设计模式，经常在面向对象的编程中采用。本质上，一个门面就是指一个通过封装复杂功能的类库并提供简单易读接口的类。门面模式也可以理解为为那些复杂、糟糕设计的 API 提供统一的、精心设计的 API。
 
-Laravel 框架当中有一个特性类似于这种模式，也被称作门面。在这篇教程我们将学习如何将 Laravel 的门面模式带到别的框架。在此之前，你需要对 [Ioc 容器](https://www.sitepoint.com/inversion-of-control-the-hollywood-principle/)有一点基本的理解。
+Laravel 框架当中有一个类似于这种模式的特性，也被称作门面。在这篇教程里我们将学习如何将 Laravel 的门面模式带到别的框架。在此之前，你需要对 [Ioc 容器](https://www.sitepoint.com/inversion-of-control-the-hollywood-principle/)有一点基本的理解。
 
-首先，让我们看看 Laravel 门面的内部工作原理，然后，我们将讨论如何将这个特性改写适配到别的框架中。
+现在，首先让我们看看 Laravel 门面模式的工作原理，然后，我们将讨论如何将这个特性适配到别的框架中。
 
 ### Laravel 中的门面模式
 
-Laravel 的一个门面，是指一个提供了类似静态接口访问容器内部服务的类。根据官方文档的说明，这些门面，作为访问容器服务的底层实现提供了一个代理途径。
+Laravel 里一个门面，是指一个提供了静态风格接口来访问容器内部服务的类。根据官方文档的说明，这些门面，作为一个代理途径，可以访问底层的容器服务。
 
-然而，关于[这个命名](https://www.brandonsavage.net/lets-talk-about-facades/)，PHP 社区存在着许多争论。一些人认为应该改变这个术语的叫法以避免开发者的疑惑，因为它并没有完全遵循门面模式的实现。如果你对这个命名感到迷惑了，你可以以自己的方式随意去理解，不过请注意，我们将要使用的基类在 Laravel 框架当中被称作门面。
+然而，关于[这个命名](https://www.brandonsavage.net/lets-talk-about-facades/)，PHP 社区存在着许多争论。一部分人认为应该更改这个术语的叫法以避免误导一些开发者，因为它并没有完全遵循门面模式的实现。如果你对这个命名感到疑惑了，你也可以以自己的方式去理解，不过需要注意的是，我们将要使用的基类在 Laravel 框架当中被称作门面。
 
 ### 在 Laravel 当中门面模式是怎样实现的
 
-你可能知道，Laravel 容器内的每一个服务都有唯一的名字。在一个 Laravel 应用中，我们想要直接访问容器内的服务，可以使用 `App::make()` 方法或者 `app()` 帮助函数。
+你可能已经了解过，服务容器内的每一个服务都有自己唯一的名字。在一个 Laravel 应用中，如果我们想要直接访问容器内的服务，可以使用 `App::make()` 方法或者 `app()` 帮助函数。
 
 ```php
 <?php 
@@ -34,7 +34,7 @@ Laravel 的一个门面，是指一个提供了类似静态接口访问容器内
 App::make('some_service')->methodName();
 ```
 
-正如之前所说，Laravel 使用了门面类使得开发者可以以一种更加通俗易懂的方式访问服务。使用门面类，我们只需要写以下代码就可以做相同的事情。
+正如之前所说，Laravel 使用了门面类使得开发者可以以一种更加简洁的方式访问底层服务。使用门面类，我们只需要以下代码就可以做相同的事情。
 
 ```php
 //...
@@ -42,17 +42,17 @@ someService::methodName();
 //...
 ```
 
-在 Laravel 当中，所有的服务都有一个门面类。这些门面类继承了 `Illuminate/Support` 内的门面基类。门面类所唯一需要做的事情就是实现 `getFacadeAccesor` 方法，该方法返回了容器内的服务名称。
+在 Laravel 当中，所有的服务都有一个门面类。这些类继承了 `Illuminate/Support` 内的门面基类。它们唯一需要做的事情就是实现 `getFacadeAccesor` 方法，该方法返回了容器内的服务名称。
 
-在上面的代码中，`someService` 指的就是门面类。`methodName` 实际上就是容器内的原始服务名称。如果我们脱离了 Laravel 的上下文来看待这个写法，这意味着有一个叫 `someService` 的类暴露了一个 `methodName()` 静态方法，但这并不是 Laravel 实现这个接口的原理。在下一部分，我们将会看到表面之下的 Laravel 门面基类是如何工作的。
+在上面的代码中，`someService` 指的就是门面类。而 `methodName` 实际上就是容器内部的初始服务名称。如果我们脱离了 Laravel 的上下文来看这个写法，意味着有一个叫 `someService` 的类暴露了一个 `methodName()` 静态方法，然而，这并不是 Laravel 实现该接口的原理。下一部分，我们将会看到表面之下的 Laravel 门面基类是如何工作的。
 
 ### 门面基类
 
-门面基类定义了一个叫 `$app` 的私有属性用来保存了指向服务容器的实例。如果我们需要在 Laravel 之外使用门面，那么必须先在容器内明确设置使用 `setFacadeApplication()` 方法。我们很快就会讲到这点。
+门面基类定义了一个叫 `$app` 的私有属性用来保存了指向服务容器的实例。如果我们需要在 Laravel 之外使用门面，那么必须先在容器内明确设置实例即使用 `setFacadeApplication()` 方法。我们很快就会讲到这点。
 
-在门面基类内，已经定义好了魔术方法 `__callStatic`，该方法用于处理调用类内不存在的静态方法的情况。当我们针对 Laravel 门面类调用静态方法时，因为类内没有实现该方法，那么 `__callStatic` 方法就会被触发。所以，`__callStatic` 方法从容器中取出服务并调用对应的方法。
+在门面基类内，已经定义好了魔术方法 `__callStatic`，该方法用于处理调用类内不存在的静态方法的情况。当我们针对 Laravel 门面类调用静态方法时，因为类内并没有该方法，那么 `__callStatic` 方法就会被触发。因此，`__callStatic` 方法从容器中取出服务并调用对应的方法。
 
-这就是一个门面基类内部的 `__callStatic` 方法的实现：
+以下是一个门面基类内部的 `__callStatic` 方法的实现：
 
 ```php
 <?php
@@ -64,7 +64,7 @@ someService::methodName();
     * @param array $args
     * @return mixed
     */
-    public static function __callStatic($method, $arg)
+    public static function __callStatic($method, $args)
     {
         $instance = static::getFacadeRoot();
 
@@ -90,7 +90,7 @@ someService::methodName();
     }
 ```
 
-上述方法内部的 `getFacadeRoot()` 负责从容器内获取服务。
+上述方法的 `getFacadeRoot()` 负责从容器内获取服务实例。
 
 ### 解剖一个门面类
 
@@ -114,7 +114,7 @@ class SomeServiceFacade extends BaseFacade {
 
 ### 别名
 
-由于 Laravel 门面类是 PHP 类，在使用之前我们需要先引入。感谢 PHP 的命名空间以及自动加载机制，当我们以合法的名称访问门面类的时候，所有的类都已经被自动加载过了。PHP 还支持通过使用 `use` 指令给类起别名。
+由于 Laravel 门面类是 PHP 类，在使用之前我们需要先引入。感谢 PHP 的命名空间以及自动加载机制，当我们以合法名称访问门面类的时候，所有的类都已经被自动加载过了。PHP 还支持通过 `use` 指令给类起别名。
 
 ```php
 use App\Facades\SomeServiceFacade
@@ -122,7 +122,7 @@ use App\Facades\SomeServiceFacade
 SomeServiceFacade::SomeMethod();
 ```
 
-然而，我们如果需要某个特定的门面类，就必须在那个类中重复这段代码。而 Laravel 已经通过别名自动加载器的方式加载了别名对应的门面类。
+然而，我们如果需要使用某个特定的门面类，就必须在那个类当中重复这段代码。而 Laravel 已经通过别名自动加载的方式加载了别名对应的门面类。
 
 ### Laravel 是怎样对门面进行起别名的
 
@@ -138,9 +138,9 @@ SomeServiceFacade::SomeMethod();
 ],
 ```
 
-好，现在让我们来看看 Laravel 是怎样使用这个数组关联到门面类的。在自动加载阶段，Laravel 调用了一个 `Illuminate\Foundation` 内部叫 `AliasLoader` 的服务。`AliasLoader` 接收 `aliases` 数组，遍历所有的元素，然后使用 [spl_autoload_register](http://php.net/manual/en/function.spl-autoload-register.php) 方法创建一个 `__autoload` 函数队列。每一个 `__autoload` 函数通过使用 PHP 的 [class_alias](http://php.net/manual/en/function.class-alias.php) 函数为对应的门面类创建一个别名。
+好，现在让我们来看看 Laravel 是怎样使用这个数组关联到门面类的。在自动加载阶段，Laravel 调用了一个 `Illuminate\Foundation` 内叫 `AliasLoader` 的服务。`AliasLoader` 接收 `aliases` 数组，遍历所有的元素，然后使用 [spl_autoload_register](http://php.net/manual/en/function.spl-autoload-register.php) 方法创建一个 `__autoload` 函数队列。每一个 `__autoload` 函数通过使用 PHP 的 [class_alias](http://php.net/manual/en/function.class-alias.php) 函数为对应的门面类创建一个别名。
 
-这样做的结果是，我们不需要在使用这些类之前引入每一个类并且通过 `use` 指令给每个类起别名。因此每当我们访问一个不存在的类时，PHP 就会检查 `__autoload` 队列获取合适的自动加载器。到那个时候，`AliasLoader` 早已注册好了所有的 `__autoload` 函数。每个自动加载器将别名类名根据 `aliases` 数组解析到原始的类名。最后，为这些类创建别名类。想象下以下方法的调用：
+这样做的结果是，我们不再需要在使用这些类之前单独引入每一个类并且通过 `use` 指令给每个类起别名。因此，每当我们访问一个不存在的类时，PHP 就会检查 `__autoload` 队列获取对应的自动加载器。在那个时候，`AliasLoader` 早已注册好了所有的 `__autoload` 函数。每个自动加载器将使用类名别名根据 `aliases` 数组解析到原始的类名。最后，为这些类创建别名类。可以想象以下方法的调用原理：
 
 ```php
 // 根据 aliases 数组 FancyName 被解析到了 App\Facades\SomeServiceFacade
@@ -152,7 +152,7 @@ FancyName::someMethod()
 
 ### 在别的框架中使用门面模式
 
-好了，现在，我们已经对 Laravel 如何处理门面以及别名类有了一定程度的理解。我们可以改写 Laravel 的门面方法添加到别的框架中。在这篇文章里，我们将在 Silex 框架中使用门面模式。同理，你也可以改写将这个特性添加到别的框架中。
+好，现在，我们已经对 Laravel 如何处理门面以及别名类有了一定程度的理解。我们可以改写 Laravel 的门面方法移植到别的框架中。在这篇文章里，我们将在 Silex 框架中使用门面模式。同理，你也可以改写将这个特性添加到别的框架中。
 
 Silex 自带了容器，因为它继承自 `Pimple`。我们可以像这样使用 `$app` 来访问容器内部的服务。
 
@@ -162,7 +162,7 @@ Silex 自带了容器，因为它继承自 `Pimple`。我们可以像这样使�
 $app['some.service']->someMethod()
 ```
 
-现在，在门面类的帮助下，我们也可以给 Silex 的服务提供类似静态的接口了。除此以外，我们还可以使用 `AliasLoader` 服务来为这些门面起有含义的别名。结果是，我们可以像这样重构上面的代码：
+现在，在门面类的帮助下，我们也可以给 Silex 的服务提供静态风格的接口了。除此以外，我们还可以使用 `AliasLoader` 服务来为这些门面起有特定含义的别名。其结果就是，我们可以像这样重构上面的代码：
 
 ```php
 <?php
@@ -183,7 +183,7 @@ composer require illuminate\support
 
 为某个服务创建一个门面，我们只需要继承门面基类以及实现 `getFacadeAccessor` 方法就可以了。
 
-这篇文章当中，让我们把所有的门面放在 `src/Facades` 目录下。举个栗子，对于一个名为 `some.service` 的服务，它的门面应该是这样的：
+让我们把所有的门面放在 `src/Facades` 目录下。举个栗子，对于一个名为 `some.service` 的服务，它的门面应该是这样的：
 
 ```php
 <?php
@@ -202,9 +202,9 @@ class SomeServiceFacade extends Facade {
 }
 ```
 
-请注意在 `app\facades` 路径下定义这个类。
+请注意在 `app\facades` 目录下定义这个类。
 
-我们现在唯一的问题就是在门面类中设置应用的容器了。正如早先指出，当我们针对一个门面类以静态方式调用一个方法时，`__callStatic` 被触发了。`__callStatic` 方法使用 `getFacadeAccessor()` 返回的数据来确认容器内的服务并且尝试取出该服务。当我们在 Laravel 以外使用门面基类时，容器对象没有自动加载，所以需要我们手工实现这一块。
+我们现在唯一的问题就是怎样在门面类中设置容器实例了。正如早先指出，当我们针对一个门面类以静态方式调用一个方法时，`__callStatic` 被触发了。`__callStatic` 方法使用 `getFacadeAccessor()` 返回的数据来确认容器内的服务并且尝试取出该服务。当我们在 Laravel 以外使用门面基类时，容器对象没有自动加载，所以需要我们手工实现这一块。
 
 为了实现这点，门面基类提供了一个名为 `setFacadeApplication` 的方法，用来为门面类设置应用的容器。
 
@@ -215,21 +215,21 @@ class SomeServiceFacade extends Facade {
 Illuminate\Support\Facade::setFacadeApplication($app);
 ```
 
-该方法将为继承该门面基类的所有类设置好容器。
+该方法将为继承该门面基类的所有类设置好容器实例。
 
-现在，我们就可以使用创建好的门面，以静态的方式调用所有的方法，而不是在容器中访问服务了。
+现在，我们就可以使用创建好的门面，以静态方法的方式调用所有的方法，而不是在容器中访问服务了。
 
 ### 实现别名访问
 
-为了使用别名类，我们将采用之前提到的 `AliasLoader`。`AliasLoader` 是 `illuminate\foundation` 包的一部分。我们可以通过下载整个包或者复制[关键代码](https://github.com/laravel/framework/blob/5.1/src/Illuminate/Foundation/AliasLoader.php)保存成一个文件的方式导入到项目中。
+为了使用别名类访问，我们将采用之前提到的 `AliasLoader`。`AliasLoader` 是 `illuminate\foundation` 包的一部分。我们可以通过下载整个包或者复制[关键代码](https://github.com/laravel/framework/blob/5.1/src/Illuminate/Foundation/AliasLoader.php)保存成一个文件的方式导入到项目中。
 
 如果你想只复制源代码，那么我建议你把它保存在 `src/Facades` 目录下。你也可以根据你的项目结构找到合适的命名空间来存放 `AliasLoader`。
 
-该例子中，让我们复制代码然后存放到命名空间 `app/facades` 下。
+现在，让我们复制代码然后存放到命名空间 `app/facades` 下。
 
 ### 创建别名数组
 
-让我们在 `config` 目录下新建一个名为 `aliases.php` 的文件然后像这样绑定门面-别名关系：
+让我们在 `config` 目录下新建一个名为 `aliases.php` 的文件然后像下面这样绑定门面-别名关系：
 
 ```php
 <?php
@@ -238,13 +238,13 @@ return [
 ];
 ```
 
-`FancyName` 就是我们希望用 `App\Facades\SomeService` 替代的别名。
+`FancyName` 就是我们希望用以替代 `App\Facades\SomeService` 的别名。
 
 ### 注册别名
 
 `AliasLoader` 只是一个单一服务。创建或者获取别名加载器实例，需要将所有的别名数组作为一个参数传给 `getInstance` 方法。最后，注册所有的别名，我们需要调用它的 `register` 方法。
 
-再次，在 `app.php` 文件中添加如下代码：
+再一次在 `app.php` 文件中添加如下代码：
 
 ```php
 <?php
@@ -255,7 +255,7 @@ $aliases = require __DIR__ . '/../../config/aliases.php';
 App\Facades\AliasLoader::getInstance($aliases)->register();
 ```
 
-这就是所有内容了，现在，我们可以像这样使用服务了：
+这就是关于门面模式的所有内容了，现在，我们可以像这样使用服务：
 
 ```php
 <?php
