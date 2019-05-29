@@ -29,23 +29,23 @@ php artisan queue:work
 php artisan queue:work --once
 ```
 
-这个命令会将启动应用程序，执行一次任务后结束掉整个脚本。
+这个命令会将启动应用程序，在执行完一次任务后结束掉整个脚本。
 
 ```shell
 php artisan queue:listen
 ```
 
-`queue:listen` 命令会在循环运行期间执行 `queue:work --once` 命令，这个命令执行的过程如下：
+`queue:listen` 会在循环运行期间不断地执行 `queue:work --once`，该命令执行的过程如下：
 
 * 每次循环启动一个应用程序实例
-* 指派的工作进程将挑选一个任务并执行
+* 指派工作进程并挑选一个任务执行
 * 结束该进程
 
-使用 `queue:listen` 确保了每个任务都会诞生一个新的应用实例，这就意味着你如果改动代码也不必每次都去手动重启工作进程了，但也意味着更多的服务器资源将被消耗。
+使用 `queue:listen` 确保了每个任务都会产生一个新的应用实例，这就意味着即使你改动代码也不必每次手动去重启工作进程，但也意味着更多的服务器资源的消耗。
 
 ### queue:work 命令
 
-让我们来看一下 `Queue\Console\WorkCommand` 这个类内部的 `handle()` 方法，当你运行 `php artisan queue:work` 的时候，执行的就是这个方法。
+现在，让我们来看一下 `Queue\Console\WorkCommand` 这个类内部的 `handle()` 方法，当你运行 `php artisan queue:work` 的时候，执行的就是这个方法。
 
 ```php
 public function handle()
@@ -67,9 +67,9 @@ public function handle()
 }
 ```
 
-首先，我们检查了程序是否处于维护模式以及命令行是否使用了 `--once` 参数，如果这两个条件都符合，那么我们希望脚本能优雅地终止，而不必再执行任何任务。为此，在终止整个脚本之前我们将让工作进程进行一段设定时间的睡眠。
+可以看到，首先，我们检查了程序是否处于维护模式以及命令行是否使用了 `--once` 参数，如果这两个条件都符合，那么我们希望脚本能优雅地终止，而不必再执行任何任务。为此，在终止整个脚本之前我们将让工作进程进行一段设定时间的睡眠。
 
-`Queue\Worker` 的 `sleep()` 方法大概就是这个样子：
+`Queue\Worker` 的 `sleep()` 方法大概是这样：
 
 ```php
 public function sleep($seconds)
@@ -80,16 +80,16 @@ public function sleep($seconds)
 
 **在 handle() 方法中我们为什么不直接返回空来结束掉整个脚本呢？**
 
-正如我们之前所说那样，`queue:listen` 命令是在一个循环内执行 `WorkCommand` 的：
+正如我们之前所说那样，`queue:listen` 是在一个循环内执行 `WorkCommand` 的：
 
 ```php
 while (true) {
-    // 这个过程只需要调用 —— 'php artisan queue:work --once'
+    // 循环过程只需要不断地调用 —— 'php artisan queue:work --once'
     $this->runProgress($process, $options->memory);
 }
 ```
 
-如果程序处于维护阶段，`WorkCommand` 命令立即终止将会使得一次循环结束，并快速开启下一个工作进程。这比故意造成延迟要好得多，因为那样将会创建大量我们不需要的应用实例从而造成消耗过多的服务器资源。
+如果程序处于维护阶段，`WorkCommand` 命令将立即终止使得一次循环结束，并快速开启下一个工作进程。这比返回空而故意造成的延迟要好得多，因为那样将会创建大量我们不需要的应用实例从而造成过多的服务器资源消耗。
 
 ### 监听事件
 
@@ -114,11 +114,11 @@ protected function listenForEvents()
 }
 ```
 
-在这个方法内部，我们监听了一系列工作进程会触发的事件，这将允许我们在每个事件处理、通过或者失败的阶段打印一些信息给用户。
+可以看到，在这个方法内部，我们进行了一系列工作进程触发事件的监听，这将允许我们在每个事件处理中、处理通过或者处理失败的时候打印一些信息给用户。
 
 ### 失败任务日志记录
 
-一旦任务执行失败，`logFailedJon()` 方法将被调用：
+一旦任务执行失败，`logFailedJob()` 方法将被调用：
 
 ```php
 $this->laravel['queue.failer']->log(
@@ -127,7 +127,7 @@ $this->laravel['queue.failer']->log(
 );
 ```
 
-在 `Queue\QueueServiceProvider::registerFailedJobServices()` 方法中已经注册好了 `queue.failer` 容器别名：
+其实，在 `Queue\QueueServiceProvider::registerFailedJobServices()` 方法中已经为 `queue.failer` 服务注册好了别名：
 
 ```php
 protected function registerFailedJobServices()
@@ -141,7 +141,7 @@ protected function registerFailedJobServices()
 }
 
 /**
- * 创建一个新的数据库失败任务服务提供者
+ * 创建一个数据库任务失败的服务提供者
  *
  * @param array $config
  * @return \Illuminate\Queue\Failed\DatabaseFailedJobProvider
@@ -154,7 +154,7 @@ protected function databaseFailedJobProvider($config)
 }
 ```
 
-一旦 `queue.failed` 配置信息设置好，数据库队列将启动并且将失败的任务记录到一张数据表当中：
+一旦 `queue.failed` 配置好，数据库队列会将失败的任务记录到一张数据表当中：
 
 ```php
 $this->getTable()->insertGetId(compact(
