@@ -164,16 +164,16 @@ $this->getTable()->insertGetId(compact(
 
 ### 启动进程
 
-为了启动进程，我们需要收集两方面信息：
+为了启动进程，我们需要收集两方面的信息：
 
-* 当前进程获取任务的连接
-* 当前进程获取任务的队列
+* 工作进程获取任务的连接
+* 工作进程获取任务的队列
 
-你可以在 `queue:work` 命令中添加一个 `--connection=default` 配置项，如果你没有指明默认的连接，那么 `queue.default` 中的配置就将被使用。
+可以在 `queue:work` 命令中再添加一个 `--connection=default` 的配置项，表明如果你没有指明默认的连接，那么就采用 `queue.default` 中的配置。
 
-同样对于队列方式而言，你可以提供一个 `--queue=emails` 配置项或者使用你选择的连接配置当中的 `queue` 配置。
+同样，对于队列而言，可以再提供一个 `--queue=emails` 配置项或者使用选择的连接中的 `queue` 配置。
 
-一旦这些东西设置好，`WorkCommand::handle()` 方法将执行 `runWorker()`：
+一旦这些东西设置好，`WorkCommand::handle()` 方法就可以执行 `runWorker()` 了：
 
 ```php
 protected function runWorker($connection, $queue)
@@ -186,7 +186,7 @@ protected function runWorker($connection, $queue)
 }
 ```
 
-进程类属性在构造命令的时候已经被设置好了：
+进程类的属性在构造的时候已经被设置好了：
 
 ```php
 public function __construct(Worker $worker)
@@ -197,9 +197,9 @@ public function __construct(Worker $worker)
 }
 ```
 
-从服务容器中解析出 `Queue\Worker` 实例，在 `runWorker()` 内部我们设置进程将要使用的缓存驱动，同时也设置好基于 `--once` 命令行参数将要调用的方法。
+可以看到，在该构造函数内我们从服务容器中解析出 `Queue\Worker` 实例，在执行 `runWorker()` 的时候，我们使用实例设置进程的缓存驱动，同时也设置好基于 `--once` 命令行参数将要调用的方法。
 
-在 `--once` 配置的方法使用过后，我们将调用 `runNextJob` 方法执行下一个待执行的任务，然后脚本终止。不然我们就调用 `daemon` 方法保持进程运行从而一直处理任务。
+在 `--once` 参数配置好的前提下，我们将调用 `runNextJob` 方法执行下一个待执行的任务，然后脚本终止。否则，我们就调用 `daemon` 方法保持进程运行状态，从而可以一直处理任务。
 
 ```php
 protected function gatherWorkerOptions()
@@ -214,7 +214,7 @@ protected function gatherWorkerOptions()
 
 ### 守护进程
 
-让来我们看下 `Worker::daemon()` 方法，该方法内部的第一行就调用 `listenForSignals()` 方法：
+现在，让来我们看下 `Worker::daemon()` 方法，该方法内的第一行就调用 `listenForSignals()`：
 
 ```php
 protected function listenForSignals()
@@ -237,19 +237,19 @@ protected function listenForSignals()
 }
 ```
 
-该方法使用了 PHP7.1 的信号处理程序，`supportsAsyncSignals()` 方法检查了我们的 PHP 版本是否是 7.1 然后加载 `pcntl` 模块。
+首先，该方法使用了 PHP7.1 的信号处理函数 `supportsAsyncSignals()` 方法检查了环境是否是 PHP7.1 以及 `pcntl` 模块是否加载成功。
 
-然后调用 `pcntl_async_signals()` 开启信号处理，再然后为多个信号注册处理程序：
+然后，调用 `pcntl_async_signals()` 开启信号处理，接下来为多个信号注册对应的处理程序：
 
-* 脚本指示将要关闭时会引发 `SIGTERM`
-* `SIGUSR2` 是一个用户自定义的信号，Laravel 使用其指示脚本将要暂停
-* 暂停的脚本要重新启动时会引发 `SIGOUT`
+* `SIGTERM` 代表脚本将要关闭时会触发 
+* `SIGUSR2` 是一个用户自定义的信号，Laravel 使用其表示脚本将要暂停
+* `SIGOUT` 代表暂停的脚本要重新启动时会触发
 
-这些信号是从一个诸如 [Supervisor][1] 的进程监控发送过来的。
+这些信号是从一个类似于 [Supervisor][1] 的进程监控管理中发送过来的。
 
-`Worker::daemon()` 方法的第二行获取了最后一个队列重启的时间戳，当我们调用 `queue:restart` 的时候该值会被缓存起来，我们通过检查最后重启的时间不匹配来指示进程应该重启，更多内容稍后将介绍。
+`Worker::daemon()` 方法的第二行获取了最后一个队列任务重启的时间戳，当我们调用 `queue:restart` 时该值会被保存起来，我们通过检查进程最后一次重启的时间与该值是否匹配来指示进程是否应该重启，更多详细见下文。
 
-最终该方法开启了一个循环，我们将继续寻找剩余任务，执行它们，并且在工作进程中执行一些操作。
+最终，该方法开启了一个循环，在循环内继续寻找并执行任务，并且在工作进程中执行一些操作：
 
 ```php
 while (true) {
@@ -275,12 +275,12 @@ while (true) {
 }
 ```
 
-#### 决定了进程是否处理任务
+#### 决定进程是否处理任务
 
-调用 `daemonShouldRun()` 主要是为了确认以下情况：
+调用 `daemonShouldRun()` 是为了确认以下情况：
 
 * 应用程序不是处于维护模式
-* 进程没有暂停
+* 工作进程没有暂停
 * 循环期间没有事件监听器试图停止循环
 
 即使程序处于维护模式，你依然可以通过命令行带上 `--force` 参数来处理任务：
@@ -289,15 +289,15 @@ while (true) {
 php artisan queue:work --force
 ```
 
-其中决定了进程是否继续运行的一个条件如下：
+在这当中，决定了进程是否继续运行的一个条件如下：
 
 ```php
 $this->events->until(new \Events\Looping($connectionName, $queue)) === false
 ```
 
-这行代码启动了一个 `Queue\Event\Looping` 事件并且检查 `handle()` 有没有监听到返回 false，使用这个判断你可以偶尔强制进程暂时结束。
+这行代码启动了一个 `Queue\Event\Looping` 事件并且检查内部的 `handle()` 有没有返回 false，使用这个判断可以强制进程暂时停止。
 
-如果进程需要暂停，将调用`pauseWorker()`方法：
+如果需要暂停进程，将调用`pauseWorker()`方法：
 
 ```php
 protected function pauseWorker(WorkerOptions $options, $lastRestart)
@@ -308,7 +308,7 @@ protected function pauseWorker(WorkerOptions $options, $lastRestart)
 }
 ```
 
-该方法调用了 `sleep` 方法并且将 `--sleep` 参数传递到控制台：
+该方法内调用了 `sleep` 并且将 `--sleep` 参数传递到控制台：
 
 ```php
 public function sleep($seconds)
@@ -317,7 +317,7 @@ public function sleep($seconds)
 }
 ```
 
-在脚本休眠一段时间后，我们将检查进程是否应该退出，如果是的话结束掉该脚本，我们之后将继续跟踪 `stopIfNecessary()` 方法，如果脚本不应该被结束我们就调用 `continue`，开启一个新的循环：
+在脚本休眠一段时间后，我们将检查进程是否应该退出，如果是那么结束掉该脚本，该结果将在 `stopIfNecessary()` 内给出，如果脚本不应该结束我们就调用 `continue`，又开启一个新的循环：
 
 ```php
 if (! $this->daemonShouldRun($options, $connectionName, $queue)) {
@@ -335,7 +335,7 @@ $job = $this->getNextJob(
 );
 ```
 
-`getNextJob()` 方法接收一个待运行的队列连接实例以及应该获取任务的队列：
+`getNextJob()` 方法接收一个待运行任务的队列连接实例和一个队列任务：
 
 ```php
 protected function getNextJob($connection, $queue)
@@ -354,20 +354,20 @@ protected function getNextJob($connection, $queue)
 }
 ```
 
-我们只是在给定的队列中循环，根据选中的队列，到存储空间（数据库，redis，sqs 等等）中获取并返回一个任务。
+可以看到，我们将在队列任务中循环，每一次循环，都将根据选中的队列，到存储空间（数据库，redis，sqs 等等）中获取并返回一个任务。
 
-为了从存储空间中返回一个任务，我们查询了符合下列条件的任务：
+我们将查询符合以下条件的任务并返回：
 
-* 我们试图从那些推进 `queue` 当中的任务寻找
-* 不是由其他进程保留的
-* 在设定时间可以运行的，一些任务延迟运行
-* 我们也去获取那些保留了相当长时间被冻结的任务，并从新尝试运行
+* 该任务试图推进 `queue` 当中
+* 不是其他进程保留的任务
+* 在规定时间内仍然可以运行的任务，因为有些任务是延迟运行的
+* 我们也去获取那些保留了很长时间、被冻结的任务，并尝试重新运行
 
-一旦我们找到了符合规范的任务，我们将标记该任务作为保留的，因此其他进程将不会选中它，我们也将监控尝试运行任务的次数。
+一旦我们找到了符合条件的任务，我们将标记该任务作为当前进程保留的，以确保其他进程将不会选中它，我们也将监控尝试运行任务的次数。
 
 #### 监控任务超时
 
-在下一个任务回收之后，我们将调用 `registerTimeoutHandler()` 方法：
+在下一个任务确定之后，我们将调用 `registerTimeoutHandler()` 方法：
 
 ```php
 protected function registerTimeoutHandler($job, WorkerOptions $options)
@@ -384,15 +384,15 @@ protected function registerTimeoutHandler($job, WorkerOptions $options)
 }
 ```
 
-如果 `pcntl` 插件再次加载，我们将注册一个信号处理终结超时的进程，我们在进程超过配置的超时时间之后使用 `pcntl_alerm()` 来发送一个 `SIGALRM` 信号。
+可以看到，`pcntl` 模块再次加载，我们将注册一个终结超时进程的信号，我们在进程超过配置的超时时间后使用 `pcntl_alerm()` 来发送一个 `SIGALRM` 信号。
 
-如果处理任务花费的时间超过超时时间，处理器将结束掉整个脚本，如果没有任务被传递到下个循环的话，那么将设置一个覆盖第一个的新警报，因为在这个过程中可以存在单个警报。
+如果处理任务花费的时间超过超时时间，处理程序将结束掉整个脚本，如果没有找到下个循环执行的任务，那么将设置一个新警报覆盖上一个警报，因为这个过程中只允许存在单个警报。
 
 任务超时仅在 PHP7.1 以上版本有效，在 Windows 上也无法工作 `¯\_(ツ)_/¯`。
 
 ### 处理一个任务
 
-`runJob()` 方法调用了 `process()` 方法：
+`runJob()` 调用了 `process()` 方法：
 
 ```php
 public function process($connectionName, $job, WorkerOptions $options)
@@ -413,9 +413,9 @@ public function process($connectionName, $job, WorkerOptions $options)
 }
 ```
 
-这里 `raiseBeforeJobEvent()` 启动了 `Queue\Events\JobProcessing` 事件，并且 `raiseAfterJobEvent()` 启动了 `Queue\Events\JobProcessed` 事件。
+这里，`raiseBeforeJobEvent()` 启动了 `Queue\Events\JobProcessing` 事件，并且 `raiseAfterJobEvent()` 启动了 `Queue\Events\JobProcessed` 事件。
 
-`markJobAsFailedIfAlreadyExceedsMaxAttempts()` 方法检查了进程是否已经到达最大尝试次数并且将任务标记为失败状态：
+`markJobAsFailedIfAlreadyExceedsMaxAttempts()` 方法检查了进程是否已经到达了最大尝试次数并且决定是否将任务标记为失败状态：
 
 ```php
 protected function markJobAsFailedIfAlreadyExceedsMaxAttempts($connectionName, $job, $maxTries)
@@ -434,11 +434,11 @@ protected function markJobAsFailedIfAlreadyExceedsMaxAttempts($connectionName, $
 }
 ```
 
-不然我们就调用 `fire()` 方法基于任务对象执行任务。
+如果任务没有标记为失败，我们将基于任务对象调用 `fire()` 方法执行任务。
 
 #### 去哪里获取任务对象？
 
-`getNextJob()` 方法返回了一个 `Contracts\Queue\Job` 实例，我们将根据队列驱动使用相应的任务实例，例如，在该例子中 `Queue\Jobs\DatabaseJob` 对应的是数据库队列驱动。
+`getNextJob()` 方法返回了一个 `Contracts\Queue\Job` 实例，同时，我们将根据队列驱动使用相应的队列实例，例如，在该例子中 `Queue\Jobs\DatabaseJob` 对应的是数据库队列驱动。
 
 #### 循环结束
 
@@ -459,7 +459,7 @@ protected function stopIfNeccessary(WorkerOptions $options, $lastRestart)
 }
 ```
 
-`shouldQuit` 属性设置分为两种情况，一种是设置在 `listenForSignals()` 内的 `SIGTERM` 信号处理器，第二种是在 `stopWorkerIfLostConnection()`：
+`shouldQuit` 属性设置分两种情况，一种是在 `listenForSignals()` 内设置的 `SIGTERM` 信号处理器，另一种是在 `stopWorkerIfLostConnection()` 中：
 
 ```php
 protected function stopWorkerIfLostConnection($e)
@@ -470,7 +470,7 @@ protected function stopWorkerIfLostConnection($e)
 }
 ```
 
-当回收以及处理任务的时候，该方法会在好几个 try...catch 中被调用，确保了该进程会终止从而控制台会发起一个新的数据库连接。
+当任务回收以及处理任务的时候，该方法会在好几个 try...catch 中被调用，确保了该进程会终止，从而让控制台发起一个新的数据库连接。
 
 `causedByLostConnection()` 方法可以在 `Database\DetectsLostConnections` 这个 trait 中找到。
 
