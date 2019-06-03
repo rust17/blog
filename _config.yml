@@ -38,6 +38,7 @@ disqus:
 
 # 是否使用 gitment 开启评论，categories 为空则不启用
 gitment:
+  enable: true
   client_id: 4a69a6095513d9f01f07
   client_secret: bd4841122c96cd28fdee9b48271d0cfd05ca1a3d
   categories: [blog, first, second]

@@ -48,6 +48,6 @@ layout: page
     {% include disqus.html %}
 {% endif %}
 
-{% if site.gitment.categories contains page.category %}
+{% if site.gitment.enable %}
     {% include gitment.html %}
 {% endif %}
