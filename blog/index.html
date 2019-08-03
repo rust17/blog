@@ -7,24 +7,22 @@ title: Blog
 <section class="list">
 	{% if site.posts.size == 0 %}
 		<p class="text-center">Nothing published yet!</p>
+    {% elsif site.paginate %}
+        {% for post in paginator.posts %}
+            {% if post.category == 'blog' %}
+                {% if post.hidden != true %}
+                   {% include blog-post.html %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        {% include pagination.html%}
     {% else %}
-		{% for post in site.categories.second %}
-            {% if post.hidden != true %}
-                {% include blog-post.html %}
+        {% for post in site.posts %}
+            {% if post.category == 'blog' %}
+                {% if post.hidden != true %}
+                    {% include blog-post.html %}
+                {% endif %}
             {% endif %}
         {% endfor %}
-    
-        {% for post in site.categories.first %}
-            {% if post.hidden != true %}
-                {% include blog-post.html %}
-            {% endif %}
-        {% endfor %}
-
-        {% for post in site.categories.origin %}
-            {% if post.hidden != true %}
-                {% include blog-post.html %}
-            {% endif %}
-        {% endfor %}
-
-	{% endif %}
+    {% endif %}
 </section>
