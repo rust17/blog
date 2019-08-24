@@ -48,7 +48,7 @@ wow, that's a big file. Can you store it somewhere else? We're pretty cramped he
 作者：[Evert Pot](https://twitter.com/evertp)
 
 ---
-[1](https://tools.ietf.org/html/rfc4918#section-11.5)
-[2](https://tools.ietf.org/html/rfc4918)
-[3](https://evertpot.com/http/413-payload-too-large)
-[4](https://evertpot.com/http/413-payload-too-large)
+[1]: https://tools.ietf.org/html/rfc4918#section-11.5
+[2]: https://tools.ietf.org/html/rfc4918
+[3]: https://evertpot.com/http/413-payload-too-large
+[4]: https://evertpot.com/http/413-payload-too-large
