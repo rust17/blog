@@ -99,9 +99,161 @@ $foo->a = 1;
 
 在赋值的时候已经完成了类型检查，只有在读取属性值的时候，才会分析未初始化的状态。这样确保了最终属性的值不会是无效的类型。
 
-## 继承 & 类型变动
+## 继承 & 类型差异
 
-不管 PHP 7.4 有没有改善类型变动，类型属性仍然保持相同，即不变。
+不管 PHP 7.4 有没有改善类型差异，类型属性仍然保持相同，即不变。为了更好地解释，请看下面的代码：
+
+```php
+class A {}
+class B extends A {}
+class Foo
+{
+    public A $prop;
+}
+class Bar extends Foo
+{
+    public B $prop;
+}
+Fatal error: Type of Bar::$prop must be A (as in class Foo)
+```
+
+如果没看懂上面的例子也不要紧，来看一看下面这个例子：
+
+```php
+class Foo
+{
+    public self $prop;
+}
+class Bar extends Foo
+{
+    public self $prop;
+}
+```
+
+[新版本的 php][2] 在执行代码之前会在后台将当前代码中的 "self" 替换成子类。解决办法是下面这样：
+
+```php
+class Foo
+{
+    public Foo $prop;
+}
+class Bar extends Foo
+{
+    public Foo $prop;
+}
+```
+
+如果我们讨论继承，你很难提出有更好的用例来替代继承属性的类型。
+
+对于每个内部继承属性都可能发生改变是很奇怪的特性。然而，只有当属性的访问修饰符从“私有”变成“受保护”或者“公有”时，这一切才有可能。
+
+### 来看一下下面的合法的代码：
+
+```php
+class Foo
+{
+    private int $prop;
+}
+class Bar extends Foo
+{
+    public string $prop;
+}
+```
+
+但是，新版本的 PHP 7.4 中改变类型将类型从可为空转变为不可为空或者反之都是不被允许的。
+
+```php
+class Foo
+{
+    public int $a;
+    public ?int $b;
+}
+class Bar extends Foo
+{
+    public ?int $a;
+    public int $b;
+}
+Fatal error: Type of Bar::$a must be int (as in class Foo)
+```
+
+## 类型
+
+让我们来看看什么可以传入以及以何种方式传入。然而，需要确保传入的属性在当前类下是可行的。为了标记它们可行，需要在它们前面加上访问修饰符或者关键字 “var”。
+
+在 PHP 7.4 当中，几乎每一种类型都可以被排除在 "void" 和 "callable" 之外。"void" 是指缺少一个值，明确指出不能确定类型的任意值。跟 "callable" 类似，似乎更细微。
+
+下列代码显示了一个在 PHP 中的 "callable" 类型：
+
+```php
+class Foo
+{
+    public callable $callable;
+    public function __construct(callable $callable)
+    {/*...*/}
+}
+class Bar
+{
+    public Foo $foo;
+    public function __construct()
+    {
+        $this->foo = new Foo([$this, 'method'])
+    }
+    private function method()
+    {/*...*/}
+}
+$bar = new Bar;
+($bar->foo->callable)();
+```
+
+在这，"callable" 是一个私有的 "Bar::method"，虽然根据上下文它是指 "Foo"。由于这个问题，PHP 7.4 并没有支持 "callable"。
+
+然而，这并不是什么大问题，因为"闭包"早已引入到 PHP 当中，所以根据上下文当需要的时候将调用 "$this"。
+
+### 一些在 PHP 7.4 中可用的类型：
+
+* int
+* float
+* bool
+* array
+* string
+* iterable
+* object
+* self & parent
+* ?(nullable)
+* Classes & interfaces
+
+## 严格类型 & 限制
+
+PHP [动态编程语言][3] 的特点被许多开发者喜欢或者讨厌。如果在传递一个字符串给一个希望得到整型的函数，现在的 PHP 会通过自动转换类型来实现：
+
+```php
+function coerce(int $i)
+{/*...*/}
+coerce('1'); // 1
+```
+
+同样的规则也适用于类型属性。看一下下面的代码，将字符串 '1' 转成了整型 1。
+
+```php
+class Bar
+{
+    public int $i;
+}
+$bar = new Bar;
+$bar->i = '1'; // 1
+```
+
+如果你不希望发生类型转换，最好的方法是，你可以通过使用严格模式来禁用掉：
+
+```php
+declare(stict_types = 1);
+$bar = new Bar;
+$bar->i = '1'; // 1
+Fatal error: Uncaught TypeError:
+Typed property Bar::$i must be int, string used
+```
+
+好了，这些就是你将会在 PHP 7.4 通用版本中看到的一些重要属性类型了。你可以联系我们获知更多关于 [PHP web 开发服务][4] 的信息
 
 ---
 
@@ -111,4 +263,7 @@ $foo->a = 1;
 
 ---
 
-[1]: [https://www.qltech.com.au/php-development/]
+[1]: https://www.qltech.com.au/php-development/
+[2]: https://www.qltech.com.au/category/develop/php-development/
+[3]: https://www.qltech.com.au/develop/web-development/how-to-empower-web-apps-nowadays-with-laravel-application-development/
+[4]: https://www.qltech.com.au/
