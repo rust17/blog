@@ -7,7 +7,7 @@ tag:
 - php
 - php 7.4
 category: blog
-hidden: true
+hidden: false
 author: circle
 description: php 7.4 features
 ---
