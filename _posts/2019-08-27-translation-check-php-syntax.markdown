@@ -8,12 +8,12 @@ tag:
 - command line
 - syntax
 category: blog
-hidden: true
+hidden: false
 author: circle
 description: use php command line check syntax
 ---
 
-PHP 的命令行模式(CLI)包含了一个快速检查文件源代码语法错误的巧妙方法。一个简单的例子如下。检查的选项参数是 -l (小写的 'L')。
+PHP 的命令行模式(CLI)包含了一个巧妙的参数可用于快速检查文件源代码的语法错误。一个简单的例子如下。检查的选项参数是 -l (小写的 'L')。
 
 ```php
 $ php -l example.php
