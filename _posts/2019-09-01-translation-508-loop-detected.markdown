@@ -4,8 +4,7 @@ layout: post
 date: 2019-09-01 15:00
 headerImage: false
 tag:
-- http
-- 508
+- http status
 - loop detected
 category: blog
 hidden: true
