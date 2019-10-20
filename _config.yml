@@ -120,3 +120,7 @@ jekyll-mentions:
 # 表明 markdown 渲染器
 markdown: kramdown
 
+# 备案
+beian-show: ture 
+beian: 粤ICP备18032995号
+
