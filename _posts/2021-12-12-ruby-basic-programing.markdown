@@ -10,6 +10,8 @@ hidden: false
 author: circle
 description: Ruby
 ---
+<center><h2>Ruby</h2></center>
+
 ### 对象
 
 * 在 Ruby 中，对象是什么？
@@ -213,3 +215,21 @@ description: Ruby
 * 正则表达式选项：
     * i：忽略大小写
     * x：忽略空白字符以及 # 后面的字符
+
+---
+
+<center><h2>Ruby 生态的一些工具链</h2></center>
+
+* RVM 是什么：Ruby Version Manager，Ruby 的版本管理工具，类似于 node.js 的 NVM
+* gem 是什么：Ruby 的包管理工具，当 Ruby 程序需要引入别的依赖时，会去 $LOAD_PATH（Ruby 自带的环境变量） + Gems Install Path（Gem 安装的依赖）里面查找，类似于 PHP 的 composer
+* bundle 是什么：gem 的版本管理工具，不同的 Ruby 版本对应 gem 也不同，使用 bundle 可以选择符合当前 Ruby 版本的 gem，省略了切换的过程
+* unicorn 是什么：可以代理 Rack 应用的服务器
+* puma 是什么：可以代理 Rack 应用的服务器
+* puma 与 unicorn 有什么区别：
+    * puma：I/O 模型是多进程多线程，master 进程 fork 出多个 worker 进程，每个 worker 进程又创建出多个线程，通过线程处理请求，内存占用低
+    * unicorn：I/O 模型是多进程，master 进程 fork 出多个 worker 进程，worker 进程监听 socket，来自客户端的请求会通过 nginx 分配到不同的 worker 进程，worker 再进一步交给 Ruby 程序处理
+* Rack
+    * Rack 是什么：Ruby 应用程序一般分三层：框架（Rails）、Rack、服务器（Puma、Unicorn），Rack 层就是一个协议，在服务器与应用之间提供一个接口，把服务器的请求信息传递给框架，再把框架处理完的结果返回给服务器
+    * Rack 协议：将 Rack 应用定义为一个可以响应 call 方法的 Ruby 对象，接受来自服务器的参数（env），然后返回一个只包含三个值（状态码、HTTP 头、响应正文）的数组
+    * Rack 中间件是什么：本质就是定义符合需求的类，需要实现两个方法 .initialize 和 call，可以在上层改变响应或请求
+* Rake 是什么：本质是一个 Ruby 命令行应用程序，可以读取 rakefile 来执行脚本任务
