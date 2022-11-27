@@ -146,7 +146,7 @@ wget -qO- https://raw.githubusercontent.com/summerblue/laravel-ubuntu-init/maste
 ./laravel-ubuntu-init/16.04/nginx_add_site.sh
 ```
 
-会提示输入站点名称、域名，确认后会创建对于的 Nginx 配置并重启 Nginx，为了便于测试，我创建了两个项目，分别是 example、example2，域名为 example.com、example2.com，添加成功后将这两个域名添加到本地（Windows）的 Host 文件，配置好 nginx 配置文件后，创建软连接，重启 nginx，具体可参考 [Linux nginx 配置多站点](https://circle.hero666.cn/nginx-vhost-config/)
+会提示输入站点名称、域名，确认后会创建对于的 Nginx 配置并重启 Nginx，为了便于测试，我创建了两个项目，分别是 example、example2，域名为 example.com、example2.com，添加成功后将这两个域名添加到本地（Windows）的 Host 文件，配置好 nginx 配置文件后，创建软连接，重启 nginx，具体可参考 [Linux nginx 配置多站点](https://blog.circle33.xyz/nginx-vhost-config/)
 
 ```bash
 service nginx restart
@@ -175,7 +175,7 @@ http {
 
 ### 启动 Mysql
 
-执行命令启动 mysql 
+执行命令启动 mysql
 
 ```bash
 sudo service mysql start
@@ -210,7 +210,7 @@ server {
 
 将 laravel_demo.test 添加进 windows 本地 hosts 文件，这样在 windows 上编写的代码,执行保存后即可在 linux 上实时看到效果了，很方便有没有？
 
-### 支持多版本 php 
+### 支持多版本 php
 
 很多时候，不同的项目可能需要用到不同版本的 php，wsl 是支持同时运行多个版本的 php 的，只需要为不同的项目配置不一样的 php-fpm.sock 文件，这里以 nginx 为例。首先，安装所需要的 php 版本，装好之后，启动，例如，需要同时支持 5.6 和 7.2 版本的 php
 
@@ -248,8 +248,8 @@ service nginx restart
 在使用的过程中遇到的权限问题：
 * php 脚本执行 `chmod` 方法提示权限不足，参考 [chmod WSL (Bash) doesn't work](https://stackoverflow.com/questions/46610256/chmod-wsl-bash-doesnt-work/50856772#50856772)，解决办法：在该路径下新建 `/etc/wsl.conf`，并输入
 
->[automount]  
-enabled = true  
+>[automount]
+enabled = true
 options = "metadata"
 
 ### 如何卸载

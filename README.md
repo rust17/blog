@@ -1,3 +1,3 @@
 # circle blog
 
-https://circle.hero666.cn
+https://blog.circle33.xyz

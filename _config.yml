@@ -16,7 +16,7 @@ resume: false
 resume-external: false
 resume-url: https://google.com/?q=my+resume
 
-url: https://circle.hero666.cn
+url: https://blog.circle33.xyz
 # your url: http://USERNAME.github.io
 
 # 仓库名
@@ -121,6 +121,6 @@ jekyll-mentions:
 markdown: kramdown
 
 # 备案
-beian-show: ture 
+beian-show: false
 beian: 粤ICP备18032995号
 
