@@ -1,4 +1,4 @@
 # circle blog
 
-https://blog.circle33.xyz
+https://hello.circle33.world
 

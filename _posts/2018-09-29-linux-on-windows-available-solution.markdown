@@ -146,7 +146,7 @@ wget -qO- https://raw.githubusercontent.com/summerblue/laravel-ubuntu-init/maste
 ./laravel-ubuntu-init/16.04/nginx_add_site.sh
 ```
 
-会提示输入站点名称、域名，确认后会创建对于的 Nginx 配置并重启 Nginx，为了便于测试，我创建了两个项目，分别是 example、example2，域名为 example.com、example2.com，添加成功后将这两个域名添加到本地（Windows）的 Host 文件，配置好 nginx 配置文件后，创建软连接，重启 nginx，具体可参考 [Linux nginx 配置多站点](https://blog.circle33.xyz/nginx-vhost-config/)
+会提示输入站点名称、域名，确认后会创建对于的 Nginx 配置并重启 Nginx，为了便于测试，我创建了两个项目，分别是 example、example2，域名为 example.com、example2.com，添加成功后将这两个域名添加到本地（Windows）的 Host 文件，配置好 nginx 配置文件后，创建软连接，重启 nginx，具体可参考 [Linux nginx 配置多站点](https://hello.circle33.world/nginx-vhost-config/)
 
 ```bash
 service nginx restart
