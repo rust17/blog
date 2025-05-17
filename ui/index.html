@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的博客 - 模仿风格</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="theme-switch-wrapper" id="themeIconLight">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXN1biI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iNCIvPjxwYXRoIGQ9Ik0xMiAxdjIiLz48cGF0aCBkPSJNMTIgMjF2MiIvPjxwYXRoIGQ9Ik00LjIyIDQuMjJsMS40MiAxLjQyIi8+PHBhdGggZD0iTTE4LjM2IDE4LjM2bDEuNDIgMS40MiIvPjxwYXRoIGQ9Ik0xIDEyaDIiLz48cGF0aCBkPSJNMjEgMTJoMiIvPjxwYXRoIGQ9Ik00LjIyIDE5Ljc4bDEuNDItMS40MiIvPjxwYXRoIGQ9Ik0xOC4zNiA1LjY0bDEuNDItMS40MiIvPjwvc3ZnPg==" alt="Light Mode" class="theme-icon" data-theme="light">
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="site-title">
+                <a href="#">我的技术博客</a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home">首页</a></li>
+                    <li><a href="#about">关于</a></li>
+                    <li><a href="#archives">归档</a></li>
+                    <li><a href="#tags">标签</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- 示例：文章列表 (首页) -->
+        <section id="home" class="post-list">
+            <article class="post-excerpt">
+                <header>
+                    <h2><a href="#post1">第一篇博客文章标题</a></h2>
+                    <p class="post-meta">
+                        <time datetime="2023-10-27">2023年10月27日</time> | <span>分类: <a href="#">技术</a></span>
+                    </p>
+                </header>
+                <div class="entry-content">
+                    <p>这是第一篇文章的摘要内容。它应该足够吸引人，让读者想要点击阅读更多。这里可以放一些关键信息或者引人入思考的问题...</p>
+                </div>
+                <footer>
+                    <a href="#post1" class="read-more">阅读全文 →</a>
+                </footer>
+            </article>
+
+            <article class="post-excerpt">
+                <header>
+                    <h2><a href="#post2">探索CSS Grid布局的魅力</a></h2>
+                    <p class="post-meta">
+                        <time datetime="2023-10-25">2023年10月25日</time> | <span>分类: <a href="#">CSS</a>, <a href="#">前端</a></span>
+                    </p>
+                </header>
+                <div class="entry-content">
+                    <p>CSS Grid 布局是CSS中最强大的布局系统之一。它允许开发者二维地控制元素的位置和大小，使得复杂的网页布局变得简单而直观...</p>
+                </div>
+                <footer>
+                    <a href="#post2" class="read-more">阅读全文 →</a>
+                </footer>
+            </article>
+        </section>
+
+        <!-- 示例：单篇文章 (点击阅读全文后跳转的页面内容) -->
+        <!-- 在实际项目中，这部分会是单独的页面或者通过JS动态加载 -->
+        <article id="post1" class="post-full" style="display: none;"> <!-- 初始隐藏，可以通过JS控制显示 -->
+            <header class="post-full-header">
+                <h1 class="post-full-title">第一篇博客文章标题</h1>
+                <p class="post-full-meta">
+                    <time datetime="2023-10-27">2023年10月27日</time>
+                    <span>•</span> 作者: YourName
+                    <span>•</span> 标签: <a href="#">入门</a>, <a href="#">示例</a>
+                </p>
+            </header>
+
+            <div class="post-full-content">
+                <p>这是文章的<strong>主要内容</strong>。段落之间会有适当的间距。我们可以使用 <em>斜体</em> 来强调某些词语。</p>
+
+                <h2>二级标题</h2>
+                <p>这是二级标题下的段落。Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+
+                <h3>三级标题</h3>
+                <p>这是三级标题下的段落。Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+
+                <blockquote>
+                    <p>这是一个引用的例子。它会有一个独特的样式，使其与普通段落区分开来。</p>
+                </blockquote>
+
+                <p>下面是一个代码块的示例：</p>
+                <pre><code class="language-javascript">
+function greet(name) {
+  console.log(`Hello, ${name}!`);
+}
+
+greet('World');
+                </code></pre>
+
+                <ul>
+                    <li>无序列表项 1</li>
+                    <li>无序列表项 2
+                        <ul>
+                            <li>嵌套列表项 2.1</li>
+                            <li>嵌套列表项 2.2</li>
+                        </ul>
+                    </li>
+                    <li>无序列表项 3</li>
+                </ul>
+
+                <ol>
+                    <li>有序列表项 1</li>
+                    <li>有序列表项 2</li>
+                    <li>有序列表项 3</li>
+                </ol>
+
+                <p>链接的样式也很重要，比如这个 <a href="#">示例链接</a>。</p>
+
+                <figure>
+                    <img src="https://via.placeholder.com/600x300?text=Placeholder+Image" alt="占位图片">
+                    <figcaption>这是一个图片和它的描述文字。</figcaption>
+                </figure>
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© <span id="currentYear"></span> 我的技术博客. 保留所有权利.</p>
+            <p>主题灵感来源: <a href="https://github.com/davidhampgonsalves/hugo-black-and-light-theme" target="_blank" rel="noopener">Hugo Black and Light</a></p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

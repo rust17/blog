@@ -5,3 +5,4 @@ Gemfile.lock
 about.md
 .bundle
 vendor/
+node_modules

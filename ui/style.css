@@ -1,0 +1,462 @@
+/* style.css */
+:root {
+    --bg-color: #1e1e1e; /* 深色背景 */
+    --text-color: #e0e0e0; /* 浅色文字 */
+    --accent-color: #4db8ff; /* 模仿截图中的蓝色调，可以调整 */
+    --secondary-text-color: #a0a0a0; /* 次要文字，如元信息 */
+    --border-color: #333;
+    --header-bg: #161616; /* 头部背景可以稍有不同 */
+    --code-bg: #2d2d2d;
+    --link-hover-color: #7ac9ff;
+    --blockquote-border-color: var(--accent-color);
+    --card-bg: #252525; /* 文章摘要卡片背景 */
+
+    --font-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    --font-code: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+body.light-theme {
+    --bg-color: #f8f9fa;
+    --text-color: #212529;
+    --accent-color: #007bff;
+    --secondary-text-color: #6c757d;
+    --border-color: #dee2e6;
+    --header-bg: #e9ecef;
+    --code-bg: #f1f1f1;
+    --link-hover-color: #0056b3;
+    --blockquote-border-color: var(--accent-color);
+    --card-bg: #ffffff;
+}
+
+/* Reset and Base */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-primary);
+    line-height: 1.7;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 16px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--link-hover-color);
+    text-decoration: underline;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Theme Switcher */
+.theme-switch-wrapper {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 1000;
+    border: 1px solid var(--border-color);
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85em;
+    margin-top: 5px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.theme-switch-wrapper img {
+    transition: filter 0.3s ease;
+}
+.theme-switch {
+    display: inline-block;
+    height: 24px; /* Reduced height */
+    position: relative;
+    width: 48px; /* Reduced width */
+}
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #777; /* Darker grey for off state */
+    transition: .4s;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px; /* Smaller circle */
+    width: 18px;  /* Smaller circle */
+    left: 3px;    /* Adjusted position */
+    bottom: 3px;  /* Adjusted position */
+    background-color: white;
+    transition: .4s;
+}
+input:checked + .slider {
+    background-color: var(--accent-color);
+}
+input:checked + .slider:before {
+    transform: translateX(24px); /* Adjusted transform */
+}
+.slider.round {
+    border-radius: 24px; /* Keep it round */
+}
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.theme-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.theme-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Header */
+header {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 30px;
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.site-title a {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: var(--text-color); /* Site title color matches text or is distinct */
+    text-decoration: none;
+}
+.site-title a:hover {
+    color: var(--accent-color);
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    font-size: 1em;
+    color: var(--secondary-text-color);
+}
+nav ul li a:hover,
+nav ul li a.active { /* Add .active class for current page */
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+/* Main Content */
+main {
+    padding-bottom: 40px;
+}
+
+/* Post List (Excerpts) */
+.post-list .post-excerpt {
+    background-color: var(--card-bg);
+    padding: 25px;
+    margin-bottom: 30px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Subtle shadow */
+}
+body.light-theme .post-list .post-excerpt {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+
+.post-excerpt header h2 {
+    font-size: 1.6em;
+    margin-bottom: 5px;
+}
+.post-excerpt header h2 a {
+    color: var(--text-color);
+}
+.post-excerpt header h2 a:hover {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.post-meta, .post-full-meta {
+    font-size: 0.9em;
+    color: var(--secondary-text-color);
+    margin-bottom: 15px;
+}
+.post-meta a, .post-full-meta a {
+    color: var(--secondary-text-color);
+}
+.post-meta a:hover, .post-full-meta a:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+.post-excerpt .entry-content p {
+    margin-bottom: 15px;
+    color: var(--text-color);
+}
+
+.read-more {
+    display: inline-block;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+/* Full Post */
+.post-full {
+    padding: 20px;
+    /* Optional: background and border if different from general main */
+    /* background-color: var(--card-bg); */
+    /* border: 1px solid var(--border-color); */
+    /* border-radius: 5px; */
+}
+
+.post-full-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.post-full-title {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    color: var(--text-color);
+    line-height: 1.2;
+}
+
+.post-full-meta span {
+    margin: 0 5px;
+}
+.post-full-meta a[href^="#"] { /* Tag links specifically */
+    background-color: var(--code-bg); /* Using code-bg for subtle tag background */
+    color: var(--accent-color);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    text-decoration: none;
+    margin-right: 5px;
+}
+.post-full-meta a[href^="#"]:hover {
+    background-color: var(--accent-color);
+    color: var(--bg-color);
+}
+
+
+.post-full-content h1,
+.post-full-content h2,
+.post-full-content h3,
+.post-full-content h4,
+.post-full-content h5,
+.post-full-content h6 {
+    color: var(--text-color); /* Ensure headings are clearly visible */
+    margin-top: 1.5em;
+    margin-bottom: 0.8em;
+    line-height: 1.3;
+    font-weight: 600;
+}
+
+.post-full-content h1 { font-size: 2.2em; }
+.post-full-content h2 { font-size: 1.8em; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3em;}
+.post-full-content h3 { font-size: 1.5em; }
+.post-full-content h4 { font-size: 1.2em; }
+
+.post-full-content p {
+    margin-bottom: 1.2em;
+}
+
+.post-full-content strong {
+    font-weight: bold;
+}
+
+.post-full-content em {
+    font-style: italic;
+}
+
+.post-full-content blockquote {
+    margin: 1.5em 0;
+    padding: 1em 1.5em;
+    border-left: 4px solid var(--blockquote-border-color);
+    background-color: var(--code-bg); /* Slightly different bg for blockquote */
+    color: var(--secondary-text-color); /* Can make quote text a bit muted */
+}
+.post-full-content blockquote p {
+    margin-bottom: 0;
+}
+
+.post-full-content pre {
+    background-color: var(--code-bg);
+    color: var(--text-color); /* Ensure code text is readable */
+    padding: 1em;
+    margin-bottom: 1.5em;
+    overflow-x: auto;
+    border-radius: 4px;
+    font-family: var(--font-code);
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+.post-full-content code { /* Inline code */
+    background-color: var(--code-bg);
+    color: var(--accent-color); /* Make inline code stand out */
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: var(--font-code);
+    font-size: 0.9em;
+}
+.post-full-content pre code { /* Reset for code inside pre */
+    padding: 0;
+    background-color: transparent;
+    color: inherit; /* Inherit from pre */
+    font-size: inherit;
+}
+
+
+.post-full-content ul,
+.post-full-content ol {
+    margin-bottom: 1.2em;
+    padding-left: 2em; /* Indent lists */
+}
+.post-full-content ul ul,
+.post-full-content ol ol,
+.post-full-content ul ol,
+.post-full-content.ol ul {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.post-full-content li {
+    margin-bottom: 0.5em;
+}
+
+.post-full-content figure {
+    margin: 1.5em 0;
+}
+.post-full-content figcaption {
+    font-size: 0.9em;
+    color: var(--secondary-text-color);
+    text-align: center;
+    margin-top: 0.5em;
+}
+
+
+/* Footer */
+footer {
+    color: var(--secondary-text-color);
+    padding: 30px 0;
+    margin-top: 40px;
+    text-align: center;
+    font-size: 0.9em;
+    border-top: 1px solid var(--border-color);
+}
+
+footer p {
+    margin-bottom: 5px;
+}
+footer a {
+    color: var(--accent-color);
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .site-title a {
+        font-size: 1.5em;
+    }
+    nav ul li {
+        margin-left: 15px;
+    }
+    nav ul li a {
+        font-size: 0.9em;
+    }
+
+    .post-full-title {
+        font-size: 2em;
+    }
+    .post-excerpt header h2 {
+        font-size: 1.4em;
+    }
+
+    .theme-switch-wrapper {
+        top: 10px;
+        right: 10px;
+    }
+    .theme-switch-wrapper em {
+        display: none; /* Hide text on small screens to save space */
+    }
+}
+
+@media (max-width: 480px) {
+    header .container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .site-title {
+        margin-bottom: 10px;
+    }
+    nav ul {
+        padding-left: 0; /* Remove padding if items wrap */
+        flex-wrap: wrap; /* Allow nav items to wrap */
+    }
+    nav ul li {
+        margin-left: 0;
+        margin-right: 15px;
+        margin-bottom: 5px; /* Spacing for wrapped items */
+    }
+
+    .container {
+        padding: 0 15px;
+    }
+    .post-full-title {
+        font-size: 1.8em;
+    }
+    .post-excerpt header h2 {
+        font-size: 1.3em;
+    }
+    .post-full-content h2 {
+        font-size: 1.5em;
+    }
+    .post-full-content h3 {
+        font-size: 1.3em;
+    }
+}
