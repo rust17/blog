@@ -1,73 +1,54 @@
 import React from 'react';
-import { Box, Typography, Container, Card, CardContent, Grid, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
+// Removed Box, Typography, Container, Card, CardContent, Grid, Button from MUI
 
 const ArticleListPage: React.FC = () => {
   return (
-    <Container maxWidth="lg">
-      <Typography variant="h3" component="h1" gutterBottom sx={{ mb: 4 }}>
-        Latest Posts
-      </Typography>
-      <Grid container spacing={4}>
-        {articles.map((article) => (
-          <Grid item xs={12} key={article.id}>
-            <Card sx={{ display: 'flex', height: '100%' }}>
-              <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <Typography variant="overline" color="primary">
-                  {article.category}
-                </Typography>
-                <Typography variant="h5" component="h2" gutterBottom>
-                  {article.title}
-                </Typography>
-                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                  Published on {article.date} by {article.author}
-                </Typography>
-                <Typography variant="body1" paragraph sx={{ flex: 1 }}>
-                  {article.excerpt}
-                </Typography>
-                <Box sx={{ mt: 2 }}>
-                  <Button
-                    component={Link}
-                    to={`/article/${article.id}`}
-                    variant="outlined"
-                    color="primary"
-                  >
-                    Read More
-                  </Button>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
+    <> {/* Replaced Container with React Fragment as MainLayout now provides the main container */}
+      <h1>Articles</h1> {/* Changed Typography to h1 */}
+      <section className="post-list">
+        {posts.map((post) => ( // Changed articles to posts
+          <article className="post-excerpt" key={post.id}>
+            <header>
+              <h2><Link to={`/article/${post.id}`}>{post.title}</Link></h2>
+              <p className="post-meta">
+                <time dateTime="2023-10-27">2023年10月27日</time> {/* Placeholder date */}
+                &nbsp;|&nbsp;
+                <span>分类: <a href="#">{post.category}</a></span> {/* Placeholder for category link */}
+              </p>
+            </header>
+            <div className="entry-content">
+              <p>{post.excerpt}</p>
+            </div>
+            <footer>
+              <Link to={`/article/${post.id}`} className="read-more">阅读全文 →</Link>
+            </footer>
+          </article>
         ))}
-      </Grid>
-    </Container>
+      </section>
+    </>
   );
 };
 
-const articles = [
+// Using the same mock data as HomePage.tsx for consistency
+const posts = [
   {
     id: 1,
-    title: 'Mastering Asynchronous Tasks in Python',
-    category: 'Python',
-    author: 'Alex Bennett',
-    date: 'November 15, 2023',
-    excerpt: 'Explore the power of asyncio in Python for handling concurrent operations efficiently.',
+    title: 'Mastering Asynchronous Programming in Python',
+    category: 'Featured', // Category updated for consistency
+    excerpt: 'Explore the power of asyncio in Python for building high performance, concurrent applications. Learn how to handle I/O-bound operations efficiently and improve your application\'s responsiveness.',
   },
   {
     id: 2,
-    title: 'Database Optimization Techniques',
-    category: 'Databases',
-    author: 'Alex Bennett',
-    date: 'November 10, 2023',
-    excerpt: 'Learn how to optimize your database queries and improve application performance.',
+    title: 'Building Scalable APIs with Node.js and Express',
+    category: 'Featured', // Category updated for consistency
+    excerpt: 'Discover best practices for designing and implementing scalable APIs using Node.js and the Express framework. Learn about routing, middleware, and database integration for robust backend services.',
   },
   {
     id: 3,
-    title: 'Building Scalable APIs with Node.js',
-    category: 'Node.js',
-    author: 'Alex Bennett',
-    date: 'November 5, 2023',
-    excerpt: 'Discover best practices for designing and implementing scalable APIs using Node.js',
+    title: 'Database Optimization Techniques for High-Traffic Applications',
+    category: 'Featured', // Category updated for consistency
+    excerpt: 'Dive into advanced database optimization strategies to ensure your application handles high traffic effectively. Learn about indexing, query optimization, and caching techniques for improved performance.',
   }
 ];
 

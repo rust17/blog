@@ -1,6 +1,6 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Container, IconButton, Box } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom'; // Add Link back
+import { IconButton } from '@mui/material'; // Only IconButton is needed from MUI for now
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 
@@ -12,91 +12,35 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children, toggleTheme, isDarkMode }) => {
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <AppBar position="static" color="transparent" elevation={0}>
-        <Toolbar>
-          <Typography
-            variant="h6"
-            component={Link}
-            to="/"
-            sx={{
-              flexGrow: 1,
-              textDecoration: 'none',
-              color: 'inherit',
-              fontWeight: 'bold'
-            }}
-          >
-            DevBlog
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Typography
-              component={Link}
-              to="/"
-              sx={{
-                textDecoration: 'none',
-                color: 'inherit'
-              }}
-            >
-              Home
-            </Typography>
-            <Typography
-              component={Link}
-              to="/articles"
-              sx={{
-                textDecoration: 'none',
-                color: 'inherit'
-              }}
-            >
-              Articles
-            </Typography>
-            <Typography
-              component={Link}
-              to="/about"
-              sx={{
-                textDecoration: 'none',
-                color: 'inherit'
-              }}
-            >
-              About
-            </Typography>
-            <Typography
-              component={Link}
-              to="/contact"
-              sx={{
-                textDecoration: 'none',
-                color: 'inherit'
-              }}
-            >
-              Contact
-            </Typography>
-          </Box>
-          <IconButton onClick={toggleTheme} color="inherit">
+    <> {/* Using React Fragment as the Box is no longer needed for overall structure */}
+      <header>
+        <div className="container">
+          <div className="site-title">
+            <Link to="/">DevBlog</Link> {/* Changed back to Link */}
+          </div>
+          <nav>
+            <ul>
+              <li><NavLink to="/">Home</NavLink></li> {/* Changed Link to NavLink */}
+              <li><NavLink to="/articles">Articles</NavLink></li> {/* Changed Link to NavLink */}
+              <li><NavLink to="/about">About</NavLink></li> {/* Changed Link to NavLink */}
+              <li><NavLink to="/contact">Contact</NavLink></li> {/* Changed Link to NavLink */}
+            </ul>
+          </nav>
+          <IconButton onClick={toggleTheme} color="inherit" sx={{ ml: 'auto' }}> {/* Added sx to push to the right, similar to flexGrow */}
             {isDarkMode ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
-        </Toolbar>
-      </AppBar>
-      <Container component="main" sx={{ flexGrow: 1, py: 4 }}>
+        </div>
+      </header>
+      <main className="container">
         {children}
-      </Container>
-      <Box
-        component="footer"
-        sx={{
-          py: 3,
-          px: 2,
-          mt: 'auto',
-          backgroundColor: (theme) =>
-            theme.palette.mode === 'light'
-              ? theme.palette.grey[200]
-              : theme.palette.grey[800],
-        }}
-      >
-        <Container maxWidth="sm">
-          <Typography variant="body2" color="text.secondary" align="center">
-            ©{new Date().getFullYear()} DevBlog. All rights reserved.
-          </Typography>
-        </Container>
-      </Box>
-    </Box>
+      </main>
+      <footer>
+        <div className="container">
+          <p>©{new Date().getFullYear()} DevBlog. All rights reserved.</p>
+          <p>主题灵感来源: <a href="https://github.com/davidhampgonsalves/hugo-black-and-light-theme" target="_blank" rel="noopener noreferrer">Hugo Black and Light</a></p>
+        </div>
+      </footer>
+    </>
   );
 };
 

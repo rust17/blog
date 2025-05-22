@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
@@ -11,6 +11,14 @@ import './App.css';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    if (!isDarkMode) {
+      document.body.classList.add('light-theme');
+    } else {
+      document.body.classList.remove('light-theme');
+    }
+  }, [isDarkMode]);
 
   const theme = createTheme({
     palette: {
@@ -55,7 +63,15 @@ function App() {
   });
 
   const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
+    setIsDarkMode(prevMode => {
+      const newMode = !prevMode;
+      if (!newMode) { // Switching to light mode
+        document.body.classList.add('light-theme');
+      } else { // Switching to dark mode
+        document.body.classList.remove('light-theme');
+      }
+      return newMode;
+    });
   };
 
   return (
