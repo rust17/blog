@@ -7,16 +7,18 @@ import PostPage from './pages/PostPage';
 
 function App() {
   return (
-    <ThemeProvider>
-      <PostProvider>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<HomePage />} />
-            <Route path="*" element={<PostPage />} />
-          </Route>
-        </Routes>
-      </PostProvider>
-    </ThemeProvider>
+    <div className="min-h-screen bg-white text-gray-900 dark:bg-slate-900 dark:text-white">
+      <ThemeProvider>
+        <PostProvider>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<HomePage />} />
+              <Route path="*" element={<PostPage />} />
+            </Route>
+          </Routes>
+        </PostProvider>
+      </ThemeProvider>
+    </div>
   );
 }
 

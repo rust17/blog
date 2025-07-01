@@ -17,15 +17,15 @@ function PostPage() {
   // 如果找不到文章，显示 404 信息
   if (!currentPost) {
     return (
-      <div className="p-6">
-        <h1 className="text-2xl font-bold text-red-600">文章未找到</h1>
-        <p className="mt-2 text-gray-600">
+      <div className="p-6 bg-white dark:bg-slate-900 text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-bold text-red-600 dark:text-red-400">文章未找到</h1>
+        <p className="mt-2 text-gray-600 dark:text-gray-300">
           路径 "{articlePath}" 对应的文章不存在
         </p>
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
           可用的文章路径：
         </p>
-        <ul className="mt-2 text-sm text-gray-500">
+        <ul className="mt-2 text-sm text-gray-500 dark:text-gray-400">
           {posts.map(post => (
             <li key={post.path}>• {post.path}</li>
           ))}
@@ -35,15 +35,15 @@ function PostPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-white dark:bg-slate-900 text-gray-900 dark:text-white">
       <h1 className="text-2xl font-bold mb-4">
         {currentPost.frontmatter.title || '无标题'}
       </h1>
-      <div className="mb-4 text-sm text-gray-600">
+      <div className="mb-4 text-sm text-gray-600 dark:text-gray-300">
         <p>路径: {currentPost.path}</p>
         <p>日期: {currentPost.frontmatter.date}</p>
       </div>
-      <div className="border rounded-lg p-4 bg-gray-50">
+      <div className="border rounded-lg p-4 bg-gray-50 dark:bg-slate-800 dark:border-slate-600">
         <MarkdownRenderer content={currentPost.content} />
       </div>
     </div>

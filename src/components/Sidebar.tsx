@@ -41,7 +41,7 @@ function DirectoryItem({
     return (
       <div>
         <div
-          className={`flex items-center p-2 text-sm font-medium text-gray-600 cursor-pointer hover:bg-gray-100 rounded transition-colors ${indentClass}`}
+          className={`flex items-center p-2 text-sm font-medium text-gray-600 dark:text-gray-300 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700 rounded transition-colors ${indentClass}`}
           onClick={() => toggleDirectory(directoryPath)}
         >
           <span className="mr-1">
@@ -79,8 +79,8 @@ function DirectoryItem({
           to={linkPath}
           className={`block p-2 text-sm rounded transition-colors ${
             isActive
-              ? 'bg-blue-100 text-blue-800 font-bold border-l-4 border-blue-500'
-              : 'text-gray-700 hover:bg-gray-200'
+              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 font-bold border-l-4 border-blue-500 dark:border-blue-400'
+              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700'
           }`}
         >
           <span className="mr-1">📄</span>
@@ -145,7 +145,7 @@ function Sidebar() {
 
   return (
     <div className="p-4">
-      <h2 className="text-lg font-bold mb-4">文章目录</h2>
+      <h2 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">文章目录</h2>
       <div className="space-y-1">
         {tree.map((node, index) => (
           <DirectoryItem

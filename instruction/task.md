@@ -271,7 +271,7 @@
         4.  在 `ThemeProvider` 中，使用 `useEffect` 监听主题变化，并相应地在 `<html>` 元素上添加或移除 `dark` 类。
     *   **终点/测试**: 此任务本身不可见。但为下一步做好了准备。
 
-* [ ] **任务 5.2: 创建主题切换按钮 (`ThemeToggle`)**
+* [x] **任务 5.2: 创建主题切换按钮 (`ThemeToggle`)**
     *   **起点**: 任务 5.1 完成后的项目。
     *   **操作**:
         1.  创建 `src/components/ThemeToggle.tsx` 组件。
