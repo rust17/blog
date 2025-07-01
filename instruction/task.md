@@ -23,7 +23,7 @@
         ```
     *   **终点/测试**: 打开 `package.json` 文件，确认 `dependencies` 和 `devDependencies` 中包含了上述所有库。
 
-* [ ] **任务 1.3: 配置 Tailwind CSS**
+* [x] **任务 1.3: 配置 Tailwind CSS**
     *   **起点**: 任务 1.2 完成后的项目。
     *   **操作**:
         1.  安装 Tailwind CSS: `npm install -D tailwindcss postcss autoprefixer`。
