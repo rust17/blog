@@ -120,7 +120,7 @@
             ```
     *   **终点/测试**: 运行 `npm run dev`，打开浏览器的开发者工具，在控制台中看到一个对象，其键为 Markdown 文件的路径（如 `/src/posts/introduction.md`），值为文件的原始字符串内容。
 
-* [ ] **任务 2.3: 解析 Markdown 元数据和内容**
+* [x] **任务 2.3: 解析 Markdown 元数据和内容**
     *   **起点**: 任务 2.2 完成后的项目。
     *   **操作**:
         1.  修改 `src/services/postService.ts`。
