@@ -29,6 +29,12 @@ export function buildDirectoryTree(): TreeNode[] {
   const tree: TreeNode[] = [];
   const directoryMap = new Map<string, TreeNode>();
 
+  // 创建一个从path到post的映射，用于获取文章的日期信息
+  const postMap = new Map<string, Post>();
+  posts.forEach(post => {
+    postMap.set(post.path, post);
+  });
+
   posts.forEach(post => {
     const pathParts = post.path.split('/');
 
@@ -77,7 +83,38 @@ export function buildDirectoryTree(): TreeNode[] {
     });
   });
 
-  // 对每层进行排序：目录在前，文件在后，同类型按名称排序
+  // 获取文章的日期，用于排序
+  function getPostDate(node: TreeNode): Date {
+    if (node.isDirectory) {
+      return new Date(0); // 目录使用最早日期，确保排在前面
+    }
+
+    // 确保path存在
+    if (!node.path) {
+      return new Date(0);
+    }
+
+    const post = postMap.get(node.path);
+    if (post && post.frontmatter.date) {
+      // 处理不同的日期格式
+      const dateStr = post.frontmatter.date;
+      if (typeof dateStr === 'string') {
+        // 支持 '2023-07-21 11:00' 和 '2024-01-01' 格式
+        return new Date(dateStr);
+      }
+    }
+
+    // 如果没有日期，尝试从文件名中提取日期（如 2023-07-22-xxx.md）
+    const match = node.path.match(/(\d{4}-\d{2}-\d{2})/);
+    if (match) {
+      return new Date(match[1]);
+    }
+
+    // 如果都没有，使用最早日期
+    return new Date(0);
+  }
+
+  // 对每层进行排序：目录在前，文件按日期倒序排列
   function sortTree(nodes: TreeNode[]): TreeNode[] {
     return nodes
       .sort((a, b) => {
@@ -85,8 +122,22 @@ export function buildDirectoryTree(): TreeNode[] {
         if (a.isDirectory !== b.isDirectory) {
           return a.isDirectory ? -1 : 1;
         }
-        // 同类型按名称排序
-        return a.name.localeCompare(b.name);
+
+        if (a.isDirectory && b.isDirectory) {
+          // 目录之间按名称排序（可以考虑按年份倒序）
+          // 如果目录名是年份，按年份倒序排列
+          const aYear = parseInt(a.name);
+          const bYear = parseInt(b.name);
+          if (!isNaN(aYear) && !isNaN(bYear)) {
+            return bYear - aYear; // 年份倒序
+          }
+          return a.name.localeCompare(b.name);
+        }
+
+        // 文件之间按日期倒序排列（最新的在前）
+        const dateA = getPostDate(a);
+        const dateB = getPostDate(b);
+        return dateB.getTime() - dateA.getTime();
       })
       .map(node => ({
         ...node,
