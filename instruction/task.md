@@ -204,7 +204,7 @@
         4.  将找到的文章的原始 Markdown 内容显示在一个 `<pre>` 标签内。
     *   **终点/测试**: 访问 `/2023/2023-07-22-use-sangfor-in-virtual-machine`，页面应显示该 `md` 文件的原始文本内容。访问 `/introduction`，页面应显示介绍页的原始文本。
 
-* [ ] **任务 3.4: 渲染 Markdown 为 HTML**
+* [x] **任务 3.4: 渲染 Markdown 为 HTML**
     *   **起点**: 任务 3.3 完成后的项目。
     *   **操作**:
         1.  创建 `src/components/MarkdownRenderer.tsx` 组件。

@@ -1,5 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { usePosts } from '../contexts/PostContext';
+import MarkdownRenderer from '../components/MarkdownRenderer';
 
 function PostPage() {
   const location = useLocation();
@@ -43,10 +44,7 @@ function PostPage() {
         <p>日期: {currentPost.frontmatter.date}</p>
       </div>
       <div className="border rounded-lg p-4 bg-gray-50">
-        <h3 className="font-semibold mb-2">原始 Markdown 内容:</h3>
-        <pre className="whitespace-pre-wrap text-sm bg-white p-3 rounded border overflow-auto">
-          {currentPost.content}
-        </pre>
+        <MarkdownRenderer content={currentPost.content} />
       </div>
     </div>
   );
