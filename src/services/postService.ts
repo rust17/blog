@@ -57,6 +57,7 @@ export function buildDirectoryTree(): TreeNode[] {
       if (!dirNode) {
         dirNode = {
           name: dirName,
+          path: currentPath, // 添加目录的完整路径
           children: [],
           isDirectory: true
         };
@@ -93,9 +94,7 @@ export function buildDirectoryTree(): TreeNode[] {
       }));
   }
 
-  const sortedTree = sortTree(tree);
-  console.log('Directory tree:', sortedTree);
-  return sortedTree;
+  return sortTree(tree);
 }
 
 // 保留原来的函数用于向后兼容
