@@ -51,7 +51,7 @@
         5.  在 `src/main.tsx` 中导入该 CSS 文件: `import './index.css';`。
     *   **终点/测试**: 打开 `src/App.tsx`，给主 `div` 添加一个 Tailwind 类，如 `className="bg-red-500 h-screen"`。运行 `npm run dev`，你应该看到一个红色的全屏页面。测试通过后移除该测试类。
 
-* [ ] **任务 1.4: 创建项目目录结构**
+* [x] **任务 1.4: 创建项目目录结构**
     *   **起点**: 任务 1.3 完成后的项目。
     *   **操作**: 在 `src` 目录下，创建以下文件夹：
         - `assets`
