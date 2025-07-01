@@ -187,7 +187,7 @@
             ```
     *   **终点/测试**: 访问 `http://localhost:5173/` 应显示 `HomePage` 的内容。访问 `http://localhost:5173/some/other/path` 应显示 `PostPage` 的内容。
 
-* [ ] **任务 3.2: 创建并使用 `PostContext`**
+* [x] **任务 3.2: 创建并使用 `PostContext`**
     *   **起点**: 任务 3.1 完成后的项目。
     *   **操作**:
         1.  创建 `src/contexts/PostContext.tsx`。它应在内部调用 `getAllPosts` 并将结果通过 Context Provider 提供出去。
