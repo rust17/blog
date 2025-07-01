@@ -69,10 +69,10 @@
 
 此阶段的目标是实现从 Markdown 文件到结构化 JavaScript 数据的转换。这是系统的核心。
 
-* [x] **任务 2.1: 创建示例 Markdown 内容**
+* [x] **任务 2.1: 查看示例 Markdown 内容**
     *   **起点**: 任务 1.4 完成后的项目。
     *   **操作**:
-        1.  在 `src/posts/` 目录下创建文件 `introduction.md`，内容如下：
+        1.  在 `src/posts/` 目录下查看文件 `introduction.md`，内容如下：
             ```markdown
             ---
             title: '关于我'
@@ -80,8 +80,8 @@
             ---
             这是个人介绍页面。
             ```
-        2.  在 `src/posts/` 目录下创建文件夹 `2023`。
-        3.  在 `src/posts/2023/` 目录下创建文件 `my-first-post.md`，内容如下：
+        2.  在 `src/posts/` 目录下查看文件夹 `2023`。
+        3.  在 `src/posts/2023/` 目录下查看文件 `2023-07-22-use-sangfor-in-virtual-machine.markdown`，内容如下：
             ```markdown
             ---
             title: '我的第一篇文章'
@@ -90,7 +90,7 @@
             # 你好，世界！
             这是正文。
             ```
-    *   **终点/测试**: 检查文件系统，确认这几个文件和文件夹已按要求创建。
+    *   **终点/测试**: 检查文件系统，确认这几个文件和文件夹已按要求查看。
 
 * [x] **任务 2.2: 实现基础 `postService`**
     *   **起点**: 任务 2.1 完成后的项目。
@@ -149,7 +149,7 @@
               const modules = import.meta.glob('../posts/**/*.md', { as: 'raw', eager: true });
               const posts: Post[] = Object.entries(modules).map(([filepath, rawContent]) => {
                 const { data, content } = matter(rawContent);
-                // 从 '/src/posts/2023/my-first-post.md' 提取 '2023/my-first-post'
+                // 从 '/src/posts/2023/2023-07-22-use-sangfor-in-virtual-machine.md' 提取 '2023/2023-07-22-use-sangfor-in-virtual-machine'
                 const path = filepath.replace('../posts/', '').replace('.md', '');
                 return { path, frontmatter: data, content };
               });
@@ -193,16 +193,16 @@
         1.  创建 `src/contexts/PostContext.tsx`。它应在内部调用 `getAllPosts` 并将结果通过 Context Provider 提供出去。
         2.  在 `src/App.tsx` 的 `<Routes>` 外层包裹 `<PostProvider>`。
         3.  在 `src/pages/PostPage.tsx` 中，使用 `useContext` 获取文章数据并 `console.log` 出来。
-    *   **终点/测试**: 访问任意文章页面（如 `/2023/my-first-post`），在浏览器控制台应看到完整的文章数组，证明 Context 工作正常。
+    *   **终点/测试**: 访问任意文章页面（如 `/2023/2023-07-22-use-sangfor-in-virtual-machine`），在浏览器控制台应看到完整的文章数组，证明 Context 工作正常。
 
-* [ ] **任务 3.3: 根据 URL 显示文章内容**
+* [x] **任务 3.3: 根据 URL 显示文章内容**
     *   **起点**: 任务 3.2 完成后的项目。
     *   **操作**:
         1.  修改 `src/pages/PostPage.tsx`。
         2.  使用 `useLocation` from `react-router-dom` 来获取当前路径 (`location.pathname`)。
         3.  从 `PostContext` 获取的文章列表中，根据 `pathname` 查找对应的文章。注意 `pathname` 可能以 `/` 开头，需要处理一下。
         4.  将找到的文章的原始 Markdown 内容显示在一个 `<pre>` 标签内。
-    *   **终点/测试**: 访问 `/2023/my-first-post`，页面应显示该 `md` 文件的原始文本内容。访问 `/introduction`，页面应显示介绍页的原始文本。
+    *   **终点/测试**: 访问 `/2023/2023-07-22-use-sangfor-in-virtual-machine`，页面应显示该 `md` 文件的原始文本内容。访问 `/introduction`，页面应显示介绍页的原始文本。
 
 * [ ] **任务 3.4: 渲染 Markdown 为 HTML**
     *   **起点**: 任务 3.3 完成后的项目。
@@ -210,7 +210,7 @@
         1.  创建 `src/components/MarkdownRenderer.tsx` 组件。
         2.  该组件接收一个 `content` 字符串 prop，并使用 `react-markdown` 和 `remark-gfm` 将其渲染。
         3.  在 `src/pages/PostPage.tsx` 中，用 `<MarkdownRenderer>` 替换 `<pre>` 标签。
-    *   **终点/测试**: 访问 `/2023/my-first-post`，页面应显示格式化后的 HTML（例如，一个 H1 标题和一段文字），而不是原始的 `# 你好，世界！`。
+    *   **终点/测试**: 访问 `/2023/2023-07-22-use-sangfor-in-virtual-machine`，页面应显示格式化后的 HTML（例如，一个 H1 标题和一段文字），而不是原始的 `# 你好，世界！`。
 
 #### **阶段四：布局与侧边栏实现**
 
