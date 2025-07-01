@@ -92,7 +92,7 @@
             ```
     *   **终点/测试**: 检查文件系统，确认这几个文件和文件夹已按要求创建。
 
-* [ ] **任务 2.2: 实现基础 `postService`**
+* [x] **任务 2.2: 实现基础 `postService`**
     *   **起点**: 任务 2.1 完成后的项目。
     *   **操作**:
         1.  在 `src/services/postService.ts` 中，编写一个函数，使用 Vite 的 `import.meta.glob` 来导入所有 Markdown 文件。
