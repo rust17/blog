@@ -6,7 +6,7 @@
 
 此阶段的目标是建立一个可以正常运行的、配置好技术栈的空项目。
 
-* [ ] **任务 1.1: 初始化 Vite + React + TS 项目**
+* [x] **任务 1.1: 初始化 Vite + React + TS 项目**
     *   **起点**: 空文件夹。
     *   **操作**:
         1.  在终端运行 `npm create vite@latest your-blog-name -- --template react-ts`。
