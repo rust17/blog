@@ -18,18 +18,10 @@ function PostPage() {
   if (!currentPost) {
     return (
       <div className="p-4 md:p-6 bg-white dark:bg-slate-900 text-gray-900 dark:text-white">
-        <h1 className="text-xl md:text-2xl font-bold text-red-600 dark:text-red-400">文章未找到</h1>
+        <h1 className="text-xl md:text-2xl font-bold text-red-600 dark:text-red-400">404 Not Found</h1>
         <p className="mt-2 text-sm md:text-base text-gray-600 dark:text-gray-300">
           路径 "{articlePath}" 对应的文章不存在
         </p>
-        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-          可用的文章路径：
-        </p>
-        <ul className="mt-2 text-sm text-gray-500 dark:text-gray-400 max-h-40 overflow-y-auto">
-          {posts.map(post => (
-            <li key={post.path} className="break-all">• {post.path}</li>
-          ))}
-        </ul>
       </div>
     );
   }

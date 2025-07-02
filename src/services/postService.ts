@@ -16,9 +16,6 @@ export function getAllPosts(): Post[] {
     return { path, frontmatter: data, content };
   });
 
-  console.log('Parsed posts:', posts);
-  console.log('Number of posts found:', posts.length);
-
   allPosts = posts;
   return posts;
 }

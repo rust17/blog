@@ -7,9 +7,6 @@ interface MarkdownRendererProps {
 }
 
 function MarkdownRenderer({ content }: MarkdownRendererProps) {
-  // 添加调试信息
-  console.log('MarkdownRenderer content:', content.substring(0, 200));
-
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
