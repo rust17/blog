@@ -99,6 +99,41 @@ function Sidebar() {
   // 状态：已展开的目录列表
   const [expandedDirs, setExpandedDirs] = useState<Set<string>>(new Set());
 
+  // 获取所有目录路径的函数
+  const getAllDirectoryPaths = (nodes: TreeNode[], currentPath = ''): string[] => {
+    const paths: string[] = [];
+
+    nodes.forEach(node => {
+      if (node.isDirectory) {
+        const fullPath = currentPath ? `${currentPath}/${node.name}` : node.name;
+        paths.push(fullPath);
+
+        if (node.children) {
+          paths.push(...getAllDirectoryPaths(node.children, fullPath));
+        }
+      }
+    });
+
+    return paths;
+  };
+
+  // 展开所有目录
+  const expandAll = () => {
+    const allPaths = getAllDirectoryPaths(tree);
+    setExpandedDirs(new Set(allPaths));
+  };
+
+  // 折叠所有目录
+  const collapseAll = () => {
+    setExpandedDirs(new Set());
+  };
+
+  // 判断是否所有目录都已展开
+  const allExpanded = () => {
+    const allPaths = getAllDirectoryPaths(tree);
+    return allPaths.length > 0 && allPaths.every(path => expandedDirs.has(path));
+  };
+
   // 根据当前页面路径，计算应该默认展开的目录
   useEffect(() => {
     const currentPath = location.pathname.startsWith('/')
@@ -146,8 +181,25 @@ function Sidebar() {
   return (
     <div className="h-full flex flex-col">
       {/* 固定标题 */}
-      <div className="p-4 pb-2 flex-shrink-0">
+      <div className="p-4 pb-2 flex-shrink-0 flex items-center justify-between">
         <h2 className="text-lg font-bold text-gray-900 dark:text-white">文章目录</h2>
+
+        {/* 折叠/展开全部按钮 */}
+        <button
+          onClick={allExpanded() ? collapseAll : expandAll}
+          className="p-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 rounded transition-colors"
+          title={allExpanded() ? "折叠全部" : "展开全部"}
+        >
+          {allExpanded() ? (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          ) : (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          )}
+        </button>
       </div>
 
       {/* 可滚动内容区域 */}
