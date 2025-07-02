@@ -295,7 +295,7 @@
 
 此阶段的目标是进行最终的样式调整，并配置自动化部署流程。
 
-* [ ] **任务 6.1: 美化 Markdown 内容样式**
+* [x] **任务 6.1: 美化 Markdown 内容样式**
     *   **起点**: 任务 5.3 完成后的项目。
     *   **操作**:
         1.  安装 Tailwind 的排版插件: `npm install -D @tailwindcss/typography`。
