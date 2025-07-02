@@ -2,7 +2,14 @@ import { Link } from 'react-router-dom';
 import { usePosts } from '../contexts/PostContext';
 
 function HomePage() {
-  const posts = usePosts();
+  const allPosts = usePosts();
+
+  // 按发布时间倒序排列文章
+  const posts = [...allPosts].sort((a, b) => {
+    const dateA = new Date(a.frontmatter.date || '1970-01-01');
+    const dateB = new Date(b.frontmatter.date || '1970-01-01');
+    return dateB.getTime() - dateA.getTime(); // 倒序：最新的在前
+  });
 
   return (
     <div className="p-4 md:p-6 bg-white dark:bg-slate-900 text-gray-900 dark:text-white">
@@ -25,7 +32,7 @@ function HomePage() {
                   </Link>
                 </h3>
                 <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-2 break-all">
-                  路径: {post.path} | 日期: {post.frontmatter.date || '未知'}
+                  日期: {post.frontmatter.date || '未知'}
                 </p>
                 <p className="text-sm md:text-base text-gray-700 dark:text-gray-300 line-clamp-3">
                   {post.content.substring(0, 150)}...
@@ -50,11 +57,11 @@ function HomePage() {
           </div>
           <div className="p-3 bg-gray-50 dark:bg-slate-800 rounded-lg">
             <Link
-              to="/2023/my-first-post"
+              to={`/${posts[1].path}`}
               className="flex items-center text-blue-600 hover:underline dark:text-blue-400 dark:hover:text-blue-300 min-h-[44px]"
             >
               <span className="mr-2">📝</span>
-              <span>我的第一篇文章</span>
+              <span>我最近的一篇文章</span>
             </Link>
           </div>
         </div>
