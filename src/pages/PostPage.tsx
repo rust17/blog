@@ -43,7 +43,7 @@ function PostPage() {
         <p>路径: {currentPost.path}</p>
         <p>日期: {currentPost.frontmatter.date}</p>
       </div>
-      <div className="prose dark:prose-invert max-w-none border rounded-lg p-4 bg-gray-50 dark:bg-slate-800 dark:border-slate-600">
+      <div className="max-w-none border rounded-lg p-4 bg-gray-50 dark:bg-slate-800 dark:border-slate-600">
         <MarkdownRenderer content={currentPost.content} />
       </div>
     </div>
