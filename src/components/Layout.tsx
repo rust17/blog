@@ -1,14 +1,46 @@
 import { Outlet } from 'react-router-dom';
+import { useState, useCallback } from 'react';
 import Sidebar from './Sidebar';
 import ThemeToggle from './ThemeToggle';
 
 function Layout() {
+  const [sidebarWidth, setSidebarWidth] = useState(256); // 默认宽度 256px (w-64)
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const newWidth = e.clientX;
+      // 限制宽度在 200px 到 500px 之间
+      if (newWidth >= 200 && newWidth <= 500) {
+        setSidebarWidth(newWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  }, []);
+
   return (
     <div className="flex h-screen bg-white dark:bg-slate-900">
       {/* 侧边栏容器 */}
-      <div className="w-64 bg-gray-50 border-r border-gray-200 dark:bg-slate-800 dark:border-slate-700">
+      <div
+        className="bg-gray-50 border-r border-gray-200 dark:bg-slate-800 dark:border-slate-700"
+        style={{ width: `${sidebarWidth}px` }}
+      >
         <Sidebar />
       </div>
+
+      {/* 拖拽手柄 */}
+      <div
+        className="w-1 bg-gray-200 dark:bg-slate-700 hover:bg-blue-500 dark:hover:bg-blue-400 cursor-col-resize transition-colors"
+        onMouseDown={handleMouseDown}
+      />
 
       {/* 主内容容器 */}
       <div className="flex-1 overflow-auto flex flex-col">
