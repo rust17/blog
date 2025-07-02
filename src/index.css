@@ -28,6 +28,9 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  /* 移动端优化 */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 h1 {
@@ -44,6 +47,9 @@ button {
   font-family: inherit;
   cursor: pointer;
   transition: border-color 0.25s;
+  /* 移动端触摸优化 */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 button:hover {
   border-color: #646cff;
@@ -60,6 +66,14 @@ button:focus-visible {
 ::-webkit-scrollbar {
   width: 6px; /* 滚动条宽度 */
   height: 6px; /* 水平滚动条高度 */
+}
+
+/* 移动端使用更细的滚动条 */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
 }
 
 ::-webkit-scrollbar-track {
@@ -94,4 +108,53 @@ button:focus-visible {
 
 .dark * {
   scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
+}
+
+/* 移动端优化样式 */
+@media (max-width: 768px) {
+  /* 优化文本选择 */
+  * {
+    -webkit-touch-callout: none;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+
+  /* 代码块在移动端的优化 */
+  pre {
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+  }
+
+  /* 表格在移动端的优化 */
+  table {
+    font-size: 12px !important;
+  }
+}
+
+/* 移动端横屏优化 */
+@media (max-width: 768px) and (orientation: landscape) {
+  /* 横屏时减少垂直间距 */
+  .mobile-landscape-compact {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+  /* 移除悬停效果，使用活动状态 */
+  button:hover {
+    background-color: initial;
+  }
+
+  button:active {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .dark button:active {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 }

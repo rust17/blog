@@ -12,19 +12,31 @@ interface CodeBlockProps {
 
 function CodeBlock({ language, code, showLineNumbers = true }: CodeBlockProps) {
   return (
-    <div className="group relative mb-4 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
+    <div className="group relative mb-3 md:mb-4 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
       <LanguageLabel language={language} />
       <CopyButton code={code} />
-      <SyntaxHighlighter
-        style={vscDarkPlus}
-        language={language}
-        showLineNumbers={showLineNumbers}
-        customStyle={CODE_HIGHLIGHTER_STYLE}
-        lineNumberStyle={LINE_NUMBER_STYLE}
-        codeTagProps={{ style: CODE_TAG_STYLE }}
-      >
-        {code}
-      </SyntaxHighlighter>
+      <div className="overflow-x-auto">
+        <SyntaxHighlighter
+          style={vscDarkPlus}
+          language={language}
+          showLineNumbers={showLineNumbers}
+          customStyle={{
+            ...CODE_HIGHLIGHTER_STYLE,
+            fontSize: '13px',
+          }}
+          lineNumberStyle={LINE_NUMBER_STYLE}
+          codeTagProps={{
+            style: {
+              ...CODE_TAG_STYLE,
+              whiteSpace: 'pre',
+              wordBreak: 'normal',
+              overflowWrap: 'normal',
+            }
+          }}
+        >
+          {code}
+        </SyntaxHighlighter>
+      </div>
     </div>
   );
 }

@@ -14,13 +14,13 @@ function SidebarHeader({ allExpanded, onExpandAll, onCollapseAll }: SidebarHeade
   };
 
   return (
-    <div className="p-4 pb-2 flex-shrink-0 flex items-center justify-between">
-      <h2 className="text-lg font-bold text-gray-900 dark:text-white"></h2>
+    <div className="p-3 md:p-4 pb-2 flex-shrink-0 flex items-center justify-between">
+      <h2 className="text-base md:text-lg font-bold text-gray-900 dark:text-white">文章目录</h2>
 
-      {/* 折叠/展开全部按钮 */}
+      {/* 折叠/展开全部按钮 - 移动端优化 */}
       <button
         onClick={handleToggle}
-        className="p-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 rounded transition-colors"
+        className="p-2 md:p-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 rounded transition-colors min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 flex items-center justify-center"
         title={allExpanded ? "折叠全部" : "展开全部"}
       >
         {allExpanded ? (
