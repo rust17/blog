@@ -1,10 +1,27 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useState, useCallback } from 'react';
 import Sidebar from './Sidebar';
 import ThemeToggle from './ThemeToggle';
+import { usePosts } from '../contexts/PostContext';
 
 function Layout() {
   const [sidebarWidth, setSidebarWidth] = useState(256); // 默认宽度 256px (w-64)
+  const location = useLocation();
+  const posts = usePosts();
+
+  // 获取当前页面标题
+  const getCurrentPageTitle = () => {
+    const articlePath = location.pathname.startsWith('/')
+      ? location.pathname.slice(1)
+      : location.pathname;
+
+    if (articlePath === '' || articlePath === '/') {
+      return '我的博客';
+    }
+
+    const currentPost = posts.find(post => post.path === articlePath);
+    return currentPost?.frontmatter.title || '无标题';
+  };
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -45,7 +62,10 @@ function Layout() {
       {/* 主内容容器 */}
       <div className="flex-1 overflow-auto flex flex-col">
         {/* 顶部栏 */}
-        <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700 p-4 flex justify-end">
+        <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700 p-4 flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            {getCurrentPageTitle()}
+          </h2>
           <ThemeToggle />
         </div>
 

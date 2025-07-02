@@ -36,9 +36,6 @@ function PostPage() {
 
   return (
     <div className="p-6 bg-white dark:bg-slate-900 text-gray-900 dark:text-white">
-      <h1 className="text-2xl font-bold mb-4">
-        {currentPost.frontmatter.title || '无标题'}
-      </h1>
       <div className="mb-4 text-sm text-gray-600 dark:text-gray-300">
         <p>路径: {currentPost.path}</p>
         <p>日期: {currentPost.frontmatter.date}</p>

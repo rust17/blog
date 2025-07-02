@@ -6,7 +6,6 @@ function HomePage() {
 
   return (
     <div className="p-6 bg-white dark:bg-slate-900 text-gray-900 dark:text-white">
-      <h1 className="text-3xl font-bold mb-6">我的博客</h1>
       <p className="mb-4 text-gray-600 dark:text-gray-300">欢迎来到我的个人博客！</p>
 
       <div className="mb-6">
