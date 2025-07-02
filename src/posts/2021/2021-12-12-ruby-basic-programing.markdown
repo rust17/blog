@@ -10,7 +10,7 @@ hidden: false
 author: circle
 description: Ruby
 ---
-<center><h2>Ruby</h2></center>
+## Ruby
 
 ### 对象
 
@@ -218,7 +218,7 @@ description: Ruby
 
 ---
 
-<center><h2>Ruby 生态的一些工具链</h2></center>
+## Ruby 生态的一些工具链
 
 * RVM 是什么：Ruby Version Manager，Ruby 的版本管理工具，类似于 node.js 的 NVM
 * gem 是什么：Ruby 的包管理工具，当 Ruby 程序需要引入别的依赖时，会去 $LOAD_PATH（Ruby 自带的环境变量） + Gems Install Path（Gem 安装的依赖）里面查找，类似于 PHP 的 composer
