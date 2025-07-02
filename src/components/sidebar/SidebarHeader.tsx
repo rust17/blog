@@ -15,7 +15,7 @@ function SidebarHeader({ allExpanded, onExpandAll, onCollapseAll }: SidebarHeade
 
   return (
     <div className="p-3 md:p-4 pb-2 flex-shrink-0 flex items-center justify-between">
-      <h2 className="text-base md:text-lg font-bold text-gray-900 dark:text-white">文章目录</h2>
+      <h2 className="text-base md:text-lg font-bold text-gray-900 dark:text-white"></h2>
 
       {/* 折叠/展开全部按钮 - 移动端优化 */}
       <button
