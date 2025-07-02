@@ -47,7 +47,7 @@ function Layout() {
     <div className="flex h-screen bg-white dark:bg-slate-900">
       {/* 侧边栏容器 */}
       <div
-        className="bg-gray-50 border-r border-gray-200 dark:bg-slate-800 dark:border-slate-700"
+        className="bg-gray-50 border-r border-gray-200 dark:bg-slate-800 dark:border-slate-700 h-full overflow-hidden flex flex-col pb-4 pt-4"
         style={{ width: `${sidebarWidth}px` }}
       >
         <Sidebar />
@@ -55,7 +55,7 @@ function Layout() {
 
       {/* 拖拽手柄 */}
       <div
-        className="w-1 bg-gray-200 dark:bg-slate-700 hover:bg-blue-500 dark:hover:bg-blue-400 cursor-col-resize transition-colors"
+        className="w-0.5 bg-gray-200 dark:bg-slate-700 hover:bg-blue-500 dark:hover:bg-blue-400 cursor-col-resize transition-colors"
         onMouseDown={handleMouseDown}
       />
 
@@ -70,7 +70,7 @@ function Layout() {
         </div>
 
         {/* 页面内容 */}
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto pb-4">
           <Outlet />
         </div>
       </div>

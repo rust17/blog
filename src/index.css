@@ -54,3 +54,44 @@ button:focus-visible {
 }
 
 /* 移除了基于系统偏好的媒体查询，让Tailwind完全控制主题切换 */
+
+/* 自定义滚动条样式 */
+/* 针对 Webkit 浏览器 (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 6px; /* 滚动条宽度 */
+  height: 6px; /* 水平滚动条高度 */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* 滚动条轨道背景 */
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.5); /* 滚动条滑块颜色 (浅灰色，半透明) */
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.8); /* 悬停时更深的颜色 */
+}
+
+/* 暗黑模式下的滚动条样式 */
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4); /* 暗黑模式下的滑块颜色 */
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.7); /* 暗黑模式悬停颜色 */
+}
+
+/* 针对 Firefox 的滚动条样式 */
+* {
+  scrollbar-width: thin; /* 细滚动条 */
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent; /* 滑块颜色 轨道颜色 */
+}
+
+.dark * {
+  scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
+}

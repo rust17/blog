@@ -50,7 +50,7 @@ function DirectoryItem({
           <span className="mr-1">
             {isExpanded ? '▼' : '▶'}
           </span>
-          {node.name}/
+          {node.name}
         </div>
         {isExpanded && node.children && (
           <div>
@@ -92,7 +92,7 @@ function DirectoryItem({
 }
 
 function Sidebar() {
-  const posts = usePosts(); // 确保posts已加载
+  usePosts(); // 确保posts已加载
   const tree = buildDirectoryTree();
   const location = useLocation();
 
@@ -138,24 +138,31 @@ function Sidebar() {
   };
 
   // 根据节点和层级计算目录路径
-  const getDirectoryPath = (node: TreeNode, level: number) => {
+  const getDirectoryPath = (node: TreeNode) => {
     // 使用节点的path属性，如果是目录的话已经包含完整路径
     return node.path || node.name;
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">文章目录</h2>
-      <div className="space-y-1">
-        {tree.map((node, index) => (
-          <DirectoryItem
-            key={node.path || `root-${index}`}
-            node={node}
-            expandedDirs={expandedDirs}
-            toggleDirectory={toggleDirectory}
-            getDirectoryPath={getDirectoryPath}
-          />
-        ))}
+    <div className="h-full flex flex-col">
+      {/* 固定标题 */}
+      <div className="p-4 pb-2 flex-shrink-0">
+        <h2 className="text-lg font-bold text-gray-900 dark:text-white">文章目录</h2>
+      </div>
+
+      {/* 可滚动内容区域 */}
+      <div className="flex-1 overflow-y-auto px-4 pb-4">
+        <div className="space-y-1">
+          {tree.map((node, index) => (
+            <DirectoryItem
+              key={node.path || `root-${index}`}
+              node={node}
+              expandedDirs={expandedDirs}
+              toggleDirectory={toggleDirectory}
+              getDirectoryPath={getDirectoryPath}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
