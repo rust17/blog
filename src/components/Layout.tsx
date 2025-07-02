@@ -1,6 +1,6 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { useState, useCallback } from 'react';
-import Sidebar from './Sidebar';
+import Sidebar from './sidebar/Sidebar';
 import ThemeToggle from './ThemeToggle';
 import { usePosts } from '../contexts/PostContext';
 
