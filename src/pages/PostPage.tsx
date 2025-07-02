@@ -36,12 +36,11 @@ function PostPage() {
 
   return (
     <div className="p-6 bg-white dark:bg-slate-900 text-gray-900 dark:text-white">
-      <div className="mb-4 text-sm text-gray-600 dark:text-gray-300">
-        <p>路径: {currentPost.path}</p>
-        <p>日期: {currentPost.frontmatter.date}</p>
-      </div>
       <div className="max-w-none">
         <MarkdownRenderer content={currentPost.content} />
+      </div>
+      <div className="mt-4 text-sm text-gray-600 dark:text-gray-300 flex justify-end">
+        <p>发布于: {currentPost.frontmatter.date}</p>
       </div>
     </div>
   );
