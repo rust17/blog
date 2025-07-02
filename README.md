@@ -1,3 +1,3 @@
 # circle blog
 
-https://circle33.github.io
+https://rust17.github.io

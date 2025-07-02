@@ -303,7 +303,7 @@
         3.  给渲染 Markdown 的容器（可能在 `PostPage.tsx` 中）添加 `prose` 和 `dark:prose-invert` 类。
     *   **终点/测试**: 文章详情页中的标题、段落、列表、代码块等元素现在应该有了优雅、易读的默认样式，并且能适应暗黑模式。
 
-* [ ] **任务 6.2: 配置 GitHub Pages 部署**
+* [x] **任务 6.2: 配置 GitHub Pages 部署**
     *   **起点**: 任务 6.1 完成后的项目。
     *   **操作**:
         1.  在 `vite.config.ts` 中，设置 `base` 属性为你的仓库名称，例如 `base: '/your-repo-name/'`。
