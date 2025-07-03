@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>页面重定向中...</title>
+  <script>
+    // GitHub Pages SPA 路由解决方案
+    // 当用户直接访问 SPA 的子路由时，GitHub Pages 会显示 404
+    // 这个脚本会将用户重定向到正确的页面
+
+    // 获取当前的完整路径（包括查询参数和hash）
+    const currentPath = window.location.pathname;
+    const search = window.location.search;
+    const hash = window.location.hash;
+
+    // 构建完整的路径
+    const fullPath = currentPath + search + hash;
+
+    // 如果不是根路径，则重定向到根路径并保持路径信息
+    if (currentPath !== '/') {
+      // 使用 sessionStorage 临时保存路径信息
+      sessionStorage.setItem('redirectPath', fullPath);
+
+      // 重定向到根路径
+      window.location.replace('/');
+    }
+  </script>
+</head>
+<body>
+  <div style="text-align: center; margin-top: 50px; font-family: Arial, sans-serif;">
+    <h2>页面重定向中...</h2>
+    <p>正在为您跳转到正确的页面，请稍候...</p>
+  </div>
+</body>
+</html>
