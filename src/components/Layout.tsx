@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { useResponsive, useSidebarWidth, useMobileMenu, usePageTitle } from '../hooks';
+import { useResponsive, useSidebarWidth, useMobileMenu, usePageTitle, useScrollToTop } from '../hooks';
 import { DesktopSidebar, MobileSidebar, ResizeHandle, Header } from './layout';
 
 function Layout() {
@@ -7,6 +7,9 @@ function Layout() {
   const { sidebarWidth, handleMouseDown } = useSidebarWidth();
   const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useMobileMenu(isMobile);
   const pageTitle = usePageTitle();
+
+  // 添加滚动到顶部的功能
+  useScrollToTop();
 
   return (
     <div className="flex h-screen bg-white dark:bg-slate-900">
@@ -39,7 +42,7 @@ function Layout() {
         />
 
         {/* 页面内容 */}
-        <div className="flex-1 overflow-auto pb-4">
+        <div id="main-content" className="flex-1 overflow-auto pb-4">
           <Outlet />
         </div>
       </div>
