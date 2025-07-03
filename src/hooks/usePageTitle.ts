@@ -11,7 +11,7 @@ export function usePageTitle() {
       : location.pathname;
 
     if (articlePath === '' || articlePath === '/') {
-      return '我的博客';
+      return 'Home';
     }
 
     const currentPost = posts.find(post => post.path === articlePath);
